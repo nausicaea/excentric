@@ -13,24 +13,14 @@
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/excentric/icon.png",
-	"environment": "*",
+	"environment": "server",
 	"entrypoints": {
 		"main": [
 			"net.nausicaea.excentric.Excentric"
-		],
-		"client": [
-			"net.nausicaea.excentric.client.ExcentricClient"
-		],
-		"fabric-datagen": [
-			"net.nausicaea.excentric.client.ExcentricDataGenerator"
 		]
 	},
 	"mixins": [
-		"excentric.mixins.json",
-		{
-			"config": "excentric.client.mixins.json",
-			"environment": "client"
-		}
+		"excentric.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
