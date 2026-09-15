@@ -1,0 +1,4 @@
+fileignoreconfig:
+  - filename: gradlew
+    checksum: 7800518488d3d75df6e435dee38e777f637589e175efbd24e62e93c1bdd01cc4
+version: "1.0"
