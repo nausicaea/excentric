@@ -6,8 +6,15 @@ loom {
 	serverOnlyMinecraftJar()
 }
 
+repositories {
+	maven {
+		name = "Ladysnake Mods"
+		url = "https://maven.ladysnake.org/releases"
+	}
+}
+
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft(libs.minecraft)
 	mappings loom.officialMojangMappings()
 }
 
