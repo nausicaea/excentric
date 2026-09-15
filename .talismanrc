@@ -1,4 +1,6 @@
 fileignoreconfig:
   - filename: gradlew
     checksum: 7800518488d3d75df6e435dee38e777f637589e175efbd24e62e93c1bdd01cc4
+  - filename: .github/workflows/build.yml
+    checksum: cb8be4c9b4c3ebf9558d94775bea0ce960a7afaff80dd9b550c1f06ff4f16a2a
 version: "1.0"
