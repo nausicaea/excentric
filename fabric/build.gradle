@@ -8,13 +8,18 @@ loom {
 }
 
 repositories {
+	maven {
+		name = "Ladysnake Mods"
+		url = "https://maven.ladysnake.org/releases"
+	}
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft(libs.minecraft)
 	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation(libs.fabric.loader)
+	modImplementation(libs.fabric.api)
+	modImplementation(libs.bundles.cca)
 
 	implementation project(path: ':common', configuration: 'namedElements')
 }
