@@ -16,7 +16,7 @@
 	"environment": "server",
 	"entrypoints": {
 		"main": [
-			"net.nausicaea.excentric.Excentric"
+          "net.nausicaea.excentric.ExcentricFabric"
 		]
 	},
 	"mixins": [
