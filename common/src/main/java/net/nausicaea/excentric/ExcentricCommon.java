@@ -4,17 +4,19 @@ import net.minecraft.resources.ResourceLocation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public final class ExcentricCommon {
 	public static final String MOD_ID = "excentric";
-
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Marker LOG_MARKER = MarkerFactory.getMarker(MOD_ID);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExcentricCommon.class);
 
 	private ExcentricCommon() {
 	}
 
-	public static void init() {
-		LOGGER.info("Hello world, from common!");
+	public static void onInitialize() {
+		LOGGER.info(LOG_MARKER, "Hello world, from common!");
 	}
 
 	public static ResourceLocation id(String path) {
