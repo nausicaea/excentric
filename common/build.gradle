@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+    alias(libs.plugins.fabric.loom.remap)
 }
 
 loom {
