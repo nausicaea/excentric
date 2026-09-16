@@ -20,4 +20,7 @@ gradle-spotless = { id = "com.diffplug.spotless", version.ref = "gradle-spotless
 gradle-spotbugs = { id = "com.github.spotbugs", version.ref = "gradle-spotbugs" }
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 
+[plugins]
+fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
+
 [bundles]
