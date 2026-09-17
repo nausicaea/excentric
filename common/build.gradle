@@ -7,15 +7,16 @@ loom {
 }
 
 repositories {
-	maven {
-		name = "Ladysnake Mods"
-		url = "https://maven.ladysnake.org/releases"
-	}
+    maven {
+        name = "Spongepowered"
+        url = "https://repo.spongepowered.org/repository/maven-public"
+    }
 }
 
 dependencies {
 	minecraft(libs.minecraft)
 	mappings loom.officialMojangMappings()
+    compileOnly(libs.mixin)
 }
 
 tasks.withType(JavaCompile).configureEach {
