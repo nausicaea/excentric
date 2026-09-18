@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 public final class VillageManager extends SavedData {
-	private record Data(List<Village.Data> villages) {
+	private record Data(List<Village> villages) {
 	}
 	private static final Codec<Data> CODEC = RecordCodecBuilder.create(
 	    i -> i.group(Codec.list(Village.CODEC).fieldOf("villages").forGetter(Data::villages)).apply(i, Data::new));
@@ -35,11 +35,26 @@ public final class VillageManager extends SavedData {
 		this.villages = new HashMap<>();
 	}
 
+	/// Create a new village (radius and height from config)
+	/// 1. Determine [net.nausicaea.excentric.Village#anchor()]
+	/// 2. Determine all beds
+	///    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
+	///    [net.nausicaea.excentric.Village#radius()]
+	/// 3. Calculate [net.nausicaea.excentric.Village#center()] from the beds
 	public Village create(GlobalPos anchor) {
-		Village center = new Village(UUID.randomUUID(), this::setDirty, anchor);
-		villages.put(center.id(), center);
-		setDirty();
-		return center;
+		// Village center = new Village(UUID.randomUUID(), this::setDirty, anchor);
+		// villages.put(center.id(), center);
+		// setDirty();
+		// return center;
+		throw new Todo();
+	}
+
+	public Optional<Village> find(GlobalPos anchor) {
+		throw new Todo();
+	}
+
+	public Village findOrCreate(GlobalPos anchor) {
+		return find(anchor).orElseGet(() -> this.create(anchor));
 	}
 
 	public Optional<Village> get(UUID id) {
@@ -48,7 +63,7 @@ public final class VillageManager extends SavedData {
 
 	@Override
 	public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-		var serialized = new Data(villages.values().stream().map(Village::export).toList());
+		var serialized = new Data(List.copyOf(villages.values()));
 		return (CompoundTag) CODEC.encode(serialized, NbtOps.INSTANCE, tag).getPartialOrThrow();
 	}
 
@@ -56,8 +71,7 @@ public final class VillageManager extends SavedData {
 		VillageManager manager = new VillageManager();
 		CODEC.decode(NbtOps.INSTANCE, tag)
 		    .resultOrPartial(err -> LOG.error(ExcentricCommon.LOG_MARKER, "Failed to parse village data: {}", err))
-		    .map(p -> p.getFirst().villages()).orElseGet(List::of)
-		    .forEach(d -> manager.villages.put(d.id(), new Village(d.id(), manager::setDirty, d.anchor())));
+		    .map(p -> p.getFirst().villages()).orElseGet(List::of).forEach(d -> manager.villages.put(d.id(), d));
 		return manager;
 	}
 }
