@@ -11,7 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockBehaviour.class)
 abstract class BlockBehaviourMixin {
-	/// Always leave empty
+	/// Hook into [net.minecraft.world.level.block.Block] placement.
+	///
+	/// **Leave implementation empty: must be overridden by a more specific class**
 	@Inject(method = "onPlace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V", at = @At("TAIL"))
 	protected void villageMod$onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2,
 	    boolean bl, CallbackInfo ci) {
