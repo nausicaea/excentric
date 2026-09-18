@@ -12,9 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class BlockEntityMixin {
 	/// Always leave empty
 	@Inject(method = "saveAdditional", at = @At("TAIL"))
-	protected void villageMod$save(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {}
+	protected void villageMod$save(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+	}
 
 	/// Always leave empty
 	@Inject(method = "loadAdditional", at = @At("TAIL"))
-	protected void villageMod$load(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {}
+	protected void villageMod$load(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
+	}
 }

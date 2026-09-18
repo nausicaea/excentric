@@ -8,6 +8,7 @@ public interface VillageRef {
 	default Optional<UUID> villageMod$getVillageId() {
 		throw new AssertionError("Implemented in Mixin");
 	}
+
 	default void villageMod$setVillageId(UUID id) {
 		throw new AssertionError("Implemented in Mixin");
 	}
