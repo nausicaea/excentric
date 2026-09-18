@@ -21,7 +21,7 @@ public final class VillageManager extends SavedData {
 	        .group(Codec.list(Village.CODEC).fieldOf("villages").forGetter(Data::villages))
 	        .apply(i, Data::new));
 	private static final String DATA_NAME = ExcentricCommon.MOD_ID + "_villages";
-	private static final Logger LOGGER = LoggerFactory.getLogger(VillageManager.class);
+	private static final Logger LOG = LoggerFactory.getLogger(VillageManager.class);
 	private Map<UUID, Village> villages;
 
 	public static VillageManager get(MinecraftServer server) {
@@ -59,7 +59,7 @@ public final class VillageManager extends SavedData {
 		VillageManager manager = new VillageManager();
 		CODEC
 		    .decode(NbtOps.INSTANCE, tag)
-		    .resultOrPartial(err -> LOGGER.error(ExcentricCommon.LOG_MARKER, "Failed to parse village data: {}", err))
+		    .resultOrPartial(err -> LOG.error(ExcentricCommon.LOG_MARKER, "Failed to parse village data: {}", err))
 		    .map(p -> p.getFirst().villages())
 		    .orElseGet(List::of)
 		    .forEach(d -> manager.villages.put(d.id(), new Village(d.id(), manager::setDirty, d.anchor())));
