@@ -5,6 +5,12 @@ plugins {
 
 loom {
 	serverOnlyMinecraftJar()
+
+	runs {
+		server {
+			systemProperties.put('fabric.log.debug.level', 'trace')
+		}
+	}
 }
 
 repositories {
