@@ -6,43 +6,7 @@
         <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="mixed"/>
         <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
         <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+        <setting id="org.eclipse.jdt.core.formatter.continuation_indentation" value="1" />
         <setting id="org.eclipse.jdt.core.formatter.use_tabs_only_for_leading_indentations" value="true"/>
-
-        <!-- Line wrapping -->
-        <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
-        <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="120"/>
-
-        <!-- Braces: same-line (K&R style), standard for most Java/Minecraft modding code -->
-        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_block" value="end_of_line"/>
-        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_method_declaration" value="end_of_line"/>
-        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_type_declaration" value="end_of_line"/>
-        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_switch" value="end_of_line"/>
-        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_lambda_body" value="end_of_line"/>
-        <setting id="org.eclipse.jdt.core.formatter.brace_position_for_anonymous_type_declaration" value="end_of_line"/>
-
-        <!-- Blank lines -->
-        <setting id="org.eclipse.jdt.core.formatter.number_of_empty_lines_to_preserve" value="1"/>
-        <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_field" value="0"/>
-        <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_first_class_body_declaration" value="0"/>
-        <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_method" value="1"/>
-
-        <!-- Alignment of wrapped parameters/arguments/chained calls uses
-             spaces once past the leading tab indentation (see
-             use_tabs_only_for_leading_indentations above). -->
-        <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation" value="18"/>
-        <setting id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration" value="18"/>
-        <setting id="org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation" value="52"/>
-        <setting id="org.eclipse.jdt.core.formatter.alignment_for_binary_expression" value="16"/>
-
-        <!-- Imports -->
-        <setting id="org.eclipse.jdt.core.formatter.import_group_import" value="true"/>
-
-        <!-- Whitespace around operators/keywords: standard conventions -->
-        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_method_declaration" value="do not insert"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_opening_paren_in_method_invocation" value="do not insert"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_method_invocation_arguments" value="insert"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_space_after_comma_in_method_declaration_parameters" value="insert"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_space_before_binary_operator" value="insert"/>
-        <setting id="org.eclipse.jdt.core.formatter.insert_space_after_binary_operator" value="insert"/>
     </profile>
 </profiles>

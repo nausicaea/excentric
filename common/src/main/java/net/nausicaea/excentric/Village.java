@@ -12,10 +12,8 @@ public final class Village {
 	}
 
 	public final static Codec<Data> CODEC = RecordCodecBuilder
-	    .create(i -> i
-	        .group(UUIDUtil.CODEC.fieldOf("id").forGetter(Data::id),
-	               GlobalPos.CODEC.fieldOf("anchor").forGetter(Data::anchor))
-	        .apply(i, Data::new));
+	    .create(i -> i.group(UUIDUtil.CODEC.fieldOf("id").forGetter(Data::id),
+	        GlobalPos.CODEC.fieldOf("anchor").forGetter(Data::anchor)).apply(i, Data::new));
 	private final UUID id;
 	private final Runnable setDirty;
 	private GlobalPos anchor;
