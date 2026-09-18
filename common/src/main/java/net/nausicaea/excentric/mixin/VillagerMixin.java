@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(Villager.class)
-public abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
+abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 	@Unique
 	private static final String villageMod$TAG = "villageModVillagerData";
 
