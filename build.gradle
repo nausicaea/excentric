@@ -7,8 +7,8 @@ plugins {
 }
 
 allprojects {
-	apply plugin: libs.plugins.spotless.get().pluginId
-	apply plugin: libs.plugins.spotbugs.get().pluginId
+	apply plugin: rootProject.libs.plugins.spotless.get().pluginId
+	apply plugin: rootProject.libs.plugins.spotbugs.get().pluginId
 
 	group = rootProject.group
 	version = rootProject.version
