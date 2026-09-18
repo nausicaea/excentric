@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.fabric.loom.remap)
+	alias(libs.plugins.fabric.loom.remap)
 }
 
 loom {
@@ -7,16 +7,16 @@ loom {
 }
 
 repositories {
-    maven {
-        name = "Spongepowered"
-        url = "https://repo.spongepowered.org/repository/maven-public"
-    }
+	maven {
+		name = "Spongepowered"
+		url = "https://repo.spongepowered.org/repository/maven-public"
+	}
 }
 
 dependencies {
 	minecraft(libs.minecraft)
 	mappings loom.officialMojangMappings()
-    compileOnly(libs.mixin)
+	compileOnly(libs.mixin)
 }
 
 tasks.withType(JavaCompile).configureEach {
