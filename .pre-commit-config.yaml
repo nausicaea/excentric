@@ -35,3 +35,12 @@ repos:
     rev: v4.16.4
     hooks:
       - id: commitizen
+
+  - repo: local
+    hooks:
+      - id: spotless-apply
+        name: Spotless (auto-format Java/Gradle files)
+        entry: ./gradlew spotlessApply
+        language: system
+        pass_filenames: false
+        files: \.(java|gradle)$
