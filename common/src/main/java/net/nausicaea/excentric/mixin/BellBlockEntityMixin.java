@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(BellBlockEntity.class)
-public abstract class BellBlockEntityMixin extends BlockEntityMixin implements VillageRef {
+abstract class BellBlockEntityMixin extends BlockEntityMixin implements VillageRef {
 	@Unique
 	private static final String villageMod$TAG = "villageModVillageId";
 
