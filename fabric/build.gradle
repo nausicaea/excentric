@@ -21,10 +21,10 @@ repositories {
 }
 
 dependencies {
-	minecraft(libs.minecraft)
+	minecraft(rootProject.libs.minecraft)
 	mappings loom.officialMojangMappings()
-	modImplementation(libs.fabric.loader)
-	modImplementation(libs.fabric.api)
+	modImplementation(rootProject.libs.fabric.loader)
+	modImplementation(rootProject.libs.fabric.api)
 
 	implementation project(path: ':common', configuration: 'namedElements')
 }

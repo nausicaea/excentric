@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
+    <!-- Match throws of net.nausicaea.excentric.Todo as a warning -->
+    <Match>
+        <Bug pattern="THROWS_METHOD_THROWS_CLAUSE_THROWABLE"/>
+        <Class name="~net\.nausicaea\.excentric\.Todo"/>
+    </Match>
+
     <!-- Mixin classes are compiler magic: fields/methods look unused or
          unreachable to SpotBugs because the real implementation is woven
          in at build/runtime by Mixin's annotation processor. -->

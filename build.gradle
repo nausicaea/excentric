@@ -40,6 +40,6 @@ allprojects {
 		showStackTraces = false
 		effort = Effort.valueOf("MAX")
 		reportLevel = Confidence.valueOf("MEDIUM")
-		excludeFilter = rootProject.file('config/spotbugs/exclude.xml')
+		excludeFilter = rootProject.file('config/spotbugs/filter.xml')
 	}
 }
