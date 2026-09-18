@@ -45,11 +45,13 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 		this.villageMod$data = data;
 	}
 
+	/// Save [VillagerData] to persistent storage.
 	@Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
 	private void villageMod$save(CompoundTag tag, CallbackInfo ci) {
 		tag.put(villageMod$TAG, this.villageMod$data.save());
 	}
 
+	/// Load [VillagerData] from persistent storage.
 	@Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
 	private void villageMod$load(CompoundTag tag, CallbackInfo ci) {
 		if (tag.contains(villageMod$TAG)) {

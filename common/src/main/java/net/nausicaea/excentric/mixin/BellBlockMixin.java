@@ -20,8 +20,11 @@ abstract class BellBlockMixin extends BlockBehaviourMixin {
 	@Unique
 	private final static Logger villageMod$LOG = LoggerFactory.getLogger(BellBlockMixin.class);
 
+	/// For [BellBlockEntity], find or create a
+	/// [net.nausicaea.excentric.Village], then assign a reference to it.
+	///
 	/// 1. Does the bell have a village [java.util.UUID]?
-	/// 2. If yes, early return
+	/// 2. If yes, early return. This case is expected to be seldom.
 	/// 3. If not, query [net.nausicaea.excentric.VillageManager#findOrCreate] for
 	///    the closest [net.nausicaea.excentric.Village] in range or trigger creation
 	///    of one.
@@ -43,7 +46,7 @@ abstract class BellBlockMixin extends BlockBehaviourMixin {
 
 			var server = level.getServer();
 			if (server == null) {
-				villageMod$LOG.error(ExcentricCommon.LOG_MARKER, "Server reference is null from level {}", level);
+				villageMod$LOG.error(ExcentricCommon.LOG_MARKER, "Server reference is null on level {}", level);
 				return;
 			}
 			var village = VillageManager.get(server).findOrCreate(GlobalPos.of(level.dimension(), blockPos));

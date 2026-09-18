@@ -29,6 +29,8 @@ abstract class BellBlockEntityMixin extends BlockEntityMixin implements VillageR
 		this.villageMod$villageId = id;
 	}
 
+	/// Store a [net.nausicaea.excentric.Village] [UUID] as custom
+	/// persistent storage.
 	@Override
 	protected void villageMod$save(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
 		if (villageMod$villageId != null) {
@@ -36,6 +38,7 @@ abstract class BellBlockEntityMixin extends BlockEntityMixin implements VillageR
 		}
 	}
 
+	/// Load a [net.nausicaea.excentric.Village] [UUID] from persistent storage.
 	@Override
 	protected void villageMod$load(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo ci) {
 		if (tag.hasUUID(villageMod$TAG)) {
