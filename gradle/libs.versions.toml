@@ -1,4 +1,6 @@
 [versions]
+spotless = '8.10.2'
+spotbugs = '6.5.11'
 minecraft = '1.21.4'
 mixin = '0.8.7'
 fabric-loom = '1.17-SNAPSHOT'
@@ -12,4 +14,6 @@ fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = 
 fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
 
 [plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs" }
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
