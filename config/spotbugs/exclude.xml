@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Mixin classes are compiler magic: fields/methods look unused or
+         unreachable to SpotBugs because the real implementation is woven
+         in at build/runtime by Mixin's annotation processor. -->
+    <Match>
+        <Class name="~.*\.mixin\..*" />
+    </Match>
+
+    <!-- Generated/accessor mixin interfaces trip EI_EXPOSE_REP-style checks
+         on their synthetic accessor methods. -->
+    <Match>
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP" />
+            <Bug pattern="EI_EXPOSE_REP2" />
+        </Or>
+        <Class name="~.*Accessor" />
+    </Match>
+
+    <!-- Mapped/generated code (loom, ATs, mapping remap output) if it
+         lands under a generated source set. -->
+    <Match>
+        <Source name="~.*[/\\]generated[/\\].*" />
+    </Match>
+</FindBugsFilter>
