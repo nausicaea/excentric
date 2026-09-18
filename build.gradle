@@ -1,6 +1,45 @@
-// Root build.gradle: shared config for every subproject.
-// Module-specific dependencies/plugins live in common/build.gradle and fabric/build.gradle.
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
+
+plugins {
+	alias(libs.plugins.spotless) apply false
+	alias(libs.plugins.spotbugs) apply false
+}
+
 allprojects {
+	apply plugin: libs.plugins.spotless.get().pluginId
+	apply plugin: libs.plugins.spotbugs.get().pluginId
+
 	group = rootProject.group
 	version = rootProject.version
+
+	repositories {
+		mavenCentral()
+	}
+
+	spotless {
+		java {
+			target 'src/*/java/**/*.java'
+			eclipse().configFile(rootProject.file('config/spotless/eclipse-formatter.xml'))
+			removeUnusedImports()
+			trimTrailingWhitespace()
+			endWithNewline()
+		}
+
+		groovyGradle {
+			target '*.gradle', '**/*.gradle'
+			greclipse()
+			trimTrailingWhitespace()
+			endWithNewline()
+		}
+	}
+
+	spotbugs {
+		toolVersion = '4.8.6'
+		ignoreFailures = false
+		showStackTraces = false
+		effort = Effort.valueOf("MAX")
+		reportLevel = Confidence.valueOf("MEDIUM")
+		excludeFilter = rootProject.file('config/spotbugs/exclude.xml')
+	}
 }
