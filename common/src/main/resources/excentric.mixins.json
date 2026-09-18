@@ -4,7 +4,10 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BellBlockEntityMixin",
+    "BellBlockMixin",
+    "BlockBehaviourMixin",
     "BlockEntityMixin",
+    "LevelChunkMixin",
     "VillagerMixin"
   ],
   "injectors": {

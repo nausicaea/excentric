@@ -19,9 +19,9 @@ repositories {
 }
 
 dependencies {
-	minecraft(libs.minecraft)
+	minecraft(rootProject.libs.minecraft)
 	mappings loom.officialMojangMappings()
-	compileOnly(libs.mixin)
+	compileOnly(rootProject.libs.mixin)
 }
 
 tasks.withType(JavaCompile).configureEach {
