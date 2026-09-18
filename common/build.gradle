@@ -4,6 +4,11 @@ plugins {
 
 loom {
 	serverOnlyMinecraftJar()
+
+	// Remove the run configurations from the common module.
+	runs {
+		removeIf { true }
+	}
 }
 
 repositories {
