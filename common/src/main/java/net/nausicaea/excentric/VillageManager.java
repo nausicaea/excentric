@@ -80,8 +80,9 @@ public final class VillageManager extends SavedData {
 		    chunkPos.getMaxBlockX() + 1, level.getMaxY(), chunkPos.getMaxBlockZ() + 1);
 	}
 
-	/// Produce a function that reconciles important members of a chunk with
-	/// a [Village].
+	/// Produce a function that reconciles important members of a chunk with a
+	/// [Village]. FIXME: narrow reconciliation to chunk section instead of
+	/// whole chunks.
 	private static void reconcileChunk(ServerLevel serverLevel, ChunkPos chunkPos, Village village) {
 		var poiManager = serverLevel.getPoiManager();
 
