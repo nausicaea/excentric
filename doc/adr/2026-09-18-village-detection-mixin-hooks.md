@@ -37,7 +37,7 @@ chunks alike (`ChunkStatusTasks.full(...)`). This works for world-gen
 and in existing worlds.
 
 Inside:
-1. `StructureManager#getStructureWithPieceAt(BlockPos, Predicate<Holder<Structure>>)`
+1. `StructureManager#startsForStructure(ChunkPos, Predicate)`
    filtered to `town_centers`-rooted structures (match by pool path
    suffix across biome variants, not a hardcoded `ResourceLocation`) →
    is this a village chunk?
