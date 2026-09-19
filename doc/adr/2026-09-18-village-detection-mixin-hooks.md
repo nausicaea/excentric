@@ -9,7 +9,7 @@ date: 2026-09-18
 
 The following writing assumes Mojang's obfuscation mappings.
 
-A `Village` is defined by an anchor position and a bounding cylinder (fixed at
+A `Village` is defined by an anchor position and a bounding AABB (fixed at
 creation, never recalculated):
 
 - **Anchor**: calculated first. Determined from the jigsaw pool `town_centers`
