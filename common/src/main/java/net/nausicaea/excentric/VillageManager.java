@@ -7,15 +7,18 @@ import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -25,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public final class VillageManager extends SavedData {
@@ -56,11 +60,13 @@ public final class VillageManager extends SavedData {
 	///    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
 	///    [net.nausicaea.excentric.Village#radius()]
 	/// 3. Calculate [net.nausicaea.excentric.Village#center()] from the beds
-	/// 4. Queue a task for later that searches for any [Villager]s and
+	/// 4. Search for any [Villager]s and
 	///    [net.minecraft.world.level.block.BellBlock]s within the village extents
 	///    and assigns them to this village.
+	///
+	/// TODO: what happens to villagers who spawn after claiming?
 	public Village claim(GlobalPos anchor) {
-		// Village center = new Village(UUID.randomUUID(), this::setDirty, anchor);
+		// var center = new Village(UUID.randomUUID(), this::setDirty, anchor);
 		// villages.put(center.id(), center);
 		// setDirty();
 		// return center;
@@ -79,6 +85,8 @@ public final class VillageManager extends SavedData {
 		return Optional.ofNullable(villages.get(id));
 	}
 
+	/// Find StructureStart instances for any villages that extend into the
+	/// given chunk.
 	private static List<StructureStart> findVillageStarts(StructureManager structureManager, ChunkPos chunkPos) {
 		return structureManager.startsForStructure(chunkPos, structure -> {
 			if (!(structure instanceof JigsawStructure jigsawStructure)) {
@@ -88,30 +96,19 @@ public final class VillageManager extends SavedData {
 			// Object (see
 			// https://docs.fabricmc.net/develop/mixins/accessors#accessors-for-final-classes).
 			var startPool = ((JigsawStructureAccessor) (Object) jigsawStructure).villageMod$getStartPool();
-			// The following call is true if the resource path starts with "village"
 			return startPool.unwrapKey().map(key -> key.location().getPath().endsWith("town_centers")).orElse(false);
 		});
 	}
 
-	/// 1. Find the structure start chunk with
-	///    [net.minecraft.world.level.StructureManager#getStructureWithPieceAt]
-	/// 2. Query [net.nausicaea.excentric.VillageManager#findOrClaim] for the closest
-	///    [net.nausicaea.excentric.Village] in range or trigger creation of one.
-	/// 3. Find [net.minecraft.world.entity.npc.Villager]s and
-	///    [net.minecraft.world.level.block.entity.BellBlockEntity], and link the new
-	///    [net.nausicaea.excentric.Village#id()].
-	public void onChunkLoad(ServerLevel serverLevel, LevelChunk chunk) {
-		var chunkPos = chunk.getPos();
-		var dimension = serverLevel.dimension();
+	private static AABB chunkAabb(Level level, ChunkPos chunkPos) {
+		return new AABB(chunkPos.getMinBlockX(), level.getMinY(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX() + 1,
+		    level.getMaxY(), chunkPos.getMaxBlockZ() + 1);
+	}
+
+	/// Produce a function that reconciles important members of a chunk with
+	/// a [Village].
+	private static Consumer<Village> reconcileChunk(ServerLevel serverLevel, ChunkPos chunkPos) {
 		var poiManager = serverLevel.getPoiManager();
-
-		var structureStarts = findVillageStarts(serverLevel.structureManager(), chunkPos);
-
-		if (structureStarts.size() > 1) {
-			LOG.warn(ExcentricCommon.LOG_MARKER,
-			    "Post-load identified {} matching village structures in chunk {}@{} but expected only one",
-			    structureStarts.size(), chunkPos, dimension);
-		}
 
 		// Find all the bells in the chunk through PoiManager (assuming PoiManager
 		// already has a populated index for the current chunk.
@@ -127,21 +124,47 @@ public final class VillageManager extends SavedData {
 		    }).toList();
 
 		// Find all villagers inside the chunk.
-		var villagersInChunk = serverLevel.getEntitiesOfClass(Villager.class,
-		    new AABB(chunkPos.getMinBlockX(), serverLevel.getMinY(), chunkPos.getMinBlockZ(),
-		        chunkPos.getMaxBlockX() + 1, serverLevel.getMaxY(), chunkPos.getMaxBlockZ() + 1),
-		    v -> new ChunkPos(v.blockPosition()).equals(chunkPos));
+		var villagersInChunk = serverLevel.getEntitiesOfClass(Villager.class, chunkAabb(serverLevel, chunkPos));
 
-		// Assume there is only one village structure in this chunk.
+		return village -> {
+			var id = village.id();
+			// Link all bells to the village.
+			bellsInChunk.forEach(bbe -> ((VillageRef) bbe).villageMod$setVillageId(id));
+			// Link all villagers to the village.
+			villagersInChunk.forEach(v -> ((VillageRef) v).villageMod$setVillageId(id));
+		};
+	}
+
+	/// Calculate the global position of a structure piece.
+	private static GlobalPos piecePos(ResourceKey<Level> dimension, StructurePiece piece) {
+		return GlobalPos.of(dimension, piece.getLocatorPosition());
+	}
+
+	/// 1. Find the structure start chunk with [findVillageStarts]
+	/// 2. Query [net.nausicaea.excentric.VillageManager#findOrClaim] for the closest
+	///    [net.nausicaea.excentric.Village] in range or trigger creation of one.
+	/// 3. Find [net.minecraft.world.entity.npc.Villager]s and
+	///    [net.minecraft.world.level.block.entity.BellBlockEntity], and link the new
+	///    [net.nausicaea.excentric.Village#id()].
+	public void onChunkLoad(ServerLevel serverLevel, LevelChunk chunk) {
+		var loadedChunkPos = chunk.getPos();
+		var dimension = serverLevel.dimension();
+
+		var structureStarts = findVillageStarts(serverLevel.structureManager(), loadedChunkPos);
+
+		if (structureStarts.size() > 1) {
+			LOG.warn(ExcentricCommon.LOG_MARKER,
+			    "Post-load identified {} matching village structures in chunk {}@{} but expected only one",
+			    structureStarts.size(), loadedChunkPos, dimension);
+		}
+
+		// Assume there is only one village structure in the loaded chunk.
 		ListUtils.first(structureStarts)
-		    // The first element starts the village.
-		    .flatMap(s -> ListUtils.first(s.getPieces()))
-		    .map(s -> findOrClaim(GlobalPos.of(dimension, s.getLocatorPosition()))).ifPresent(village -> {
-			    // Link all bells to the village.
-			    bellsInChunk.forEach(bbe -> ((VillageRef) bbe).villageMod$setVillageId(village.id()));
-			    // Link all villagers to the village.
-			    villagersInChunk.forEach(v -> ((VillageRef) v).villageMod$setVillageId(village.id()));
-		    });
+		    // The first element starts the village. Note that the start may not be in the
+		    // currently loaded chunk. We're just using that information to record the
+		    // [Village#anchor].
+		    .flatMap(s -> ListUtils.first(s.getPieces())).map(s -> findOrClaim(piecePos(dimension, s)))
+		    .ifPresent(reconcileChunk(serverLevel, loadedChunkPos));
 	}
 
 	/// 1. Does the block have a village [java.util.UUID]?
