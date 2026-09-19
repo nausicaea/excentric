@@ -4,5 +4,5 @@ fileignoreconfig:
   - filename: .github/workflows/build.yml
     checksum: cb8be4c9b4c3ebf9558d94775bea0ce960a7afaff80dd9b550c1f06ff4f16a2a
   - filename: common/src/main/java/net/nausicaea/excentric/VillageManager.java
-    checksum: a579705def1b544d4d632c38396147bda56bc18cda19ff32dfac52f611b4509c
+    checksum: d7442ca4639ab9b13e81786862950436408d5277a401ee48f3c6240270cc46e9
 version: "1.0"
