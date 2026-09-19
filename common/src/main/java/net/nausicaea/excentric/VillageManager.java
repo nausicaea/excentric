@@ -18,27 +18,31 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.mixin.accessor.JigsawStructureAccessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public final class VillageManager extends SavedData {
-	private record Data(List<Village> villages) {
-	}
 	private static final Codec<Data> CODEC = RecordCodecBuilder.create(
 	    i -> i.group(Codec.list(Village.CODEC).fieldOf("villages").forGetter(Data::villages)).apply(i, Data::new));
 	private static final String DATA_NAME = ExcentricCommon.MOD_ID + "_villages";
 	private static final Logger LOG = LoggerFactory.getLogger(VillageManager.class);
-	private Map<UUID, Village> villages;
+	private static final int CHUNK_RADIUS = 4;
+	private static final int SECTION_HEIGHT = 3;
+	private final Map<UUID, Village> villages;
+	public VillageManager() {
+		this.villages = new HashMap<>();
+	}
 
 	public static VillageManager get(MinecraftServer server) {
 		return server.overworld().getDataStorage().computeIfAbsent(
@@ -49,40 +53,11 @@ public final class VillageManager extends SavedData {
 		    new SavedData.Factory<>(VillageManager::new, VillageManager::load, null), DATA_NAME);
 	}
 
-	public VillageManager() {
-		this.villages = new HashMap<>();
-	}
-
-	/// Claims a new village (radius and height from config)
-	///
-	/// 1. Determine [net.nausicaea.excentric.Village#anchor()]
-	/// 2. Determine all beds
-	///    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
-	///    [net.nausicaea.excentric.Village#radius()]
-	/// 3. Calculate [net.nausicaea.excentric.Village#center()] from the beds
-	/// 4. Search for any [Villager]s and
-	///    [net.minecraft.world.level.block.BellBlock]s within the village extents
-	///    and assigns them to this village.
-	///
-	/// TODO: what happens to villagers who spawn after claiming?
-	public Village claim(GlobalPos anchor) {
-		// var center = new Village(UUID.randomUUID(), this::setDirty, anchor);
-		// villages.put(center.id(), center);
-		// setDirty();
-		// return center;
-		throw new Todo();
-	}
-
-	public Optional<Village> find(GlobalPos anchor) {
-		throw new Todo();
-	}
-
-	public Village findOrClaim(GlobalPos anchor) {
-		return find(anchor).orElseGet(() -> claim(anchor));
-	}
-
-	public Optional<Village> get(UUID id) {
-		return Optional.ofNullable(villages.get(id));
+	private static BoundingBox villageBoundingBox(BlockPos anchor, int chunkRadius, int sectionHeight) {
+		var halfWidth = 8 * chunkRadius;
+		var halfHeight = 8 * sectionHeight;
+		return new BoundingBox(anchor.getX() - halfWidth, anchor.getY() - halfHeight, anchor.getZ() - halfWidth,
+		    anchor.getX() + halfWidth, anchor.getY() + halfHeight, anchor.getZ() + halfWidth);
 	}
 
 	/// Find StructureStart instances for any villages that extend into the
@@ -100,22 +75,21 @@ public final class VillageManager extends SavedData {
 		});
 	}
 
-	private static AABB chunkAabb(Level level, ChunkPos chunkPos) {
-		return new AABB(chunkPos.getMinBlockX(), level.getMinY(), chunkPos.getMinBlockZ(), chunkPos.getMaxBlockX() + 1,
-		    level.getMaxY(), chunkPos.getMaxBlockZ() + 1);
+	private static BoundingBox chunkBoundingBox(Level level, ChunkPos chunkPos) {
+		return new BoundingBox(chunkPos.getMinBlockX(), level.getMinY(), chunkPos.getMinBlockZ(),
+		    chunkPos.getMaxBlockX() + 1, level.getMaxY(), chunkPos.getMaxBlockZ() + 1);
 	}
 
 	/// Produce a function that reconciles important members of a chunk with
 	/// a [Village].
-	private static Consumer<Village> reconcileChunk(ServerLevel serverLevel, ChunkPos chunkPos) {
+	private static void reconcileChunk(ServerLevel serverLevel, ChunkPos chunkPos, Village village) {
 		var poiManager = serverLevel.getPoiManager();
 
 		// Find all the bells in the chunk through PoiManager (assuming PoiManager
 		// already has a populated index for the current chunk.
 		// TODO: verify that PoiManager produces equivalent results to searching the
 		// entire chunk.
-		var bellsInChunk = poiManager
-		    .getInChunk(poiType -> poiType == PoiTypes.MEETING, chunkPos, PoiManager.Occupancy.ANY)
+		var bellsInChunk = poiManager.getInChunk(PoiTypes.MEETING::equals, chunkPos, PoiManager.Occupancy.ANY)
 		    .flatMap(poiRecord -> {
 			    if (serverLevel.getBlockEntity(poiRecord.getPos()) instanceof BellBlockEntity bellBlockEntity) {
 				    return Stream.of(bellBlockEntity);
@@ -124,20 +98,87 @@ public final class VillageManager extends SavedData {
 		    }).toList();
 
 		// Find all villagers inside the chunk.
-		var villagersInChunk = serverLevel.getEntitiesOfClass(Villager.class, chunkAabb(serverLevel, chunkPos));
+		var villagersInChunk = serverLevel.getEntitiesOfClass(Villager.class,
+		    AABB.of(chunkBoundingBox(serverLevel, chunkPos)));
 
-		return village -> {
-			var id = village.id();
-			// Link all bells to the village.
-			bellsInChunk.forEach(bbe -> ((VillageRef) bbe).villageMod$setVillageId(id));
-			// Link all villagers to the village.
-			villagersInChunk.forEach(v -> ((VillageRef) v).villageMod$setVillageId(id));
-		};
+		if (bellsInChunk.isEmpty() && villagersInChunk.isEmpty()) {
+			return;
+		}
+
+		LOG.debug(ExcentricCommon.LOG_MARKER, "Running chunk reconciliation for {} ({} bells and {} villagers)",
+		    chunkPos, bellsInChunk.size(), villagersInChunk.size());
+		var id = village.id();
+		// Link all bells to the village.
+		bellsInChunk.forEach(bbe -> ((VillageRef) bbe).villageMod$setVillageId(id));
+		// Link all villagers to the village.
+		villagersInChunk.forEach(v -> ((VillageRef) v).villageMod$setVillageId(id));
 	}
 
 	/// Calculate the global position of a structure piece.
 	private static GlobalPos piecePos(ResourceKey<Level> dimension, StructurePiece piece) {
 		return GlobalPos.of(dimension, piece.getLocatorPosition());
+	}
+
+	private static VillageManager load(CompoundTag tag, HolderLookup.Provider registries) {
+		VillageManager manager = new VillageManager();
+		CODEC.decode(NbtOps.INSTANCE, tag)
+		    .resultOrPartial(err -> LOG.error(ExcentricCommon.LOG_MARKER, "Failed to parse village data: {}", err))
+		    .map(p -> p.getFirst().villages()).orElseGet(List::of).forEach(d -> manager.villages.put(d.id(), d));
+		return manager;
+	}
+
+	/// Claim a new village
+	///
+	/// 1. Determine [net.nausicaea.excentric.Village#anchor()]
+	/// 2. Determine all beds
+	///    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
+	///    [CHUNK_RADIUS]
+	/// 3. Calculate [net.nausicaea.excentric.Village#center()] from the beds
+	/// 4. Search for any [Villager]s and
+	///    [net.minecraft.world.level.block.BellBlock]s within the village extents
+	///    and assigns them to this village.
+	///
+	/// TODO: what happens to villagers who spawn after claiming?
+	public Village claim(ServerLevel level, GlobalPos anchor) {
+		var poiManager = level.getPoiManager();
+		var extents = villageBoundingBox(anchor.pos(), CHUNK_RADIUS, SECTION_HEIGHT);
+		LOG.debug(ExcentricCommon.LOG_MARKER, "New village with volume centered at {} (dim: {}): {}x{}x{}",
+		    anchor.pos(), anchor.dimension().location().getPath(), extents.getXSpan(), extents.getYSpan(),
+		    extents.getZSpan());
+		var homes = poiManager
+		    .getInSquare(p -> p.is(PoiTypes.HOME), anchor.pos(), 16 * CHUNK_RADIUS, PoiManager.Occupancy.ANY)
+		    .filter(p -> extents.isInside(p.getPos())).toList();
+		LOG.debug(ExcentricCommon.LOG_MARKER, "Found {} homes / beds", homes.size());
+		var centroid = Vec3Utils.toBlockPosFloor(
+		    Vec3Utils.mapMean(homes, p -> new Vec3(p.getPos())).orElseGet(() -> new Vec3(anchor.pos())));
+		var village = new Village(UUID.randomUUID(), anchor, centroid, extents);
+		LOG.debug(ExcentricCommon.LOG_MARKER, "Claimed village {}", village);
+		villages.put(village.id(), village);
+		setDirty();
+
+		var intersectingChunks = village.boundingBox().intersectingChunks().toList();
+		LOG.debug(ExcentricCommon.LOG_MARKER, "Now starting reconciliation on {} chunks", intersectingChunks.size());
+		// TODO: actually perform the reconciliation.
+		// village.boundingBox()
+		// .intersectingChunks()
+		// .forEach(chunk -> reconcileChunk(level, chunk, village));
+
+		return village;
+	}
+
+	// TODO: this silently discards multiple matching villages
+	public Optional<Village> find(GlobalPos anchor) {
+		return villages.values().stream()
+		    .filter(v -> v.anchor().dimension().equals(anchor.dimension()) && v.boundingBox().isInside(anchor.pos()))
+		    .findFirst();
+	}
+
+	public Village findOrClaim(ServerLevel level, GlobalPos anchor) {
+		return find(anchor).orElseGet(() -> claim(level, anchor));
+	}
+
+	public Optional<Village> get(UUID id) {
+		return Optional.ofNullable(villages.get(id));
 	}
 
 	/// 1. Find the structure start chunk with [findVillageStarts]
@@ -163,8 +204,8 @@ public final class VillageManager extends SavedData {
 		    // The first element starts the village. Note that the start may not be in the
 		    // currently loaded chunk. We're just using that information to record the
 		    // [Village#anchor].
-		    .flatMap(s -> ListUtils.first(s.getPieces())).map(s -> findOrClaim(piecePos(dimension, s)))
-		    .ifPresent(reconcileChunk(serverLevel, loadedChunkPos));
+		    .flatMap(s -> ListUtils.first(s.getPieces())).map(s -> findOrClaim(serverLevel, piecePos(dimension, s)))
+		    .ifPresent(village -> reconcileChunk(serverLevel, loadedChunkPos, village));
 	}
 
 	/// 1. Does the block have a village [java.util.UUID]?
@@ -185,7 +226,7 @@ public final class VillageManager extends SavedData {
 			return;
 		}
 
-		var village = findOrClaim(GlobalPos.of(serverLevel.dimension(), blockPos));
+		var village = findOrClaim(serverLevel, GlobalPos.of(serverLevel.dimension(), blockPos));
 		block.villageMod$setVillageId(village.id());
 	}
 
@@ -195,11 +236,6 @@ public final class VillageManager extends SavedData {
 		return (CompoundTag) CODEC.encode(serialized, NbtOps.INSTANCE, tag).getPartialOrThrow();
 	}
 
-	private static VillageManager load(CompoundTag tag, HolderLookup.Provider registries) {
-		VillageManager manager = new VillageManager();
-		CODEC.decode(NbtOps.INSTANCE, tag)
-		    .resultOrPartial(err -> LOG.error(ExcentricCommon.LOG_MARKER, "Failed to parse village data: {}", err))
-		    .map(p -> p.getFirst().villages()).orElseGet(List::of).forEach(d -> manager.villages.put(d.id(), d));
-		return manager;
+	private record Data(List<Village> villages) {
 	}
 }
