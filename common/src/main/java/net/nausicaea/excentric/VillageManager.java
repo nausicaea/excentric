@@ -49,13 +49,17 @@ public final class VillageManager extends SavedData {
 		this.villages = new HashMap<>();
 	}
 
-	/// Create a new village (radius and height from config)
+	/// Claims a new village (radius and height from config)
+	///
 	/// 1. Determine [net.nausicaea.excentric.Village#anchor()]
 	/// 2. Determine all beds
 	///    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
 	///    [net.nausicaea.excentric.Village#radius()]
 	/// 3. Calculate [net.nausicaea.excentric.Village#center()] from the beds
-	public Village create(GlobalPos anchor) {
+	/// 4. Queue a task for later that searches for any [Villager]s and
+	///    [net.minecraft.world.level.block.BellBlock]s within the village extents
+	///    and assigns them to this village.
+	public Village claim(GlobalPos anchor) {
 		// Village center = new Village(UUID.randomUUID(), this::setDirty, anchor);
 		// villages.put(center.id(), center);
 		// setDirty();
@@ -67,8 +71,8 @@ public final class VillageManager extends SavedData {
 		throw new Todo();
 	}
 
-	public Village findOrCreate(GlobalPos anchor) {
-		return find(anchor).orElseGet(() -> create(anchor));
+	public Village findOrClaim(GlobalPos anchor) {
+		return find(anchor).orElseGet(() -> claim(anchor));
 	}
 
 	public Optional<Village> get(UUID id) {
@@ -91,9 +95,8 @@ public final class VillageManager extends SavedData {
 
 	/// 1. Find the structure start chunk with
 	///    [net.minecraft.world.level.StructureManager#getStructureWithPieceAt]
-	/// 2. Query [net.nausicaea.excentric.VillageManager#findOrCreate] for the
-	///    closest [net.nausicaea.excentric.Village] in range or trigger creation of
-	///    one.
+	/// 2. Query [net.nausicaea.excentric.VillageManager#findOrClaim] for the closest
+	///    [net.nausicaea.excentric.Village] in range or trigger creation of one.
 	/// 3. Find [net.minecraft.world.entity.npc.Villager]s and
 	///    [net.minecraft.world.level.block.entity.BellBlockEntity], and link the new
 	///    [net.nausicaea.excentric.Village#id()].
@@ -133,7 +136,7 @@ public final class VillageManager extends SavedData {
 		ListUtils.first(structureStarts)
 		    // The first element starts the village.
 		    .flatMap(s -> ListUtils.first(s.getPieces()))
-		    .map(s -> findOrCreate(GlobalPos.of(dimension, s.getLocatorPosition()))).ifPresent(village -> {
+		    .map(s -> findOrClaim(GlobalPos.of(dimension, s.getLocatorPosition()))).ifPresent(village -> {
 			    // Link all bells to the village.
 			    bellsInChunk.forEach(bbe -> ((VillageRef) bbe).villageMod$setVillageId(village.id()));
 			    // Link all villagers to the village.
@@ -141,16 +144,16 @@ public final class VillageManager extends SavedData {
 		    });
 	}
 
-	/// 1. Does the bell have a village [java.util.UUID]?
+	/// 1. Does the block have a village [java.util.UUID]?
 	/// 2. If yes, early return. This case is expected to be seldom.
-	/// 3. If not, query [net.nausicaea.excentric.VillageManager#findOrCreate] for
-	///    the closest [net.nausicaea.excentric.Village] in range or trigger creation
-	///    of one.
-	/// 4. Record the [net.nausicaea.excentric.Village#id()] on the bell.
-	public void onBlockPlace(ServerLevel serverLevel, VillageRef villageRef, BlockPos blockPos) {
+	/// 3. If not, query [net.nausicaea.excentric.VillageManager#findOrClaim] for the
+	///    closest [net.nausicaea.excentric.Village] in range or trigger creation of
+	///    one.
+	/// 4. Record the [net.nausicaea.excentric.Village#id()] on the submitted block.
+	public void onBlockPlace(ServerLevel serverLevel, VillageRef block, BlockPos blockPos) {
 		// TODO: figure out if the village ID is persistent if the block is broken and
 		// re-placed somewhere else.
-		var villageIdPresent = villageRef.villageMod$getVillageId().map(id -> {
+		var villageIdPresent = block.villageMod$getVillageId().map(id -> {
 			LOG.warn(ExcentricCommon.LOG_MARKER, "Newly placed bell block at {} already has a reference to village {}",
 			    blockPos, id);
 			return true;
@@ -159,8 +162,8 @@ public final class VillageManager extends SavedData {
 			return;
 		}
 
-		var village = findOrCreate(GlobalPos.of(serverLevel.dimension(), blockPos));
-		villageRef.villageMod$setVillageId(village.id());
+		var village = findOrClaim(GlobalPos.of(serverLevel.dimension(), blockPos));
+		block.villageMod$setVillageId(village.id());
 	}
 
 	@Override
