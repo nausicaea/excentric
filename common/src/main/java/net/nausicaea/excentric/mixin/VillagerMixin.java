@@ -23,7 +23,9 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 	private static final Logger villageMod$LOG = LoggerFactory.getLogger(VillagerMixin.class);
 
 	@Unique
-	private static final String villageMod$TAG = "villageModVillagerData";
+	private static final String villageMod$ID_TAG = "villageModVillageId";
+	@Unique
+	private static final String villageMod$DATA_TAG = "villageModVillagerData";
 
 	@Unique
 	private VillagerData villageMod$data = new VillagerData();
@@ -63,15 +65,20 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 	/// Save [VillagerData] to persistent storage.
 	@Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
 	private void villageMod$save(CompoundTag tag, CallbackInfo ci) {
-		tag.put(villageMod$TAG, this.villageMod$data.save());
+		tag.putUUID(villageMod$ID_TAG, this.villageMod$villageId);
+		tag.put(villageMod$DATA_TAG, this.villageMod$data.save());
 	}
 
 	/// Load [VillagerData] from persistent storage.
 	@Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
 	private void villageMod$load(CompoundTag tag, CallbackInfo ci) {
-		if (!tag.contains(villageMod$TAG)) {
+		if (!tag.contains(villageMod$ID_TAG)) {
 			return;
 		}
-		this.villageMod$data = VillagerData.load(tag.getCompound(villageMod$TAG));
+		this.villageMod$villageId = tag.getUUID(villageMod$ID_TAG);
+		if (!tag.contains(villageMod$DATA_TAG)) {
+			return;
+		}
+		this.villageMod$data = VillagerData.load(tag.getCompound(villageMod$DATA_TAG));
 	}
 }
