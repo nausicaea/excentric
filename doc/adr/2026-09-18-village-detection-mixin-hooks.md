@@ -91,7 +91,7 @@ bell's `BellBlockEntity`.
   must be the first line in the injection.
 - `movedByPiston`/same-block-state filters must track vanilla's own
   convention, or villages get double-created or bells get missed.
-- Both targets are vanilla classes → mixins live in `common`, referenced
-  from both Fabric and NeoForge mixin configs, no loader-specific variants.
+- Both targets are vanilla classes → mixins live in `common`, referenced from any loader-specific configs in their
+  respective modules.
 - Zero-bed villages fall back to `center = anchor`, height around
   `anchor.Y` — revisit if this proves too coarse in practice.
