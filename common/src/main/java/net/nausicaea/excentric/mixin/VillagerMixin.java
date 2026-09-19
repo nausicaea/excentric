@@ -2,9 +2,12 @@ package net.nausicaea.excentric.mixin;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.npc.Villager;
+import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.VillageRef;
 import net.nausicaea.excentric.VillagerData;
 import net.nausicaea.excentric.VillagerDataHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,6 +19,9 @@ import java.util.UUID;
 
 @Mixin(Villager.class)
 abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
+	@Unique
+	private static final Logger villageMod$LOG = LoggerFactory.getLogger(VillagerMixin.class);
+
 	@Unique
 	private static final String villageMod$TAG = "villageModVillagerData";
 
@@ -32,6 +38,15 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 
 	@Override
 	public void villageMod$setVillageId(UUID id) {
+		if (villageMod$villageId == id) {
+			return;
+		}
+
+		if (villageMod$villageId != null) {
+			var position = ((Villager) (Object) this).position();
+			villageMod$LOG.warn(ExcentricCommon.LOG_MARKER, "Overwriting village ID on villager entity at {}",
+			    position);
+		}
 		this.villageMod$villageId = id;
 	}
 
@@ -54,8 +69,9 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 	/// Load [VillagerData] from persistent storage.
 	@Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
 	private void villageMod$load(CompoundTag tag, CallbackInfo ci) {
-		if (tag.contains(villageMod$TAG)) {
-			this.villageMod$data = VillagerData.load(tag.getCompound(villageMod$TAG));
+		if (!tag.contains(villageMod$TAG)) {
+			return;
 		}
+		this.villageMod$data = VillagerData.load(tag.getCompound(villageMod$TAG));
 	}
 }
