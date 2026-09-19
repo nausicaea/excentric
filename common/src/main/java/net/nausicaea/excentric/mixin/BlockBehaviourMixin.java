@@ -14,7 +14,7 @@ abstract class BlockBehaviourMixin {
 	/// Hook into [net.minecraft.world.level.block.Block] placement.
 	///
 	/// **Leave implementation empty: must be overridden by a more specific class**
-	@Inject(method = "onPlace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V", at = @At("TAIL"))
+	@Inject(method = "onPlace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V", at = @At("HEAD"))
 	protected void villageMod$onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2,
 	    boolean bl, CallbackInfo ci) {
 	}
