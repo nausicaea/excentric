@@ -28,10 +28,10 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 	private static final String villageMod$DATA_TAG = "villageModVillagerData";
 
 	@Unique
-	private VillagerData villageMod$data = new VillagerData();
+	private UUID villageMod$villageId;
 
 	@Unique
-	private UUID villageMod$villageId;
+	private VillagerData villageMod$data = new VillagerData();
 
 	@Override
 	public Optional<UUID> villageMod$getVillageId() {
@@ -65,20 +65,20 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 	/// Save [VillagerData] to persistent storage.
 	@Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
 	private void villageMod$save(CompoundTag tag, CallbackInfo ci) {
-		tag.putUUID(villageMod$ID_TAG, this.villageMod$villageId);
+		if (villageMod$villageId != null) {
+			tag.putUUID(villageMod$ID_TAG, this.villageMod$villageId);
+		}
 		tag.put(villageMod$DATA_TAG, this.villageMod$data.save());
 	}
 
 	/// Load [VillagerData] from persistent storage.
 	@Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
 	private void villageMod$load(CompoundTag tag, CallbackInfo ci) {
-		if (!tag.contains(villageMod$ID_TAG)) {
-			return;
+		if (tag.contains(villageMod$ID_TAG)) {
+			this.villageMod$villageId = tag.getUUID(villageMod$ID_TAG);
 		}
-		this.villageMod$villageId = tag.getUUID(villageMod$ID_TAG);
-		if (!tag.contains(villageMod$DATA_TAG)) {
-			return;
+		if (tag.contains(villageMod$DATA_TAG)) {
+			this.villageMod$data = VillagerData.load(tag.getCompound(villageMod$DATA_TAG));
 		}
-		this.villageMod$data = VillagerData.load(tag.getCompound(villageMod$DATA_TAG));
 	}
 }
