@@ -85,7 +85,7 @@ public final class VillageManager extends SavedData {
 			// https://docs.fabricmc.net/develop/mixins/accessors#accessors-for-final-classes).
 			var startPool = ((JigsawStructureAccessor) (Object) jigsawStructure).villageMod$getStartPool();
 			// The following call is true if the resource path starts with "village"
-			return startPool.unwrapKey().map(key -> key.location().getPath().startsWith("village")).orElse(false);
+			return startPool.unwrapKey().map(key -> key.location().getPath().endsWith("town_centers")).orElse(false);
 		});
 	}
 
