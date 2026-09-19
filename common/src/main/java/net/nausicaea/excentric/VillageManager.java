@@ -159,10 +159,7 @@ public final class VillageManager extends SavedData {
 
 		var intersectingChunks = village.boundingBox().intersectingChunks().toList();
 		LOG.debug(ExcentricCommon.LOG_MARKER, "Now starting reconciliation on {} chunks", intersectingChunks.size());
-		// TODO: actually perform the reconciliation.
-		// village.boundingBox()
-		// .intersectingChunks()
-		// .forEach(chunk -> reconcileChunk(level, chunk, village));
+		village.boundingBox().intersectingChunks().forEach(chunk -> reconcileChunk(level, chunk, village));
 
 		return village;
 	}
