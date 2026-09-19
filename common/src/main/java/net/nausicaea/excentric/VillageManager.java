@@ -125,7 +125,7 @@ public final class VillageManager extends SavedData {
 
 		// Find all villagers inside the chunk.
 		var villagersInChunk = serverLevel.getEntitiesOfClass(Villager.class,
-		    new AABB(chunkPos.getMinBlockX(), serverLevel.getMinY(), chunkPos.getMiddleBlockZ(),
+		    new AABB(chunkPos.getMinBlockX(), serverLevel.getMinY(), chunkPos.getMinBlockZ(),
 		        chunkPos.getMaxBlockX() + 1, serverLevel.getMaxY(), chunkPos.getMaxBlockZ() + 1),
 		    v -> new ChunkPos(v.blockPosition()).equals(chunkPos));
 
