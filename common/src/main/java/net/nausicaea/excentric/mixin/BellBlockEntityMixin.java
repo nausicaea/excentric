@@ -17,7 +17,7 @@ import java.util.UUID;
 @Mixin(BellBlockEntity.class)
 abstract class BellBlockEntityMixin extends BlockEntityMixin implements VillageRef {
 	@Unique
-	private static final Logger villageMod$LOG = LoggerFactory.getLogger(BellBlockEntityMixin.class);
+	private static final Logger villageMod$LOG = LoggerFactory.getLogger(ExcentricCommon.MOD_ID);
 
 	@Unique
 	private static final String villageMod$TAG = "villageModVillageId";
@@ -41,6 +41,7 @@ abstract class BellBlockEntityMixin extends BlockEntityMixin implements VillageR
 			villageMod$LOG.warn(ExcentricCommon.LOG_MARKER, "Overwriting village ID on bell block entity at {}",
 			    blockPos);
 		}
+		villageMod$LOG.info(ExcentricCommon.LOG_MARKER, "Setting village ID on bell to {}", id);
 		this.villageMod$villageId = id;
 	}
 

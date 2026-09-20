@@ -20,7 +20,7 @@ import java.util.UUID;
 @Mixin(Villager.class)
 abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 	@Unique
-	private static final Logger villageMod$LOG = LoggerFactory.getLogger(VillagerMixin.class);
+	private static final Logger villageMod$LOG = LoggerFactory.getLogger(ExcentricCommon.MOD_ID);
 
 	@Unique
 	private static final String villageMod$ID_TAG = "villageModVillageId";
@@ -49,6 +49,7 @@ abstract class VillagerMixin implements VillagerDataHolder, VillageRef {
 			villageMod$LOG.warn(ExcentricCommon.LOG_MARKER, "Overwriting village ID on villager entity at {}",
 			    position);
 		}
+		villageMod$LOG.info(ExcentricCommon.LOG_MARKER, "Setting village ID on villager to {}", id);
 		this.villageMod$villageId = id;
 	}
 

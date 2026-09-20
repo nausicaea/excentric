@@ -10,7 +10,7 @@ import org.slf4j.MarkerFactory;
 public final class ExcentricCommon {
 	public static final String MOD_ID = "excentric";
 	public static final Marker LOG_MARKER = MarkerFactory.getMarker(MOD_ID);
-	private static final Logger LOG = LoggerFactory.getLogger(ExcentricCommon.class);
+	public static final Logger LOG = LoggerFactory.getLogger(ExcentricCommon.class);
 
 	private ExcentricCommon() {
 	}
