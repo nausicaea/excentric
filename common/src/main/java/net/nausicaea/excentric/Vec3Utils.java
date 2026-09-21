@@ -9,6 +9,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class Vec3Utils {
+	private Vec3Utils() {
+	}
 	public static BlockPos toBlockPosFloor(Vec3 src) {
 		return new BlockPos((int) src.x(), (int) src.y(), (int) src.z());
 	}

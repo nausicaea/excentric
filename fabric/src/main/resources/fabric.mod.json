@@ -17,11 +17,22 @@
 	"entrypoints": {
 		"main": [
           "net.nausicaea.excentric.ExcentricFabric"
+		],
+		"cardinal-components": [
+			"net.nausicaea.excentric.CardinalComponents"
 		]
 	},
 	"mixins": [
-      "excentric.mixins.json"
+		"excentric.mixins.json"
 	],
+	"custom": {
+		"cardinal-components": [
+			"excentric:village_manager",
+			"excentric:level_chunk",
+			"excentric:bell",
+			"excentric:villager"
+		]
+	},
 	"depends": {
 		"fabricloader": ">=0.19.5",
 		"minecraft": "~1.21.4",

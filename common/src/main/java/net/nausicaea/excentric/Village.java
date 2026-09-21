@@ -15,4 +15,11 @@ public record Village(UUID id, GlobalPos anchor, BlockPos center, BoundingBox bo
 	        GlobalPos.CODEC.fieldOf("anchor").forGetter(Village::anchor),
 	        BlockPos.CODEC.fieldOf("center").forGetter(Village::center),
 	        BoundingBox.CODEC.fieldOf("boundingBox").forGetter(Village::boundingBox)).apply(i, Village::new));
+
+	public static BoundingBox extents(BlockPos anchor, int chunkRadius, int sectionHeight) {
+		var halfWidth = 8 * chunkRadius;
+		var halfHeight = 8 * sectionHeight;
+		return new BoundingBox(anchor.getX() - halfWidth, anchor.getY() - halfHeight, anchor.getZ() - halfWidth,
+		    anchor.getX() + halfWidth, anchor.getY() + halfHeight, anchor.getZ() + halfWidth);
+	}
 }

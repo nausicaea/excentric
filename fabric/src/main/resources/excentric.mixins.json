@@ -3,13 +3,8 @@
   "package": "net.nausicaea.excentric.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BellBlockEntityMixin",
-    "BellBlockMixin",
     "BlockBehaviourMixin",
-    "BlockEntityMixin",
-    "accessor.JigsawStructureAccessor",
-    "LevelChunkMixin",
-    "VillagerMixin"
+    "accessor.JigsawStructureAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
