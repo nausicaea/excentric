@@ -6,14 +6,23 @@ mixin = '0.8.7'
 fabric-loom = '1.17-SNAPSHOT'
 fabric-loader = '0.19.5'
 fabric-api = '0.119.4+1.21.4'
+cca = '6.2.2'
 
 [libraries]
 minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
 mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
 fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric-loader" }
 fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
+cca-base = { module = "org.ladysnake.cardinal-components-api:cardinal-components-base", version.ref = "cca" }
+cca-level = { module = "org.ladysnake.cardinal-components-api:cardinal-components-level", version.ref = "cca" }
+cca-chunk = { module = "org.ladysnake.cardinal-components-api:cardinal-components-chunk", version.ref = "cca" }
+cca-entity = { module = "org.ladysnake.cardinal-components-api:cardinal-components-entity", version.ref = "cca" }
+cca-block = { module = "org.ladysnake.cardinal-components-api:cardinal-components-block", version.ref = "cca" }
 
 [plugins]
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs" }
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
+
+[bundles]
+cca = [ "cca-base", "cca-level", "cca-chunk", "cca-entity", "cca-block" ]
