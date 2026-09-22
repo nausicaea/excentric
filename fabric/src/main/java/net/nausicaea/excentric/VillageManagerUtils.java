@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
@@ -13,8 +12,8 @@ import net.nausicaea.excentric.mixin.accessor.JigsawStructureAccessor;
 
 import java.util.List;
 
-public final class LevelChunkUtils {
-	private LevelChunkUtils() {
+public final class VillageManagerUtils {
+	private VillageManagerUtils() {
 	}
 
 	/// Find StructureStart instances for any villages that extend into the
@@ -30,11 +29,6 @@ public final class LevelChunkUtils {
 			var startPool = ((JigsawStructureAccessor) (Object) jigsawStructure).villageMod$getStartPool();
 			return startPool.unwrapKey().map(key -> key.location().getPath().endsWith("town_centers")).orElse(false);
 		});
-	}
-
-	public static BoundingBox chunkBoundingBox(Level level, ChunkPos chunkPos) {
-		return new BoundingBox(chunkPos.getMinBlockX(), level.getMinY(), chunkPos.getMinBlockZ(),
-		    chunkPos.getMaxBlockX() + 1, level.getMaxY(), chunkPos.getMaxBlockZ() + 1);
 	}
 
 	/// Calculate the global position of a structure piece.

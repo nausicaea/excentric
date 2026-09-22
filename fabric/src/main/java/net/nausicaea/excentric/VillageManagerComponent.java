@@ -12,7 +12,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.Vec3;
@@ -28,6 +27,7 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 	private static final Logger LOG = LoggerFactory.getLogger(VillageManagerComponent.class);
 	private static final int CHUNK_RADIUS = 4;
 	private static final int SECTION_HEIGHT = 3;
+	private static final int DEBUG_TICK_INTERVAL = 10;
 
 	private final LevelData levelData;
 	private final Map<UUID, Village> villages;
@@ -60,7 +60,7 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 	@Override
 	public void serverTick() {
 		var ctr = tickCounter.getAndIncrement();
-		if (ctr % 10 == 0) {
+		if (ctr % DEBUG_TICK_INTERVAL == 0) {
 			ServerAccess.get().ifPresent(this::debug);
 			tickCounter.set(0);
 		}
@@ -122,7 +122,7 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 	private static void claimLoadedChunks(ServerLevel level, Village village) {
 		var chunkSource = level.getChunkSource();
 		village.boundingBox().intersectingChunks().filter(chunk -> chunkSource.hasChunk(chunk.x, chunk.z))
-		    .flatMap(chunk -> Optional.ofNullable(chunkSource.getChunk(chunk.x, chunk.z, ChunkStatus.FULL, false))
+		    .flatMap(chunk -> Optional.ofNullable(chunkSource.getChunkNow(chunk.x, chunk.z))
 		        .flatMap(CardinalComponents.LEVEL_CHUNK::maybeGet).stream())
 		    .forEach(chunk -> chunk.setVillageId(village.id()));
 	}

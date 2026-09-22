@@ -3,12 +3,15 @@ package net.nausicaea.excentric;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import org.ladysnake.cca.api.v3.component.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.UUID;
 
 /// Represents an optional reference to a [Village] by a [java.util.UUID].
 public abstract class VillageRefComponent implements Component {
+	private static final Logger LOG = LoggerFactory.getLogger(VillageRefComponent.class);
 	private static final String TAG = "%svillageId".formatted(ExcentricCommon.MOD_ID);
 	private UUID villageId = null;
 
@@ -18,12 +21,13 @@ public abstract class VillageRefComponent implements Component {
 	}
 
 	/// Setter for a [Village] reference.
-	public void setVillageId(UUID villageId) {
-		if (this.villageId == villageId) {
+	public void setVillageId(UUID id) {
+		if (this.villageId == id || id == null) {
 			return;
 		}
 
-		this.villageId = villageId;
+		LOG.info(ExcentricCommon.MARKER, "Setting {}#villageId to {}", this.getClass().getSimpleName(), id);
+		this.villageId = id;
 	}
 
 	@Override

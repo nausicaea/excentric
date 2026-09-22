@@ -16,7 +16,7 @@ public final class ExcentricCommon {
 	}
 
 	public static void onInitialize() {
-		LOG.info(MARKER, "Hello world, from common!");
+		LOG.info(MARKER, "Testing seed: -5038984067013596602");
 	}
 
 	public static ResourceLocation id(String path) {

@@ -1,5 +1,6 @@
 package net.nausicaea.excentric;
 
+import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
@@ -10,7 +11,8 @@ public final class LevelChunkComponent extends VillageRefComponent {
 		this.chunk = chunk;
 	}
 
-	/// 1. Find the structure start chunk with [LevelChunkUtils#findVillageStarts]
+	/// 1. Find the structure start chunk with
+	///    [VillageManagerUtils#findVillageStarts]
 	/// 2. Query [net.nausicaea.excentric.VillageManagerComponent#findOrClaim] for
 	///    the closest [net.nausicaea.excentric.Village] in range or trigger creation
 	///    of one.
@@ -20,34 +22,13 @@ public final class LevelChunkComponent extends VillageRefComponent {
 			return;
 		}
 
+		var vman = CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData());
 		var dimension = serverLevel.dimension();
 		var loadedChunkPos = chunk.getPos();
-		var villageStructures = LevelChunkUtils.findVillageStarts(serverLevel.structureManager(), loadedChunkPos);
-		if (villageStructures.isEmpty()) {
-			return;
-		}
-
-		// Assume there is only one village structure in the loaded chunk.
-		var villageStructureStart = villageStructures.getFirst();
-		var boundingBox = villageStructureStart.getBoundingBox();
-		var villageStructurePieces = villageStructureStart.getPieces();
-		if (villageStructurePieces.isEmpty()) {
-			return;
-		}
-
-		// The first element starts the village. Note that the start may not be in the
-		// currently loaded chunk. We're just using that information to record the
-		// [Village#anchor].
-		var startPiece = villageStructurePieces.getFirst();
-		// FIXME: this raises NoSuchElementException
-		var village = CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData()).findOrClaim(serverLevel,
-		    LevelChunkUtils.piecePos(dimension, startPiece), boundingBox);
-		if (village.boundingBox().intersectingChunks().noneMatch(loadedChunkPos::equals)) {
-			return;
-		}
-
-		// Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
-		// on the chunk itself) here because it will trigger a complete chunk load.
-		setVillageId(village.id());
+		vman.find(GlobalPos.of(dimension, loadedChunkPos.getMiddleBlockPosition(80)))
+		    .or(() -> vman.findOrClaimByStructure(serverLevel, loadedChunkPos))
+		    // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
+		    // on the chunk itself) here because it will trigger a complete chunk load.
+		    .ifPresent(village -> setVillageId(village.id()));
 	}
 }
