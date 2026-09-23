@@ -121,7 +121,7 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 	/// [Village] bounding box. Silently skips chunks that aren't fully loaded.
 	private static void claimLoadedChunks(ServerLevel level, Village village) {
 		var chunkSource = level.getChunkSource();
-		village.boundingBox().intersectingChunks().filter(chunk -> chunkSource.hasChunk(chunk.x, chunk.z))
+		BoundingBoxUtils.containedChunks(village.boundingBox()).filter(chunk -> chunkSource.hasChunk(chunk.x, chunk.z))
 		    .flatMap(chunk -> Optional.ofNullable(chunkSource.getChunkNow(chunk.x, chunk.z))
 		        .flatMap(CardinalComponents.LEVEL_CHUNK::maybeGet).stream())
 		    .forEach(chunk -> chunk.setVillageId(village.id()));
