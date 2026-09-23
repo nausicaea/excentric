@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.mixin;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,6 +17,12 @@ abstract class BlockBehaviourMixin {
 	@Inject(method = "onPlace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V", at = @At("TAIL"))
 	protected void villageMod$onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2,
 	    boolean bl, CallbackInfo ci) {
-		ExcentricEvents.AFTER_BLOCK_PLACE.invoker().afterBlockPlace(blockState, level, blockPos, blockState2, bl);
+		if (!(level instanceof ServerLevel serverLevel)) {
+			return;
+		}
+		if (bl || blockState.is(blockState2.getBlock())) {
+			return;
+		}
+		ExcentricEvents.AFTER_BLOCK_PLACE.invoker().afterBlockPlace(blockState, blockPos, serverLevel);
 	}
 }

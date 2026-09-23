@@ -26,4 +26,10 @@ public final class BellComponent extends VillageRefComponent {
 		    GlobalPos.of(serverLevel.dimension(), blockPos));
 		setVillageId(village.id());
 	}
+
+	public void onLoad(ServerLevel serverLevel) {
+		CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData())
+		    .find(GlobalPos.of(serverLevel.dimension(), blockEntity.getBlockPos()))
+		    .ifPresent(v -> setVillageId(v.id()));
+	}
 }
