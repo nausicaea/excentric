@@ -1,6 +1,6 @@
 package net.nausicaea.excentric;
 
-import net.minecraft.core.GlobalPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -8,10 +8,10 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import java.util.Optional;
 
 public interface VillageManager {
-	default Village findOrClaim(ServerLevel level, GlobalPos anchor) {
+	default Village findOrClaim(ServerLevel level, BlockPos anchor) {
 		return find(anchor).orElseGet(() -> claim(level, anchor));
 	}
-	default Village findOrClaim(ServerLevel level, GlobalPos anchor, BoundingBox extents) {
+	default Village findOrClaim(ServerLevel level, BlockPos anchor, BoundingBox extents) {
 		return find(anchor).orElseGet(() -> claim(level, anchor, extents));
 	}
 
@@ -34,15 +34,15 @@ public interface VillageManager {
 		// currently loaded chunk. We're just using that information to record the
 		// [Village#anchor].
 		var startPiece = villageStructurePieces.getFirst();
-		var village = findOrClaim(serverLevel, VillageManagerUtils.piecePos(dimension, startPiece), boundingBox);
+		var village = findOrClaim(serverLevel, startPiece.getLocatorPosition(), boundingBox);
 		if (BoundingBoxUtils.containedChunks(village.boundingBox()).noneMatch(pos::equals)) {
 			return Optional.empty();
 		}
 		return Optional.of(village);
 	}
 
-	Optional<Village> find(GlobalPos anchor);
+	Optional<Village> find(BlockPos anchor);
 
-	Village claim(ServerLevel level, GlobalPos anchor);
-	Village claim(ServerLevel level, GlobalPos anchor, BoundingBox extents);
+	Village claim(ServerLevel level, BlockPos anchor);
+	Village claim(ServerLevel level, BlockPos anchor, BoundingBox extents);
 }

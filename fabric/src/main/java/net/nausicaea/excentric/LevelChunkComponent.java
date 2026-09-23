@@ -1,6 +1,5 @@
 package net.nausicaea.excentric;
 
-import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
@@ -23,9 +22,8 @@ public final class LevelChunkComponent extends VillageRefComponent {
 		}
 
 		var vman = CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData());
-		var dimension = serverLevel.dimension();
 		var loadedChunkPos = chunk.getPos();
-		vman.find(GlobalPos.of(dimension, loadedChunkPos.getMiddleBlockPosition(80)))
+		vman.find(loadedChunkPos.getMiddleBlockPosition(80))
 		    .or(() -> vman.findOrClaimByStructure(serverLevel, loadedChunkPos))
 		    // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
 		    // on the chunk itself) here because it will trigger a complete chunk load.

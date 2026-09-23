@@ -1,7 +1,6 @@
 package net.nausicaea.excentric;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 
@@ -23,13 +22,12 @@ public final class BellComponent extends VillageRefComponent {
 		}
 
 		var village = CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData()).findOrClaim(serverLevel,
-		    GlobalPos.of(serverLevel.dimension(), blockPos));
+		    blockPos);
 		setVillageId(village.id());
 	}
 
 	public void onLoad(ServerLevel serverLevel) {
-		CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData())
-		    .find(GlobalPos.of(serverLevel.dimension(), blockEntity.getBlockPos()))
+		CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData()).find(blockEntity.getBlockPos())
 		    .ifPresent(v -> setVillageId(v.id()));
 	}
 }

@@ -1,13 +1,9 @@
 package net.nausicaea.excentric;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure;
 import net.nausicaea.excentric.mixin.accessor.JigsawStructureAccessor;
@@ -31,11 +27,6 @@ public final class VillageManagerUtils {
 			var startPool = ((JigsawStructureAccessor) (Object) jigsawStructure).villageMod$getStartPool();
 			return startPool.unwrapKey().map(key -> key.location().getPath().endsWith("town_centers")).orElse(false);
 		});
-	}
-
-	/// Calculate the global position of a structure piece.
-	public static GlobalPos piecePos(ResourceKey<Level> dimension, StructurePiece piece) {
-		return GlobalPos.of(dimension, piece.getLocatorPosition());
 	}
 
 	public static BoundingBox extents(BlockPos anchor, int chunkRadius, int sectionHeight) {

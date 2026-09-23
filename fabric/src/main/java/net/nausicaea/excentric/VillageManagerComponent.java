@@ -1,14 +1,12 @@
 package net.nausicaea.excentric;
 
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.GlobalPos;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
@@ -16,27 +14,23 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.debug.BoundingBoxVisualiser;
-import org.ladysnake.cca.api.v3.component.tick.ServerTickingComponent;
+import org.ladysnake.cca.api.v3.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-public final class VillageManagerComponent implements ServerTickingComponent, VillageManager {
+public final class VillageManagerComponent implements Component, VillageManager {
 	private static final Logger LOG = LoggerFactory.getLogger(VillageManagerComponent.class);
 	private static final int CHUNK_RADIUS = 4;
 	private static final int SECTION_HEIGHT = 3;
-	private static final int DEBUG_TICK_INTERVAL = 10;
 
 	private final LevelData levelData;
 	private final Map<UUID, Village> villages;
-	private final AtomicInteger tickCounter;
 
 	public VillageManagerComponent(LevelData levelData) {
 		this.levelData = levelData;
 		this.villages = new HashMap<>();
-		this.tickCounter = new AtomicInteger(0);
 	}
 
 	@Override
@@ -58,17 +52,8 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 	}
 
 	@Override
-	public void serverTick() {
-		var ctr = tickCounter.getAndIncrement();
-		if (ctr % DEBUG_TICK_INTERVAL == 0) {
-			ServerAccess.get().ifPresent(this::debug);
-			tickCounter.set(0);
-		}
-	}
-
-	@Override
-	public Village claim(ServerLevel level, GlobalPos anchor) {
-		var extents = VillageManagerUtils.extents(anchor.pos(), CHUNK_RADIUS, SECTION_HEIGHT);
+	public Village claim(ServerLevel level, BlockPos anchor) {
+		var extents = VillageManagerUtils.extents(anchor, CHUNK_RADIUS, SECTION_HEIGHT);
 		return claim(level, anchor, extents);
 	}
 
@@ -83,16 +68,16 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 	///
 	/// TODO: what happens to villagers who spawn after claiming?
 	@Override
-	public Village claim(ServerLevel level, GlobalPos anchor, BoundingBox extents) {
+	public Village claim(ServerLevel level, BlockPos anchor, BoundingBox extents) {
 		var poiManager = level.getPoiManager();
-		LOG.info(ExcentricCommon.MARKER, "New village with volume centered at {} (dim: {}): {}x{}x{}", anchor.pos(),
-		    anchor.dimension().location().getPath(), extents.getXSpan(), extents.getYSpan(), extents.getZSpan());
+		LOG.info(ExcentricCommon.MARKER, "New village with volume centered at {}: {}x{}x{}", anchor, extents.getXSpan(),
+		    extents.getYSpan(), extents.getZSpan());
 		var homes = poiManager
-		    .getInSquare(p -> p.is(PoiTypes.HOME), anchor.pos(), 16 * CHUNK_RADIUS, PoiManager.Occupancy.ANY)
+		    .getInSquare(p -> p.is(PoiTypes.HOME), anchor, 16 * CHUNK_RADIUS, PoiManager.Occupancy.ANY)
 		    .filter(p -> extents.isInside(p.getPos())).toList();
 		LOG.info(ExcentricCommon.MARKER, "Found {} homes / beds", homes.size());
-		var centroid = Vec3Utils.toBlockPosFloor(
-		    Vec3Utils.mapMean(homes, p -> new Vec3(p.getPos())).orElseGet(() -> new Vec3(anchor.pos())));
+		var centroid = Vec3Utils
+		    .toBlockPosFloor(Vec3Utils.mapMean(homes, p -> new Vec3(p.getPos())).orElseGet(() -> new Vec3(anchor)));
 		var village = new Village(UUID.randomUUID(), anchor, centroid, extents);
 		villages.put(village.id(), village);
 		claimLoadedChunks(level, village);
@@ -101,20 +86,8 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 
 	/// This silently discards multiple matching villages
 	@Override
-	public Optional<Village> find(GlobalPos anchor) {
-		return villages.values().stream()
-		    .filter(v -> v.anchor().dimension().equals(anchor.dimension()) && v.boundingBox().isInside(anchor.pos()))
-		    .findFirst();
-	}
-
-	/// Set [VillageRefComponent#villageId()] for all loaded chunks within the
-	/// [Village] bounding box. Silently skips chunks that aren't fully loaded.
-	private static void claimLoadedChunks(MinecraftServer server, Village village) {
-		var level = server.getLevel(village.anchor().dimension());
-		if (level == null) {
-			return;
-		}
-		claimLoadedChunks(level, village);
+	public Optional<Village> find(BlockPos anchor) {
+		return villages.values().stream().filter(v -> v.boundingBox().isInside(anchor)).findFirst();
 	}
 
 	/// Set [VillageRefComponent#villageId()] for all loaded chunks within the
@@ -127,15 +100,11 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 		    .forEach(chunk -> chunk.setVillageId(village.id()));
 	}
 
-	private void debug(MinecraftServer server) {
+	public void debug(ServerLevel level) {
 		int particleColor = 0x0088ff;
-		villages.values().stream()
-		    .flatMap(
-		        v -> Optional.ofNullable(server.getLevel(v.anchor().dimension())).map(l -> new Pair<>(l, v)).stream())
-		    .forEach(v -> {
-			    BoundingBoxVisualiser.showEdges(v.getFirst(), v.getSecond().boundingBox(),
-			        new DustParticleOptions(particleColor, 1), 1);
-		    });
+		villages.values().forEach(v -> {
+			BoundingBoxVisualiser.showEdges(level, v.boundingBox(), new DustParticleOptions(particleColor, 1), 1);
+		});
 	}
 
 	private static final Codec<Data> CODEC = RecordCodecBuilder.create(
