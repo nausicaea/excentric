@@ -65,8 +65,6 @@ public final class VillageManagerComponent implements Component, VillageManager 
 	///    [CHUNK_RADIUS]
 	/// 3. Calculate [net.nausicaea.excentric.Village#center()] from the beds
 	/// 4. Claim only the chunks within the bounding box of the village.
-	///
-	/// TODO: what happens to villagers who spawn after claiming?
 	@Override
 	public Village claim(ServerLevel level, BlockPos anchor, BoundingBox extents) {
 		var poiManager = level.getPoiManager();

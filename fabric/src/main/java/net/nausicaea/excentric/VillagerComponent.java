@@ -11,6 +11,10 @@ public class VillagerComponent extends VillageRefComponent {
 	}
 
 	public void onLoad(ServerLevel serverLevel) {
+		if (villageId().isPresent()) {
+			return;
+		}
+
 		CardinalComponents.VILLAGE_MANAGER.get(serverLevel.getLevelData()).find(entity.blockPosition())
 		    .ifPresent(v -> setVillageId(v.id()));
 	}
