@@ -68,7 +68,7 @@ public final class VillageManagerComponent implements ServerTickingComponent, Vi
 
 	@Override
 	public Village claim(ServerLevel level, GlobalPos anchor) {
-		var extents = Village.extents(anchor.pos(), CHUNK_RADIUS, SECTION_HEIGHT);
+		var extents = VillageManagerUtils.extents(anchor.pos(), CHUNK_RADIUS, SECTION_HEIGHT);
 		return claim(level, anchor, extents);
 	}
 
