@@ -4,7 +4,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BlockBehaviourMixin",
-    "accessor.JigsawStructureAccessor"
+    "ZombieMixin",
+    "accessor.JigsawStructureAccessor",
+    "accessor.MobAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -22,7 +22,7 @@ public abstract class VillageRefComponent implements Component {
 
 	/// Setter for a [Village] reference.
 	public void setVillageId(UUID id) {
-		if (this.villageId == id || id == null) {
+		if (this.villageId == id || id == null || this.villageId != null) {
 			return;
 		}
 
