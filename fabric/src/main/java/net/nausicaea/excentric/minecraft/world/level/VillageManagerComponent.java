@@ -17,6 +17,7 @@ import net.nausicaea.excentric.*;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxVisualiser;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxUtils;
 import net.nausicaea.excentric.minecraft.world.phys.Vec3Utils;
+import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public final class VillageManagerComponent implements Component, VillageManager 
 	}
 
 	@Override
-	public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+	public void readFromNbt(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
 		var villages = CODEC.decode(NbtOps.INSTANCE, tag)
 		    .resultOrPartial(err -> LOG.error(ExcentricCommon.MARKER, "Failed to parse village data: {}", err))
 		    .map(p -> p.getFirst().villages()).orElseGet(List::of);
@@ -46,7 +47,7 @@ public final class VillageManagerComponent implements Component, VillageManager 
 	}
 
 	@Override
-	public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+	public void writeToNbt(CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
 		var serialized = new Data(List.copyOf(this.villages.values()));
 		var newTag = (CompoundTag) CODEC.encodeStart(NbtOps.INSTANCE, serialized).getPartialOrThrow();
 		tag.merge(newTag);
