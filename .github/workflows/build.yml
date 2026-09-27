@@ -14,8 +14,9 @@ jobs:
       - name: setup jdk
         uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
-          java-version: '25'
-          distribution: 'microsoft'
+          java-version: '21'
+          distribution: 'temurin'
+          check-latest: 'true'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: spotless check (formatting)
