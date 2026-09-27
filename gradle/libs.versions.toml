@@ -1,6 +1,7 @@
 [versions]
-spotless = '8.10.2'
-spotbugs = '6.5.11'
+spotbugs = '4.10.4'
+gradle-spotless = '8.10.2'
+gradle-spotbugs = '6.5.11'
 minecraft = '1.21.4'
 mixin = '0.8.7'
 fabric-loom = '1.17.21'
@@ -20,8 +21,8 @@ cca-entity = { module = "org.ladysnake.cardinal-components-api:cardinal-componen
 cca-block = { module = "org.ladysnake.cardinal-components-api:cardinal-components-block", version.ref = "cca" }
 
 [plugins]
-spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
-spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs" }
+spotless = { id = "com.diffplug.spotless", version.ref = "gradle-spotless" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "gradle-spotbugs" }
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 
 [bundles]

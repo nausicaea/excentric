@@ -35,7 +35,7 @@ allprojects {
 	}
 
 	spotbugs {
-		toolVersion = '4.10.4'
+		toolVersion = libs.versions.spotbugs
 		ignoreFailures = false
 		showStackTraces = false
 		effort = Effort.valueOf("MAX")
