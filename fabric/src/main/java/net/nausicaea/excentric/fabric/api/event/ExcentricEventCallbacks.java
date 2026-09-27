@@ -1,4 +1,4 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.fabric.api.event;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
@@ -13,17 +13,18 @@ import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.nausicaea.excentric.CardinalComponents;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-final class ExcentricEventCallbacks {
+public final class ExcentricEventCallbacks {
 	private static final int DEBUG_TICK_INTERVAL = 10;
 	private static final AtomicInteger tickCounter = new AtomicInteger(0);
 
 	private ExcentricEventCallbacks() {
 	}
 
-	static void register() {
+	public static void register() {
 		ServerTickEvents.END_SERVER_TICK.register(ExcentricEventCallbacks::onEndTick);
 		ServerChunkEvents.CHUNK_LOAD.register(ExcentricEventCallbacks::onChunkLoad);
 		ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(ExcentricEventCallbacks::onBlockEntityLoad);

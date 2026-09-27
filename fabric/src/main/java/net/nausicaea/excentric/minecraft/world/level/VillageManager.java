@@ -1,13 +1,14 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.minecraft.world.level;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxUtils;
 
 import java.util.Optional;
 
-interface VillageManager {
+public interface VillageManager {
 	default Village findOrClaim(ServerLevel level, BlockPos anchor) {
 		return find(anchor).orElseGet(() -> claim(level, anchor));
 	}

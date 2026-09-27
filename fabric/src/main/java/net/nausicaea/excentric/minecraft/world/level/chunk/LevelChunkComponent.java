@@ -1,22 +1,18 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.minecraft.world.level.chunk;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.nausicaea.excentric.CardinalComponents;
+import net.nausicaea.excentric.minecraft.world.level.VillageRefComponent;
 
-final class LevelChunkComponent extends VillageRefComponent {
+public final class LevelChunkComponent extends VillageRefComponent {
 	private final ChunkAccess chunk;
 
-	LevelChunkComponent(ChunkAccess chunk) {
+	public LevelChunkComponent(ChunkAccess chunk) {
 		this.chunk = chunk;
 	}
 
-	/// 1. Find the structure start chunk with
-	///    [VillageManagerUtils#findVillageStarts]
-	/// 2. Query [net.nausicaea.excentric.VillageManagerComponent#findOrClaim] for
-	///    the closest [net.nausicaea.excentric.Village] in range or trigger creation
-	///    of one.
-	/// 3. Claim the current chunk by setting the village ID.
-	void onLoad(ServerLevel serverLevel) {
+	public void onLoad(ServerLevel serverLevel) {
 		if (villageId().isPresent()) {
 			return;
 		}

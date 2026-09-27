@@ -1,16 +1,18 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.minecraft.world.entity.npc;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.Villager;
+import net.nausicaea.excentric.CardinalComponents;
+import net.nausicaea.excentric.minecraft.world.level.VillageRefComponent;
 
-class VillagerComponent extends VillageRefComponent {
+public class VillagerComponent extends VillageRefComponent {
 	private final Villager entity;
 
-	VillagerComponent(Villager villager) {
+	public VillagerComponent(Villager villager) {
 		this.entity = villager;
 	}
 
-	void onLoad(ServerLevel serverLevel) {
+	public void onLoad(ServerLevel serverLevel) {
 		if (villageId().isPresent()) {
 			return;
 		}

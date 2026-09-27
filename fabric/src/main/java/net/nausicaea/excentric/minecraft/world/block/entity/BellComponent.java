@@ -1,22 +1,24 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.minecraft.world.block.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
+import net.nausicaea.excentric.CardinalComponents;
+import net.nausicaea.excentric.minecraft.world.level.VillageRefComponent;
 
-final class BellComponent extends VillageRefComponent {
+public final class BellComponent extends VillageRefComponent {
 	private final BellBlockEntity blockEntity;
 
-	BellComponent(BellBlockEntity bbe) {
+	public BellComponent(BellBlockEntity bbe) {
 		this.blockEntity = bbe;
 	}
 
 	/// 1. Does the block have a village [java.util.UUID]?
 	/// 2. If yes, early return. This case is expected to be seldom.
-	/// 3. If not, query [VillageManager#findOrClaim] for the closest
-	///    [net.nausicaea.excentric.Village] in range or trigger creation of one.
-	/// 4. Record the [net.nausicaea.excentric.Village#id()] on the submitted block.
-	void onPlace(ServerLevel serverLevel, BlockPos blockPos) {
+	/// 3. If not, query [VillageManager#findOrClaim] for the closest [Village] in
+	///    range or trigger creation of one.
+	/// 4. Record the [Village#id()] on the submitted block.
+	public void onPlace(ServerLevel serverLevel, BlockPos blockPos) {
 		if (villageId().isPresent()) {
 			return;
 		}
@@ -26,7 +28,7 @@ final class BellComponent extends VillageRefComponent {
 		setVillageId(village.id());
 	}
 
-	void onLoad(ServerLevel serverLevel) {
+	public void onLoad(ServerLevel serverLevel) {
 		if (villageId().isPresent()) {
 			return;
 		}
