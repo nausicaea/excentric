@@ -2,6 +2,10 @@ package net.nausicaea.excentric;
 
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
+import net.nausicaea.excentric.minecraft.world.block.entity.BellComponent;
+import net.nausicaea.excentric.minecraft.world.level.chunk.LevelChunkComponent;
+import net.nausicaea.excentric.minecraft.world.level.VillageManagerComponent;
+import net.nausicaea.excentric.minecraft.world.entity.npc.VillagerComponent;
 import org.ladysnake.cca.api.v3.block.BlockComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.block.BlockComponentInitializer;
 import org.ladysnake.cca.api.v3.chunk.ChunkComponentFactoryRegistry;
@@ -13,19 +17,19 @@ import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
 import org.ladysnake.cca.api.v3.level.LevelComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.level.LevelComponentInitializer;
 
-final class CardinalComponents
+public final class CardinalComponents
     implements
         LevelComponentInitializer,
         ChunkComponentInitializer,
         BlockComponentInitializer,
         EntityComponentInitializer {
-	static final ComponentKey<VillageManagerComponent> VILLAGE_MANAGER = ComponentRegistry
+	public static final ComponentKey<VillageManagerComponent> VILLAGE_MANAGER = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("village_manager"), VillageManagerComponent.class);
-	static final ComponentKey<LevelChunkComponent> LEVEL_CHUNK = ComponentRegistry
+	public static final ComponentKey<LevelChunkComponent> LEVEL_CHUNK = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("level_chunk"), LevelChunkComponent.class);
-	static final ComponentKey<BellComponent> BELL = ComponentRegistry.getOrCreate(ExcentricCommon.id("bell"),
+	public static final ComponentKey<BellComponent> BELL = ComponentRegistry.getOrCreate(ExcentricCommon.id("bell"),
 	    BellComponent.class);
-	static final ComponentKey<VillagerComponent> VILLAGER = ComponentRegistry
+	public static final ComponentKey<VillagerComponent> VILLAGER = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("villager"), VillagerComponent.class);
 
 	@Override

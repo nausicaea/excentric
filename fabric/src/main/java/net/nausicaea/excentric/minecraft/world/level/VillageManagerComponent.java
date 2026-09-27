@@ -1,4 +1,4 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.minecraft.world.level;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -13,29 +13,30 @@ import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.Vec3;
-import net.nausicaea.excentric.debug.BoundingBoxVisualiser;
+import net.nausicaea.excentric.*;
+import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxVisualiser;
+import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxUtils;
+import net.nausicaea.excentric.minecraft.world.phys.Vec3Utils;
+import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-final class VillageManagerComponent implements Component, VillageManager {
+public final class VillageManagerComponent implements Component, VillageManager {
 	private static final Logger LOG = LoggerFactory.getLogger(VillageManagerComponent.class);
 	private static final int CHUNK_RADIUS = 4;
 	private static final int SECTION_HEIGHT = 3;
 
-	/// This variable must be present even if unused.
-	private final LevelData levelData;
 	private final Map<UUID, Village> villages;
 
-	VillageManagerComponent(LevelData levelData) {
-		this.levelData = levelData;
+	public VillageManagerComponent(LevelData levelData) {
 		this.villages = new HashMap<>();
 	}
 
 	@Override
-	public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+	public void readFromNbt(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
 		var villages = CODEC.decode(NbtOps.INSTANCE, tag)
 		    .resultOrPartial(err -> LOG.error(ExcentricCommon.MARKER, "Failed to parse village data: {}", err))
 		    .map(p -> p.getFirst().villages()).orElseGet(List::of);
@@ -46,7 +47,7 @@ final class VillageManagerComponent implements Component, VillageManager {
 	}
 
 	@Override
-	public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+	public void writeToNbt(CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
 		var serialized = new Data(List.copyOf(this.villages.values()));
 		var newTag = (CompoundTag) CODEC.encodeStart(NbtOps.INSTANCE, serialized).getPartialOrThrow();
 		tag.merge(newTag);
@@ -60,11 +61,11 @@ final class VillageManagerComponent implements Component, VillageManager {
 
 	/// Claim a new village
 	///
-	/// 1. Determine [net.nausicaea.excentric.Village#anchor()]
+	/// 1. Determine [Village#anchor()]
 	/// 2. Determine all beds
 	///    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
 	///    [CHUNK_RADIUS]
-	/// 3. Calculate [net.nausicaea.excentric.Village#center()] from the beds
+	/// 3. Calculate [Village#center()] from the beds
 	/// 4. Claim only the chunks within the bounding box of the village.
 	@Override
 	public Village claim(ServerLevel level, BlockPos anchor, BoundingBox extents) {

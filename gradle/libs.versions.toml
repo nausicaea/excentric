@@ -19,10 +19,11 @@ cca-level = { module = "org.ladysnake.cardinal-components-api:cardinal-component
 cca-chunk = { module = "org.ladysnake.cardinal-components-api:cardinal-components-chunk", version.ref = "cca" }
 cca-entity = { module = "org.ladysnake.cardinal-components-api:cardinal-components-entity", version.ref = "cca" }
 cca-block = { module = "org.ladysnake.cardinal-components-api:cardinal-components-block", version.ref = "cca" }
+spotbugs = { module = "com.github.spotbugs:spotbugs", version.ref = "spotbugs" }
 
 [plugins]
-spotless = { id = "com.diffplug.spotless", version.ref = "gradle-spotless" }
-spotbugs = { id = "com.github.spotbugs", version.ref = "gradle-spotbugs" }
+gradle-spotless = { id = "com.diffplug.spotless", version.ref = "gradle-spotless" }
+gradle-spotbugs = { id = "com.github.spotbugs", version.ref = "gradle-spotbugs" }
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 
 [bundles]

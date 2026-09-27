@@ -1,4 +1,4 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.java.util;
 
 import java.util.*;
 
