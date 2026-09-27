@@ -14,15 +14,21 @@ import org.ladysnake.cca.api.v3.component.ComponentKey;
 import org.ladysnake.cca.api.v3.component.ComponentRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
+import org.ladysnake.cca.api.v3.item.ItemComponentInitializer;
+import org.ladysnake.cca.api.v3.item.ItemComponentMigrationRegistry;
 import org.ladysnake.cca.api.v3.level.LevelComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.level.LevelComponentInitializer;
+import org.ladysnake.cca.api.v3.world.WorldComponentFactoryRegistry;
+import org.ladysnake.cca.api.v3.world.WorldComponentInitializer;
 
 public final class CardinalComponents
     implements
+        WorldComponentInitializer,
         LevelComponentInitializer,
         ChunkComponentInitializer,
         BlockComponentInitializer,
-        EntityComponentInitializer {
+        EntityComponentInitializer,
+        ItemComponentInitializer {
 	public static final ComponentKey<VillageManagerComponent> VILLAGE_MANAGER = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("village_manager"), VillageManagerComponent.class);
 	public static final ComponentKey<LevelChunkComponent> LEVEL_CHUNK = ComponentRegistry
@@ -31,6 +37,11 @@ public final class CardinalComponents
 	    BellComponent.class);
 	public static final ComponentKey<VillagerComponent> VILLAGER = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("villager"), VillagerComponent.class);
+
+	@Override
+	public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry) {
+		throw new Todo();
+	}
 
 	@Override
 	public void registerLevelComponentFactories(LevelComponentFactoryRegistry registry) {
@@ -51,4 +62,10 @@ public final class CardinalComponents
 	public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
 		registry.registerFor(Villager.class, VILLAGER, VillagerComponent::new);
 	}
+
+	@Override
+	public void registerItemComponentMigrations(ItemComponentMigrationRegistry registry) {
+		throw new Todo();
+	}
+
 }
