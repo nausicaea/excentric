@@ -7,6 +7,8 @@ import net.minecraft.world.entity.npc.AbstractVillager;
 import net.nausicaea.excentric.mixin.accessor.NearestAttackableTargetGoalAccessor;
 
 public final class MobTargetingUtils {
+	/// Given a [GoalSelector], remove any references to
+	/// [AbstractVillager] and [IronGolem].
 	public static void removeVillagerAndGolemTargeting(GoalSelector targetSelector) {
 		targetSelector.removeAllGoals(goal -> {
 			if (!(goal instanceof NearestAttackableTargetGoal<?> targetGoal)) {
