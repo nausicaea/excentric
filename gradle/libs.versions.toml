@@ -16,7 +16,6 @@ fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = 
 fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
 cca-base = { module = "org.ladysnake.cardinal-components-api:cardinal-components-base", version.ref = "cca" }
 cca-world = { module = "org.ladysnake.cardinal-components-api:cardinal-components-world", version.ref = "cca" }
-cca-level = { module = "org.ladysnake.cardinal-components-api:cardinal-components-level", version.ref = "cca" }
 cca-chunk = { module = "org.ladysnake.cardinal-components-api:cardinal-components-chunk", version.ref = "cca" }
 cca-entity = { module = "org.ladysnake.cardinal-components-api:cardinal-components-entity", version.ref = "cca" }
 cca-block = { module = "org.ladysnake.cardinal-components-api:cardinal-components-block", version.ref = "cca" }
@@ -29,4 +28,4 @@ gradle-spotbugs = { id = "com.github.spotbugs", version.ref = "gradle-spotbugs" 
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 
 [bundles]
-cca = [ "cca-base", "cca-world", "cca-level", "cca-chunk", "cca-entity", "cca-block", "cca-item" ]
+cca = [ "cca-base", "cca-world", "cca-chunk", "cca-entity", "cca-block", "cca-item" ]

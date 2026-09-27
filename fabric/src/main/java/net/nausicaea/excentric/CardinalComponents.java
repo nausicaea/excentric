@@ -1,6 +1,7 @@
 package net.nausicaea.excentric;
 
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.nausicaea.excentric.minecraft.world.block.entity.BellComponent;
 import net.nausicaea.excentric.minecraft.world.level.chunk.LevelChunkComponent;
@@ -16,15 +17,12 @@ import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
 import org.ladysnake.cca.api.v3.item.ItemComponentInitializer;
 import org.ladysnake.cca.api.v3.item.ItemComponentMigrationRegistry;
-import org.ladysnake.cca.api.v3.level.LevelComponentFactoryRegistry;
-import org.ladysnake.cca.api.v3.level.LevelComponentInitializer;
 import org.ladysnake.cca.api.v3.world.WorldComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.world.WorldComponentInitializer;
 
 public final class CardinalComponents
     implements
         WorldComponentInitializer,
-        LevelComponentInitializer,
         ChunkComponentInitializer,
         BlockComponentInitializer,
         EntityComponentInitializer,
@@ -40,12 +38,8 @@ public final class CardinalComponents
 
 	@Override
 	public void registerWorldComponentFactories(WorldComponentFactoryRegistry registry) {
+		registry.registerFor(Level.OVERWORLD, VILLAGE_MANAGER, VillageManagerComponent::new);
 		throw new Todo();
-	}
-
-	@Override
-	public void registerLevelComponentFactories(LevelComponentFactoryRegistry registry) {
-		registry.register(VILLAGE_MANAGER, VillageManagerComponent::new);
 	}
 
 	@Override

@@ -10,8 +10,8 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.*;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxVisualiser;
@@ -29,9 +29,11 @@ public final class VillageManagerComponent implements Component, VillageManager 
 	private static final int CHUNK_RADIUS = 4;
 	private static final int SECTION_HEIGHT = 3;
 
+	private final Level level;
 	private final Map<UUID, Village> villages;
 
-	public VillageManagerComponent(LevelData levelData) {
+	public VillageManagerComponent(Level level) {
+		this.level = level;
 		this.villages = new HashMap<>();
 	}
 
