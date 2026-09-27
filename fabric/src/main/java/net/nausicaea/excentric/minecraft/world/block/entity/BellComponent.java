@@ -1,5 +1,6 @@
 package net.nausicaea.excentric.minecraft.world.block.entity;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
@@ -9,15 +10,11 @@ import net.nausicaea.excentric.minecraft.world.level.VillageRefComponent;
 public final class BellComponent extends VillageRefComponent {
 	private final BellBlockEntity blockEntity;
 
+	@SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "this component requires a reference to the connected entity, even if mutable.")
 	public BellComponent(BellBlockEntity bbe) {
 		this.blockEntity = bbe;
 	}
 
-	/// 1. Does the block have a village [java.util.UUID]?
-	/// 2. If yes, early return. This case is expected to be seldom.
-	/// 3. If not, query [VillageManager#findOrClaim] for the closest [Village] in
-	///    range or trigger creation of one.
-	/// 4. Record the [Village#id()] on the submitted block.
 	public void onPlace(ServerLevel serverLevel, BlockPos blockPos) {
 		if (villageId().isPresent()) {
 			return;
