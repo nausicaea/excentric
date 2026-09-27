@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.debug;
+package net.nausicaea.excentric.minecraft.world.level.levelgen.structure;
 
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;

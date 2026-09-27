@@ -6,7 +6,7 @@ fileignoreconfig:
   - filename: common/src/main/java/net/nausicaea/excentric/VillageManager.java
     checksum: 061fa10139639df338e62393c7690a69782aabcd47f53ac3555c34541c6908d3
   - filename: fabric/src/main/java/net/nausicaea/excentric/CardinalComponents.java
-    checksum: f310d61c5dfecc0cba1b553d1049840b47870276e252e16a7095753bc530751e
+    checksum: 7fe8a9b88d4e9095b842ac4046042770b358d74975166a0cc942fb781b48a9e2
   - filename: fabric/src/main/java/net/nausicaea/excentric/LevelChunkUtils.java
     checksum: 7eb1744bda570379c2d71eb3c2d5b07cb1a507e94ec767ec8bdce5e28fa2b738
 version: "1.0"

@@ -1,7 +1,9 @@
-package net.nausicaea.excentric;
+package net.nausicaea.excentric.minecraft.world.level;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.nausicaea.excentric.ExcentricCommon;
+import org.jetbrains.annotations.NotNull;
 import org.ladysnake.cca.api.v3.component.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,18 +12,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 /// Represents an optional reference to a [Village] by a [java.util.UUID].
-abstract class VillageRefComponent implements Component {
+public abstract class VillageRefComponent implements Component {
 	private static final Logger LOG = LoggerFactory.getLogger(VillageRefComponent.class);
 	private static final String TAG = "%svillageId".formatted(ExcentricCommon.MOD_ID);
 	private UUID villageId = null;
 
 	/// Getter for an optional [Village] reference.
-	Optional<UUID> villageId() {
+	public Optional<UUID> villageId() {
 		return Optional.ofNullable(this.villageId);
 	}
 
 	/// Setter for a [Village] reference.
-	void setVillageId(UUID id) {
+	public void setVillageId(UUID id) {
 		if (this.villageId == id || id == null || this.villageId != null) {
 			return;
 		}
@@ -31,14 +33,14 @@ abstract class VillageRefComponent implements Component {
 	}
 
 	@Override
-	public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+	public void readFromNbt(CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
 		if (tag.contains(TAG)) {
 			villageId = tag.getUUID(TAG);
 		}
 	}
 
 	@Override
-	public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+	public void writeToNbt(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registryLookup) {
 		if (villageId == null) {
 			return;
 		}

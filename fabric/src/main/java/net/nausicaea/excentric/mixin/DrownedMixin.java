@@ -1,7 +1,7 @@
 package net.nausicaea.excentric.mixin;
 
 import net.minecraft.world.entity.monster.Drowned;
-import net.nausicaea.excentric.MobTargetingUtils;
+import net.nausicaea.excentric.minecraft.world.entity.ai.goal.GoalSelectorUtils;
 import net.nausicaea.excentric.mixin.accessor.MobAccessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,6 +17,6 @@ abstract class DrownedMixin {
 	public void addBehaviourGoals(CallbackInfo ci) {
 		var mob = (MobAccessor) this;
 		var targetSelector = mob.villageMod$getTargetSelector();
-		MobTargetingUtils.removeVillagerAndGolemTargeting(targetSelector);
+		GoalSelectorUtils.removeVillagerAndGolemTargeting(targetSelector);
 	}
 }
