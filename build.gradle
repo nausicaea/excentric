@@ -2,13 +2,13 @@ import com.github.spotbugs.snom.Confidence
 import com.github.spotbugs.snom.Effort
 
 plugins {
-	alias(libs.plugins.spotless) apply false
-	alias(libs.plugins.spotbugs) apply false
+	alias(libs.plugins.gradle.spotless) apply false
+	alias(libs.plugins.gradle.spotbugs) apply false
 }
 
 allprojects {
-	apply plugin: rootProject.libs.plugins.spotless.get().pluginId
-	apply plugin: rootProject.libs.plugins.spotbugs.get().pluginId
+	apply plugin: rootProject.libs.plugins.gradle.spotless.get().pluginId
+	apply plugin: rootProject.libs.plugins.gradle.spotbugs.get().pluginId
 
 	group = rootProject.group
 	version = rootProject.version
