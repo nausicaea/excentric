@@ -25,8 +25,11 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation(rootProject.libs.fabric.loader)
 	modImplementation(rootProject.libs.fabric.api)
+	modImplementation(rootProject.libs.bundles.cca)
 
 	implementation project(path: ':common', configuration: 'namedElements')
+
+	include(rootProject.libs.bundles.cca)
 }
 
 processResources {
