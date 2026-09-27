@@ -5,7 +5,6 @@
   "mixins": [
     "BlockBehaviourMixin",
     "DrownedMixin",
-    "MobMixin",
     "ZombieMixin",
     "accessor.JigsawStructureAccessor",
     "accessor.MobAccessor",
