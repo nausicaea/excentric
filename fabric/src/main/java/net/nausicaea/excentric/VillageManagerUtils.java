@@ -10,13 +10,13 @@ import net.nausicaea.excentric.mixin.accessor.JigsawStructureAccessor;
 
 import java.util.List;
 
-public final class VillageManagerUtils {
+final class VillageManagerUtils {
 	private VillageManagerUtils() {
 	}
 
 	/// Find StructureStart instances for any villages that extend into the
 	/// given chunk.
-	public static List<StructureStart> findVillageStarts(StructureManager structureManager, ChunkPos chunkPos) {
+	static List<StructureStart> findVillageStarts(StructureManager structureManager, ChunkPos chunkPos) {
 		return structureManager.startsForStructure(chunkPos, structure -> {
 			if (!(structure instanceof JigsawStructure jigsawStructure)) {
 				return false;
@@ -29,7 +29,7 @@ public final class VillageManagerUtils {
 		});
 	}
 
-	public static BoundingBox extents(BlockPos anchor, int chunkRadius, int sectionHeight) {
+	static BoundingBox extents(BlockPos anchor, int chunkRadius, int sectionHeight) {
 		var halfWidth = 8 * chunkRadius;
 		var halfHeight = 8 * sectionHeight;
 		return new BoundingBox(anchor.getX() - halfWidth, anchor.getY() - halfHeight, anchor.getZ() - halfWidth,

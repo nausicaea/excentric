@@ -13,19 +13,19 @@ import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
 import org.ladysnake.cca.api.v3.level.LevelComponentFactoryRegistry;
 import org.ladysnake.cca.api.v3.level.LevelComponentInitializer;
 
-public final class CardinalComponents
+final class CardinalComponents
     implements
         LevelComponentInitializer,
         ChunkComponentInitializer,
         BlockComponentInitializer,
         EntityComponentInitializer {
-	public static final ComponentKey<VillageManagerComponent> VILLAGE_MANAGER = ComponentRegistry
+	static final ComponentKey<VillageManagerComponent> VILLAGE_MANAGER = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("village_manager"), VillageManagerComponent.class);
-	public static final ComponentKey<LevelChunkComponent> LEVEL_CHUNK = ComponentRegistry
+	static final ComponentKey<LevelChunkComponent> LEVEL_CHUNK = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("level_chunk"), LevelChunkComponent.class);
-	public static final ComponentKey<BellComponent> BELL = ComponentRegistry.getOrCreate(ExcentricCommon.id("bell"),
+	static final ComponentKey<BellComponent> BELL = ComponentRegistry.getOrCreate(ExcentricCommon.id("bell"),
 	    BellComponent.class);
-	public static final ComponentKey<VillagerComponent> VILLAGER = ComponentRegistry
+	static final ComponentKey<VillagerComponent> VILLAGER = ComponentRegistry
 	    .getOrCreate(ExcentricCommon.id("villager"), VillagerComponent.class);
 
 	@Override

@@ -3,14 +3,14 @@ package net.nausicaea.excentric;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.npc.Villager;
 
-public class VillagerComponent extends VillageRefComponent {
+class VillagerComponent extends VillageRefComponent {
 	private final Villager entity;
 
-	public VillagerComponent(Villager villager) {
+	VillagerComponent(Villager villager) {
 		this.entity = villager;
 	}
 
-	public void onLoad(ServerLevel serverLevel) {
+	void onLoad(ServerLevel serverLevel) {
 		if (villageId().isPresent()) {
 			return;
 		}

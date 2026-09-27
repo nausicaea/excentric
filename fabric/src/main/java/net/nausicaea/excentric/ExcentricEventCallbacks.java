@@ -16,14 +16,14 @@ import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class ExcentricEventCallbacks {
+final class ExcentricEventCallbacks {
 	private static final int DEBUG_TICK_INTERVAL = 10;
 	private static final AtomicInteger tickCounter = new AtomicInteger(0);
 
 	private ExcentricEventCallbacks() {
 	}
 
-	public static void register() {
+	static void register() {
 		ServerTickEvents.END_SERVER_TICK.register(ExcentricEventCallbacks::onEndTick);
 		ServerChunkEvents.CHUNK_LOAD.register(ExcentricEventCallbacks::onChunkLoad);
 		ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(ExcentricEventCallbacks::onBlockEntityLoad);
@@ -31,7 +31,7 @@ public final class ExcentricEventCallbacks {
 		ExcentricEvents.AFTER_BLOCK_PLACE.register(ExcentricEventCallbacks::onAfterBlockPlace);
 	}
 
-	public static void onEndTick(MinecraftServer server) {
+	private static void onEndTick(MinecraftServer server) {
 		var ctr = tickCounter.getAndIncrement();
 		if (ctr % DEBUG_TICK_INTERVAL == 0) {
 			server.getAllLevels()
@@ -40,25 +40,25 @@ public final class ExcentricEventCallbacks {
 		}
 	}
 
-	public static void onChunkLoad(ServerLevel level, LevelChunk chunk) {
+	private static void onChunkLoad(ServerLevel level, LevelChunk chunk) {
 		CardinalComponents.LEVEL_CHUNK.maybeGet(chunk).ifPresent(c -> c.onLoad(level));
 	}
 
-	public static void onAfterBlockPlace(BlockState prevState, BlockPos pos, ServerLevel serverLevel) {
+	private static void onAfterBlockPlace(BlockState prevState, BlockPos pos, ServerLevel serverLevel) {
 		if (!(serverLevel.getBlockEntity(pos) instanceof BellBlockEntity bbe)) {
 			return;
 		}
 		CardinalComponents.BELL.maybeGet(bbe).ifPresent(c -> c.onPlace(serverLevel, pos));
 	}
 
-	public static void onBlockEntityLoad(BlockEntity blockEntity, ServerLevel serverLevel) {
+	private static void onBlockEntityLoad(BlockEntity blockEntity, ServerLevel serverLevel) {
 		if (!(blockEntity instanceof BellBlockEntity bbe)) {
 			return;
 		}
 		CardinalComponents.BELL.maybeGet(bbe).ifPresent(b -> b.onLoad(serverLevel));
 	}
 
-	public static void onEntityLoad(Entity entity, ServerLevel serverLevel) {
+	private static void onEntityLoad(Entity entity, ServerLevel serverLevel) {
 		if (!(entity instanceof Villager villager)) {
 			return;
 		}

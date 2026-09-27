@@ -10,18 +10,18 @@ import java.util.Optional;
 import java.util.UUID;
 
 /// Represents an optional reference to a [Village] by a [java.util.UUID].
-public abstract class VillageRefComponent implements Component {
+abstract class VillageRefComponent implements Component {
 	private static final Logger LOG = LoggerFactory.getLogger(VillageRefComponent.class);
 	private static final String TAG = "%svillageId".formatted(ExcentricCommon.MOD_ID);
 	private UUID villageId = null;
 
 	/// Getter for an optional [Village] reference.
-	public Optional<UUID> villageId() {
+	Optional<UUID> villageId() {
 		return Optional.ofNullable(this.villageId);
 	}
 
 	/// Setter for a [Village] reference.
-	public void setVillageId(UUID id) {
+	void setVillageId(UUID id) {
 		if (this.villageId == id || id == null || this.villageId != null) {
 			return;
 		}

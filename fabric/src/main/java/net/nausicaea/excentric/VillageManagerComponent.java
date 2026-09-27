@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public final class VillageManagerComponent implements Component, VillageManager {
+final class VillageManagerComponent implements Component, VillageManager {
 	private static final Logger LOG = LoggerFactory.getLogger(VillageManagerComponent.class);
 	private static final int CHUNK_RADIUS = 4;
 	private static final int SECTION_HEIGHT = 3;
@@ -28,7 +28,7 @@ public final class VillageManagerComponent implements Component, VillageManager 
 	private final LevelData levelData;
 	private final Map<UUID, Village> villages;
 
-	public VillageManagerComponent(LevelData levelData) {
+	VillageManagerComponent(LevelData levelData) {
 		this.levelData = levelData;
 		this.villages = new HashMap<>();
 	}
@@ -100,9 +100,8 @@ public final class VillageManagerComponent implements Component, VillageManager 
 
 	public void debug(ServerLevel level) {
 		int particleColor = 0x0088ff;
-		villages.values().forEach(v -> {
-			BoundingBoxVisualiser.showEdges(level, v.boundingBox(), new DustParticleOptions(particleColor, 1), 1);
-		});
+		villages.values().forEach(
+		    v -> BoundingBoxVisualiser.showEdges(level, v.boundingBox(), new DustParticleOptions(particleColor, 1), 1));
 	}
 
 	private static final Codec<Data> CODEC = RecordCodecBuilder.create(

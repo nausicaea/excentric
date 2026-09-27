@@ -3,10 +3,10 @@ package net.nausicaea.excentric;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
 
-public final class LevelChunkComponent extends VillageRefComponent {
+final class LevelChunkComponent extends VillageRefComponent {
 	private final ChunkAccess chunk;
 
-	public LevelChunkComponent(ChunkAccess chunk) {
+	LevelChunkComponent(ChunkAccess chunk) {
 		this.chunk = chunk;
 	}
 
@@ -16,7 +16,7 @@ public final class LevelChunkComponent extends VillageRefComponent {
 	///    the closest [net.nausicaea.excentric.Village] in range or trigger creation
 	///    of one.
 	/// 3. Claim the current chunk by setting the village ID.
-	public void onLoad(ServerLevel serverLevel) {
+	void onLoad(ServerLevel serverLevel) {
 		if (villageId().isPresent()) {
 			return;
 		}

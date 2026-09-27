@@ -7,7 +7,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 import java.util.Optional;
 
-public interface VillageManager {
+interface VillageManager {
 	default Village findOrClaim(ServerLevel level, BlockPos anchor) {
 		return find(anchor).orElseGet(() -> claim(level, anchor));
 	}

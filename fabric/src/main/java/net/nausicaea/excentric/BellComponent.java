@@ -4,10 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 
-public final class BellComponent extends VillageRefComponent {
+final class BellComponent extends VillageRefComponent {
 	private final BellBlockEntity blockEntity;
 
-	public BellComponent(BellBlockEntity bbe) {
+	BellComponent(BellBlockEntity bbe) {
 		this.blockEntity = bbe;
 	}
 
@@ -16,7 +16,7 @@ public final class BellComponent extends VillageRefComponent {
 	/// 3. If not, query [VillageManager#findOrClaim] for the closest
 	///    [net.nausicaea.excentric.Village] in range or trigger creation of one.
 	/// 4. Record the [net.nausicaea.excentric.Village#id()] on the submitted block.
-	public void onPlace(ServerLevel serverLevel, BlockPos blockPos) {
+	void onPlace(ServerLevel serverLevel, BlockPos blockPos) {
 		if (villageId().isPresent()) {
 			return;
 		}
@@ -26,7 +26,7 @@ public final class BellComponent extends VillageRefComponent {
 		setVillageId(village.id());
 	}
 
-	public void onLoad(ServerLevel serverLevel) {
+	void onLoad(ServerLevel serverLevel) {
 		if (villageId().isPresent()) {
 			return;
 		}
