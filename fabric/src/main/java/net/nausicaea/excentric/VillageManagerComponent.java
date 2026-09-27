@@ -25,6 +25,7 @@ final class VillageManagerComponent implements Component, VillageManager {
 	private static final int CHUNK_RADIUS = 4;
 	private static final int SECTION_HEIGHT = 3;
 
+	/// This variable must be present even if unused.
 	private final LevelData levelData;
 	private final Map<UUID, Village> villages;
 
