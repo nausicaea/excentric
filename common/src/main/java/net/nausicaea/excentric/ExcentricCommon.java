@@ -9,17 +9,17 @@ import org.slf4j.MarkerFactory;
 
 public final class ExcentricCommon {
 	public static final String MOD_ID = "excentric";
-	public static final Marker LOG_MARKER = MarkerFactory.getMarker(MOD_ID);
+	public static final Marker MARKER = MarkerFactory.getMarker(MOD_ID);
 	public static final Logger LOG = LoggerFactory.getLogger(ExcentricCommon.class);
 
 	private ExcentricCommon() {
 	}
 
 	public static void onInitialize() {
-		LOG.info(LOG_MARKER, "Hello world, from common!");
+		LOG.info(MARKER, "Testing seed: -5038984067013596602");
 	}
 
-	public static ResourceLocation id(String path) {
+	static ResourceLocation id(String path) {
 		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 }
