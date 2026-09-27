@@ -19,7 +19,7 @@ public final class ExcentricCommon {
 		LOG.info(MARKER, "Testing seed: -5038984067013596602");
 	}
 
-	public static ResourceLocation id(String path) {
+	static ResourceLocation id(String path) {
 		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
 	}
 }
