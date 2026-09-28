@@ -12,57 +12,54 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.nausicaea.excentric.CardinalComponents;
+import net.nausicaea.excentric.minecraft.world.block.entity.Bells;
+import net.nausicaea.excentric.minecraft.world.entity.npc.Villagers;
+import net.nausicaea.excentric.minecraft.world.level.Villages;
+import net.nausicaea.excentric.minecraft.world.level.chunk.LevelChunks;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class ExcentricEventCallbacks {
+public final class EventCallbacks {
 	private static final int DEBUG_TICK_INTERVAL = 10;
 	private static final AtomicInteger tickCounter = new AtomicInteger(0);
 
-	private ExcentricEventCallbacks() {
+	private EventCallbacks() {
 	}
 
 	public static void register() {
-		ServerTickEvents.END_SERVER_TICK.register(ExcentricEventCallbacks::onEndTick);
-		ServerChunkEvents.CHUNK_LOAD.register(ExcentricEventCallbacks::onChunkLoad);
-		ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(ExcentricEventCallbacks::onBlockEntityLoad);
-		ServerEntityEvents.ENTITY_LOAD.register(ExcentricEventCallbacks::onEntityLoad);
-		ExcentricEvents.AFTER_BLOCK_PLACE.register(ExcentricEventCallbacks::onAfterBlockPlace);
+		ServerTickEvents.END_SERVER_TICK.register(EventCallbacks::onEndTick);
+		ServerChunkEvents.CHUNK_LOAD.register(LevelChunks::onLoad);
+		ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(EventCallbacks::onBlockEntityLoad);
+		ServerEntityEvents.ENTITY_LOAD.register(EventCallbacks::onEntityLoad);
+		ExcentricEvents.AFTER_BLOCK_PLACE.register(EventCallbacks::onAfterBlockPlace);
 	}
 
 	private static void onEndTick(MinecraftServer server) {
 		var ctr = tickCounter.getAndIncrement();
 		if (ctr % DEBUG_TICK_INTERVAL == 0) {
-			server.getAllLevels()
-			    .forEach(level -> CardinalComponents.VILLAGE_MANAGER.get(level.getLevelData()).debug(level));
+			server.getAllLevels().forEach(level -> Villages.get(level).debug(level));
 			tickCounter.set(0);
 		}
-	}
-
-	private static void onChunkLoad(ServerLevel level, LevelChunk chunk) {
-		CardinalComponents.LEVEL_CHUNK.maybeGet(chunk).ifPresent(c -> c.onLoad(level));
 	}
 
 	private static void onAfterBlockPlace(BlockState prevState, BlockPos pos, ServerLevel serverLevel) {
 		if (!(serverLevel.getBlockEntity(pos) instanceof BellBlockEntity bbe)) {
 			return;
 		}
-		CardinalComponents.BELL.maybeGet(bbe).ifPresent(c -> c.onPlace(serverLevel, pos));
+		Bells.onPlace(serverLevel, pos, bbe);
 	}
 
 	private static void onBlockEntityLoad(BlockEntity blockEntity, ServerLevel serverLevel) {
 		if (!(blockEntity instanceof BellBlockEntity bbe)) {
 			return;
 		}
-		CardinalComponents.BELL.maybeGet(bbe).ifPresent(b -> b.onLoad(serverLevel));
+		Bells.onLoad(serverLevel, bbe);
 	}
 
 	private static void onEntityLoad(Entity entity, ServerLevel serverLevel) {
 		if (!(entity instanceof Villager villager)) {
 			return;
 		}
-		CardinalComponents.VILLAGER.maybeGet(villager).ifPresent(c -> c.onLoad(serverLevel));
+		Villagers.onLoad(serverLevel, villager);
 	}
 }

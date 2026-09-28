@@ -17,7 +17,7 @@ public interface VillageManager {
 	}
 
 	default Optional<Village> findOrClaimByStructure(ServerLevel serverLevel, ChunkPos pos) {
-		var villageStructures = VillageManagerUtils.findVillageStarts(serverLevel.structureManager(), pos);
+		var villageStructures = VillageUtils.findStarts(serverLevel.structureManager(), pos);
 		if (villageStructures.isEmpty()) {
 			return Optional.empty();
 		}
