@@ -6,6 +6,7 @@
     "BlockBehaviourMixin",
     "DrownedMixin",
     "MobMixin",
+    "VillagerMixin",
     "ZombieMixin",
     "accessor.JigsawStructureAccessor",
     "accessor.MobAccessor",
