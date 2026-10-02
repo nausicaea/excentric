@@ -11,8 +11,8 @@ fileignoreconfig:
     checksum: 7eb1744bda570379c2d71eb3c2d5b07cb1a507e94ec767ec8bdce5e28fa2b738
   - filename: common/src/main/java/net/nausicaea/excentric/need/RegistryKeys.java
     checksum: 537c840da908f3fe454aa2101600d5f3a045a02f20209ff51f8e1916c40b2d79
-  - filename: common/src/main/java/net/nausicaea/excentric/need/Needs.java
-    checksum: 171cf777ab19ea5ffd253a03ed2d75bd6f8988b0b7394ed9c1cbfd9e5ceb0e6a
   - filename: common/src/main/java/net/nausicaea/excentric/need/NeedsReasoner.java
-    checksum: 03a3d40bff8f42fa99b7bc8053fbe65fc37b73aa6fdc94af28db04b394265519
+    checksum: 12b45bffdaccc3cca3d6e88393aa63c21a3b0cdb27a1a1f12e618e67dad4c7c0
+  - filename: common/src/main/java/net/nausicaea/excentric/need/Needs.java
+    checksum: 149232797da9f1ff30badfe75467f29604b4734b13b141934c4fbf76b1a3bb36
 version: "1.0"
