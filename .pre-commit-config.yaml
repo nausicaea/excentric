@@ -32,7 +32,7 @@ repos:
       - id: talisman-commit
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.16.4
+    rev: v4.19.0
     hooks:
       - id: commitizen
 
