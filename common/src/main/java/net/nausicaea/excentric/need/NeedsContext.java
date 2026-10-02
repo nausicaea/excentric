@@ -1,4 +1,9 @@
 package net.nausicaea.excentric.need;
 
-public record NeedsContext() {
+public final class NeedsContext {
+	public final Needs needs;
+
+	public NeedsContext(Needs needs) {
+		this.needs = needs;
+	}
 }

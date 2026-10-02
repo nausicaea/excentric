@@ -8,12 +8,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
-	private final Needs needs;
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	private Optional<Service> currentService;
 
-	public NeedsReasoner(Needs needs) {
-		this.needs = needs;
+	public NeedsReasoner() {
 		this.currentService = Optional.empty();
 	}
 
@@ -31,9 +29,8 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	/// Score each service with [Need#responseCurveFn()].
 	@Override
 	public Stream<Weighted<Service>> score(Stream<Service> services, NeedsContext context) {
-		var temp = needs.urgency();
-		return services.flatMap(svc -> Optional.ofNullable(needs.index.get(svc.key())).map(i -> new Weighted<>(svc,
-		    needs.responseCurveFns.get(i).score(svc, needs.satisfactions.get(i), temp, context))).stream());
+		var needs = context.needs;
+		return services.map(svc -> new Weighted<>(svc, needs.score(svc, context)));
 	}
 
 	/// Randomly select from the available [Service]s by their score.
@@ -48,13 +45,13 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	/// guarantees to call [Prerequisite#poll()] exactly once. Call
 	/// [Service#realise()] only if the prerequisite is satisfied (e.g. the return
 	/// value from [Prerequisite#poll()] is equal to [Prerequisite.State#SATISFIED]).
-	public void tryRealiseService() {
+	public void tryRealiseService(NeedsContext context) {
 		currentService.map(SvcPrq::new).map(SvcPrq::poll).flatMap(SvcPolled::tryRealise)
-		    .ifPresent(t -> needs.realise(t.key, t.addedAmount));
+		    .ifPresent(t -> context.needs.realise(t.key, t.addedAmount));
 	}
 
 	/// Helper throwaway `record` that aims to make
-	/// [NeedsReasoner#tryRealiseService()] more easily readable.
+	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
 	private record SvcPrq(Service svc, Prerequisite prq) {
 		SvcPrq(Service svc) {
 			this(svc, svc.prerequisite());
@@ -67,7 +64,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	}
 
 	/// Helper throwaway `record` that aims to make
-	/// [NeedsReasoner#tryRealiseService()] more easily readable.
+	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
 	private record SvcPolled(Service svc, Prerequisite.State state) {
 		/// Try to call [Service#realise()] if the [Prerequisite.State] is equal to
 		/// [Prerequisite.State#SATISFIED]. Otherwise, return [Optional#empty()].
@@ -82,7 +79,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	}
 
 	/// Helper throwaway `record` that aims to make
-	/// [NeedsReasoner#tryRealiseService()] more easily readable.
+	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
 	private record SvcRealised(ResourceKey<Need> key, double addedAmount) {
 	}
 }
