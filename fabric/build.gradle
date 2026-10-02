@@ -14,10 +14,6 @@ loom {
 }
 
 repositories {
-	maven {
-		name = "Ladysnake Mods"
-		url = "https://maven.ladysnake.org/releases"
-	}
 }
 
 dependencies {
@@ -25,12 +21,9 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation(rootProject.libs.fabric.loader)
 	modImplementation(rootProject.libs.fabric.api)
-	modImplementation(rootProject.libs.bundles.cca)
 
 	compileOnly(rootProject.libs.spotbugs)
 	implementation project(path: ':common', configuration: 'namedElements')
-
-	include(rootProject.libs.bundles.cca)
 }
 
 processResources {
