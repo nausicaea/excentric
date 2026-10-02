@@ -12,7 +12,9 @@ public final class Needs {
 	final HashMap<Integer, DecayFn> decayFns = new HashMap<>();
 	final HashMap<Integer, ResponseCurveFn> responseCurveFns = new HashMap<>();
 	final HashMap<Integer, Double> satisfactions = new HashMap<>();
+	private double urgency = 0.0d;
 	private int maxIndex = 0;
+	private long lastUpdateTime = 0L;
 
 	public boolean isEmpty() {
 		return index.isEmpty();
@@ -31,6 +33,7 @@ public final class Needs {
 		this.responseCurveFns.put(maxIndex, need.responseCurveFn());
 		this.satisfactions.put(maxIndex, need.satisfaction());
 		maxIndex += 1;
+		updateUrgency();
 		return true;
 	}
 
@@ -43,6 +46,7 @@ public final class Needs {
 		this.responseCurveFns.remove(idx);
 		this.satisfactions.remove(idx);
 		this.index.remove(needKey);
+		updateUrgency();
 		return true;
 	}
 
@@ -51,23 +55,36 @@ public final class Needs {
 		this.decayFns.clear();
 		this.responseCurveFns.clear();
 		this.satisfactions.clear();
+		updateUrgency();
 	}
 
 	/// Slowly reduce [Need#satisfaction()] through [Need#decayFn()].
-	public void decay(float deltaTime) {
+	public void decay(long monotonicTime) {
+		var deltaTime = (double) Math.max(0L, monotonicTime - lastUpdateTime);
+		lastUpdateTime = monotonicTime;
 		for (var i : index.values()) {
 			satisfactions.compute(i, (k, v) -> (v == null) ? 1.0d : decayFns.get(k).decay(v, deltaTime));
 		}
+		updateUrgency();
 	}
 
 	/// Calculates the total urgency of the collection of [Need]s.
-	public double urgency() {
-		return 1.0d - CollectionUtils.mean(satisfactions.values());
+	private void updateUrgency() {
+		urgency = 1.0d - CollectionUtils.mean(satisfactions.values());
+	}
+
+	public <T> double score(Service svc, T context) {
+		var i = index.get(svc.key());
+		if (i == null) {
+			return 0.0d;
+		}
+		return responseCurveFns.get(i).score(svc, satisfactions.get(i), urgency, context);
 	}
 
 	public void realise(ResourceKey<Need> key, double addedIntensity) {
 		Optional.ofNullable(index.get(key)).ifPresent(
 		    i -> satisfactions.compute(i, (k, v) -> (v == null) ? 1.0d : DoubleUtils.clamp01(addedIntensity + v)));
+		updateUrgency();
 	}
 
 	public record NeedData(ResourceKey<Need> key, DecayFn decayFn, ResponseCurveFn responseCurveFn,

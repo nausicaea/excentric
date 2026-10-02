@@ -11,14 +11,18 @@ import org.jetbrains.annotations.Nullable;
 
 /// Just a test entity
 public final class TestVillager extends AbstractVillager {
+	private final Needs needs;
 	private final NeedsReasoner reasoner;
-	private final EveryN everyNTicks;
+	private final EveryN every32Ticks;
+	private final EveryN every8Ticks;
 	private final RandomSource rng;
 
 	public TestVillager(EntityType<? extends AbstractVillager> entityType, Level level) {
 		super(entityType, level);
-		reasoner = new NeedsReasoner(new Needs());
-		everyNTicks = new EveryN(32, level.random.nextInt(32));
+		needs = new Needs();
+		reasoner = new NeedsReasoner();
+		every32Ticks = new EveryN(32, level.random.nextInt(32));
+		every8Ticks = new EveryN(8, level.random.nextInt(8));
 		rng = level.random.fork();
 	}
 
@@ -26,8 +30,11 @@ public final class TestVillager extends AbstractVillager {
 	/// [net.minecraft.world.entity.Mob#tick()], ).
 	@Override
 	public void tick() {
-		reasoner.tryRealiseService();
-		everyNTicks.run(() -> reasoner.plan(new NeedsContext(), rng));
+		var ctx = new NeedsContext(needs);
+		var gameTime = level().getGameTime();
+		reasoner.tryRealiseService(ctx);
+		every8Ticks.run(() -> needs.decay(gameTime));
+		every32Ticks.run(() -> reasoner.plan(ctx, rng));
 	}
 
 	@Override

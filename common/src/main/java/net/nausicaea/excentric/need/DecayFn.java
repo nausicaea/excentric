@@ -1,5 +1,7 @@
 package net.nausicaea.excentric.need;
 
+import net.nausicaea.excentric.java.util.DoubleUtils;
+
 public sealed interface DecayFn {
 	DecayFn LINEAR = new Linear();
 
@@ -12,7 +14,7 @@ public sealed interface DecayFn {
 
 		@Override
 		public double decay(double value, double deltaTime) {
-			return value * baseRate * deltaTime;
+			return DoubleUtils.clamp01(value - baseRate * deltaTime);
 		}
 	}
 }
