@@ -2,13 +2,13 @@ package net.nausicaea.excentric.minecraft.world.level;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiTypes;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -27,10 +27,8 @@ import java.util.*;
 public final class Villages extends SavedData implements VillageManager {
 	private static final Logger LOG = LoggerFactory.getLogger(Villages.class);
 	private static final String ID = ExcentricCommon.MOD_ID + "_villages";
-	@SuppressWarnings("DataFlowIssue")
-	@SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "We don't use any data fixer uppers (i.e. migration types), so this is supposed to be null.")
 	private static final SavedData.Factory<Villages> FACTORY = new SavedData.Factory<>(Villages::new, Villages::load,
-	    null);
+	    DataFixTypes.LEVEL);
 	private static final int CHUNK_RADIUS = 4;
 	private static final int SECTION_HEIGHT = 3;
 
