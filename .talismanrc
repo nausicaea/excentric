@@ -1,4 +1,18 @@
 fileignoreconfig:
   - filename: gradlew
     checksum: 7800518488d3d75df6e435dee38e777f637589e175efbd24e62e93c1bdd01cc4
+  - filename: .github/workflows/build.yml
+    checksum: cb8be4c9b4c3ebf9558d94775bea0ce960a7afaff80dd9b550c1f06ff4f16a2a
+  - filename: common/src/main/java/net/nausicaea/excentric/VillageManager.java
+    checksum: 061fa10139639df338e62393c7690a69782aabcd47f53ac3555c34541c6908d3
+  - filename: fabric/src/main/java/net/nausicaea/excentric/CardinalComponents.java
+    checksum: 7fe8a9b88d4e9095b842ac4046042770b358d74975166a0cc942fb781b48a9e2
+  - filename: fabric/src/main/java/net/nausicaea/excentric/LevelChunkUtils.java
+    checksum: 7eb1744bda570379c2d71eb3c2d5b07cb1a507e94ec767ec8bdce5e28fa2b738
+  - filename: common/src/main/java/net/nausicaea/excentric/need/RegistryKeys.java
+    checksum: 537c840da908f3fe454aa2101600d5f3a045a02f20209ff51f8e1916c40b2d79
+  - filename: common/src/main/java/net/nausicaea/excentric/need/Needs.java
+    checksum: 171cf777ab19ea5ffd253a03ed2d75bd6f8988b0b7394ed9c1cbfd9e5ceb0e6a
+  - filename: common/src/main/java/net/nausicaea/excentric/need/NeedsReasoner.java
+    checksum: de634016cf4b40e003c8838209c5bf25ba5028209669b866c40cdff23e80ae05
 version: "1.0"
