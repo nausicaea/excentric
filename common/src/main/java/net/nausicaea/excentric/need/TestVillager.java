@@ -27,7 +27,7 @@ public final class TestVillager extends AbstractVillager {
 	}
 
 	/// Deliberately don't call `super.tick()` (i.e.
-	/// [net.minecraft.world.entity.Mob#tick()], ).
+	/// [net.minecraft.world.entity.Mob#tick()]).
 	@Override
 	public void tick() {
 		var ctx = new NeedsContext(needs);
