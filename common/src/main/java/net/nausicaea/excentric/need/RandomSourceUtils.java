@@ -5,6 +5,7 @@ import net.minecraft.util.RandomSource;
 import java.util.List;
 import java.util.Optional;
 
+/// Collects extensions for Minecraft's [RandomSource].
 public final class RandomSourceUtils {
 	private RandomSourceUtils() {
 	}

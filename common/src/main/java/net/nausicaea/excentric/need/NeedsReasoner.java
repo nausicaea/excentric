@@ -26,10 +26,10 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 		throw new Todo();
 	}
 
-	/// Score each service with [Need#responseCurveFn()].
+	/// For every service, call [Needs#score(Service, Object)]
 	@Override
 	public Stream<Weighted<Service>> score(Stream<Service> services, NeedsContext context) {
-		var needs = context.needs;
+		var needs = context.needs();
 		return services.map(svc -> new Weighted<>(svc, needs.score(svc, context)));
 	}
 
@@ -47,7 +47,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	/// value from [Prerequisite#poll()] is equal to [Prerequisite.State#SATISFIED]).
 	public void tryRealiseService(NeedsContext context) {
 		currentService.map(SvcPrq::new).map(SvcPrq::poll).flatMap(SvcPolled::tryRealise)
-		    .ifPresent(t -> context.needs.realise(t.key, t.addedAmount));
+		    .ifPresent(t -> context.needs().realise(t.key, t.addedAmount));
 	}
 
 	/// Helper throwaway `record` that aims to make

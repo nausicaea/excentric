@@ -5,6 +5,7 @@ import net.minecraft.util.RandomSource;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/// Describes a utility-based AI reasoning system.
 public interface Reasoner<A, C> {
 	/// Set the currently active action.
 	void setAction(A action);

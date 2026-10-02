@@ -7,6 +7,9 @@ import net.nausicaea.excentric.java.util.DoubleUtils;
 import java.util.HashMap;
 import java.util.Optional;
 
+/// A mutable set of [Need]s that decay over time (see [Needs#decay(long)]), can
+/// be satisfied by [Service]s (see [Needs#realise(ResourceKey, double)]), and
+/// can score [Service]s.
 public final class Needs {
 	final HashMap<ResourceKey<Need>, Integer> index = new HashMap<>();
 	final HashMap<Integer, DecayFn> decayFns = new HashMap<>();
@@ -16,14 +19,19 @@ public final class Needs {
 	private int maxIndex = 0;
 	private long lastUpdateTime = 0L;
 
+	/// Return `true` if the collection contains at least one
+	/// [Need], `false` otherwise.
 	public boolean isEmpty() {
 		return index.isEmpty();
 	}
 
+	/// Return the number of [Need]s in the collection.
 	public int size() {
 		return index.size();
 	}
 
+	/// Add a [Need] to the collection. Return `true` if a need was added, `false`
+	/// if this need was already present.
 	public boolean add(Need need) {
 		if (this.index.containsKey(need.key())) {
 			return false;
@@ -37,6 +45,8 @@ public final class Needs {
 		return true;
 	}
 
+	/// Remove a particular [Need] by its resource key. Return `true` if a need was
+	/// removed, `false` otherwise.
 	public boolean remove(ResourceKey<Need> needKey) {
 		if (!this.index.containsKey(needKey)) {
 			return false;
@@ -50,6 +60,7 @@ public final class Needs {
 		return true;
 	}
 
+	/// Delete all [Need]s.
 	public void clear() {
 		this.index.clear();
 		this.decayFns.clear();
@@ -68,11 +79,15 @@ public final class Needs {
 		updateUrgency();
 	}
 
-	/// Calculates the total urgency of the collection of [Need]s.
+	/// Calculate the total urgency of the collection of [Need]s.
 	private void updateUrgency() {
 		urgency = 1.0d - CollectionUtils.mean(satisfactions.values());
 	}
 
+	/// If a [Need] matching the [Service] can be found, calculate a score based on
+	/// the need's [ResponseCurveFn]. Otherwise, return `0`. The score is based on
+	/// the [Service]'s data, the corresponding [Need]'s satisfaction level, the
+	/// overall urgency (i.e. `1 - mean(satisfaction)`), and any external context.
 	public <T> double score(Service svc, T context) {
 		var i = index.get(svc.key());
 		if (i == null) {
