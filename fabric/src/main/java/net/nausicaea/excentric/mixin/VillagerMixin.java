@@ -42,7 +42,7 @@ abstract class VillagerMixin {
 
 		// Add initial needs
 		// TODO: make need assignment data-driven
-		villageMod$needs.add(Needs.SATIATION);
+		villageMod$needs.add(Needs.SATIATION, 1.0d);
 	}
 
 	/// [Villager]s shall not use their [Brain]: concretely, `Brain#tick()` may not
