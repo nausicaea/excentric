@@ -10,7 +10,7 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.EveryN;
-import net.nausicaea.excentric.need.Needs;
+import net.nausicaea.excentric.need.NeedsCollection;
 import net.nausicaea.excentric.need.NeedsContext;
 import net.nausicaea.excentric.need.NeedsReasoner;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Villager.class)
 abstract class VillagerMixin {
 	@Unique
-	private final Needs villageMod$needs = new Needs();
+	private final NeedsCollection villageMod$needs = new NeedsCollection();
 	@Unique
 	private final NeedsReasoner villageMod$reasoner = new NeedsReasoner();
 	@Unique
@@ -50,14 +50,13 @@ abstract class VillagerMixin {
 
 	@Inject(method = "tick()V", at = @At("TAIL"))
 	public void villageMod$tickTail(CallbackInfo ci) {
-		var level = ((Villager) (Object) this).level();
-		if (level.isClientSide()) {
+		if (!(((Villager) (Object) this).level() instanceof ServerLevel level)) {
 			// We don't run this on the client.
 			return;
 		}
 
 		var gameTime = level.getGameTime();
-		var ctx = new NeedsContext(villageMod$needs);
+		var ctx = new NeedsContext(villageMod$needs, level);
 		villageMod$reasoner.tryRealiseService(ctx);
 		villageMod$every8Ticks.run(() -> villageMod$needs.decay(gameTime));
 		villageMod$every32Ticks.run(() -> villageMod$reasoner.plan(ctx, villageMod$rng));

@@ -3,6 +3,7 @@ package net.nausicaea.excentric.need;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.nausicaea.excentric.Todo;
+import net.nausicaea.excentric.java.util.DoubleUtils;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -26,11 +27,12 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 		throw new Todo();
 	}
 
-	/// For every service, call [Needs#score(Service, Object)]
+	/// For every service, call [NeedsCollection#score(Service, NeedsContext)]
 	@Override
 	public Stream<Weighted<Service>> score(Stream<Service> services, NeedsContext context) {
 		var needs = context.needs();
-		return services.map(svc -> new Weighted<>(svc, needs.score(svc, context)));
+		var temp = needs.urgency();
+		return services.map(svc -> new Weighted<>(svc, DoubleUtils.boltzmann(needs.score(svc, context), temp)));
 	}
 
 	/// Randomly select from the available [Service]s by their score.

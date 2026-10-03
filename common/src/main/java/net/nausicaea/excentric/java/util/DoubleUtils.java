@@ -9,4 +9,10 @@ public final class DoubleUtils {
 		// noinspection MathClampMigration
 		return Math.min(Math.max(value, 0.0d), 1.0d);
 	}
+
+	/// Transform a subjective utility value to a probability-like value
+	/// by `exp(utility/temperature)-1`.
+	public static double boltzmann(double utility, double temperature) {
+		return clamp01(Math.expm1(utility / temperature));
+	}
 }
