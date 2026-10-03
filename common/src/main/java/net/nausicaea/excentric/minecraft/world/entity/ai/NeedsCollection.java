@@ -1,8 +1,12 @@
 package net.nausicaea.excentric.minecraft.world.entity.ai;
 
 import net.minecraft.resources.ResourceKey;
+import net.nausicaea.excentric.ExcentricCommon;
+import net.nausicaea.excentric.ExcentricRegistries;
 import net.nausicaea.excentric.java.util.CollectionUtils;
 import net.nausicaea.excentric.java.util.DoubleUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -11,6 +15,7 @@ import java.util.Optional;
 /// [NeedsCollection#decay(long)]), can be satisfied by [Service]s (see
 /// [NeedsCollection#realise(ResourceKey, double)]), and can score [Service]s.
 public final class NeedsCollection {
+	private static final Logger LOG = LoggerFactory.getLogger(NeedsCollection.class);
 	final HashMap<ResourceKey<Need>, Integer> index = new HashMap<>();
 	final HashMap<Integer, DecayFn> decayFns = new HashMap<>();
 	final HashMap<Integer, UtilityFn<NeedsContext>> utilityFns = new HashMap<>();
@@ -31,16 +36,15 @@ public final class NeedsCollection {
 
 	/// Add a [Need] to the collection. Return `true` if a need was added, `false`
 	/// if this need was already present.
-	public boolean add(Need need) {
-		if (this.index.containsKey(need.key())) {
-			return false;
-		}
-		this.index.put(need.key(), maxIndex);
-		this.decayFns.put(maxIndex, need.decayFn());
-		this.utilityFns.put(maxIndex, need.utilityFn());
-		this.satisfactions.put(maxIndex, need.initialSatisfaction());
-		maxIndex += 1;
-		return true;
+	public boolean add(Need need, double initialSatisfaction) {
+		return ExcentricRegistries.NEEDS.getResourceKey(need).filter(k -> !this.index.containsKey(k)).map(k -> {
+			index.put(k, maxIndex);
+			decayFns.put(maxIndex, need.decayFn());
+			utilityFns.put(maxIndex, need.utilityFn());
+			satisfactions.put(maxIndex, initialSatisfaction);
+			maxIndex += 1;
+			return true;
+		}).orElse(false);
 	}
 
 	/// Remove a particular [Need] by its resource key. Return `true` if a need was
@@ -65,7 +69,7 @@ public final class NeedsCollection {
 		this.satisfactions.clear();
 	}
 
-	/// Slowly reduce [Need#initialSatisfaction()] through [Need#decayFn()].
+	/// Slowly reduce the [Need]'s satisfaction level through [Need#decayFn()].
 	public void decay(long monotonicTime) {
 		var deltaTime = (double) Math.max(0L, monotonicTime - lastUpdateTime);
 		lastUpdateTime = monotonicTime;
@@ -77,6 +81,10 @@ public final class NeedsCollection {
 					return DoubleUtils.clamp01(decayFns.get(k).decay(v, deltaTime));
 				}
 			});
+		}
+
+		if (isCritical()) {
+			LOG.info(ExcentricCommon.MARKER, "At least one need is in critical condition");
 		}
 	}
 
