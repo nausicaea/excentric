@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.need;
+package net.nausicaea.excentric.minecraft.world.entity.ai;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
