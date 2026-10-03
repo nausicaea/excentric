@@ -9,4 +9,14 @@ fileignoreconfig:
     checksum: 7fe8a9b88d4e9095b842ac4046042770b358d74975166a0cc942fb781b48a9e2
   - filename: fabric/src/main/java/net/nausicaea/excentric/LevelChunkUtils.java
     checksum: 7eb1744bda570379c2d71eb3c2d5b07cb1a507e94ec767ec8bdce5e28fa2b738
+  - filename: common/src/main/java/net/nausicaea/excentric/need/RegistryKeys.java
+    checksum: 537c840da908f3fe454aa2101600d5f3a045a02f20209ff51f8e1916c40b2d79
+  - filename: common/src/main/java/net/nausicaea/excentric/need/NeedsReasoner.java
+    checksum: 12b45bffdaccc3cca3d6e88393aa63c21a3b0cdb27a1a1f12e618e67dad4c7c0
+  - filename: common/src/main/java/net/nausicaea/excentric/need/Need.java
+    checksum: 7117537b4189f0f8361e1c2542c7bee1e05b89a1e4dc3f20ccc91a9a54a56b93
+  - filename: common/src/main/java/net/nausicaea/excentric/ExcentricRegistryKeys.java
+    checksum: 9313ed0e81fab1dbc4445001138417620cda657a6ceed461c60d9004b180ebba
+  - filename: common/src/main/java/net/nausicaea/excentric/minecraft/world/entity/ai/need/Satiation.java
+    checksum: 143962d0deed69af238391f2b0c1714fef12b82d5de4499f1b58e6adf9882200
 version: "1.0"
