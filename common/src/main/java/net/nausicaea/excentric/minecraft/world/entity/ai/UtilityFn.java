@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.need;
+package net.nausicaea.excentric.minecraft.world.entity.ai;
 
 /// Resource curves convert a [Service#baseUtility()] to a subjective utility.
 public sealed interface UtilityFn<T> {
