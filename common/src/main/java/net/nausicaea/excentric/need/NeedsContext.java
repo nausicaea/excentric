@@ -1,4 +1,6 @@
 package net.nausicaea.excentric.need;
 
-public record NeedsContext(Needs needs) {
+import net.minecraft.server.level.ServerLevel;
+
+public record NeedsContext(NeedsCollection needs, ServerLevel level) {
 }

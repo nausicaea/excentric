@@ -7,15 +7,14 @@ import net.nausicaea.excentric.java.util.DoubleUtils;
 import java.util.HashMap;
 import java.util.Optional;
 
-/// A mutable set of [Need]s that decay over time (see [Needs#decay(long)]), can
-/// be satisfied by [Service]s (see [Needs#realise(ResourceKey, double)]), and
-/// can score [Service]s.
-public final class Needs {
+/// A mutable set of [Need]s that decay over time (see
+/// [NeedsCollection#decay(long)]), can be satisfied by [Service]s (see
+/// [NeedsCollection#realise(ResourceKey, double)]), and can score [Service]s.
+public final class NeedsCollection {
 	final HashMap<ResourceKey<Need>, Integer> index = new HashMap<>();
 	final HashMap<Integer, DecayFn> decayFns = new HashMap<>();
-	final HashMap<Integer, ResponseCurveFn> responseCurveFns = new HashMap<>();
+	final HashMap<Integer, UtilityFn<NeedsContext>> utilityFns = new HashMap<>();
 	final HashMap<Integer, Double> satisfactions = new HashMap<>();
-	private double urgency = 0.0d;
 	private int maxIndex = 0;
 	private long lastUpdateTime = 0L;
 
@@ -38,10 +37,9 @@ public final class Needs {
 		}
 		this.index.put(need.key(), maxIndex);
 		this.decayFns.put(maxIndex, need.decayFn());
-		this.responseCurveFns.put(maxIndex, need.responseCurveFn());
+		this.utilityFns.put(maxIndex, need.utilityFn());
 		this.satisfactions.put(maxIndex, need.satisfaction());
 		maxIndex += 1;
-		updateUrgency();
 		return true;
 	}
 
@@ -53,10 +51,9 @@ public final class Needs {
 		}
 		var idx = this.index.get(needKey);
 		this.decayFns.remove(idx);
-		this.responseCurveFns.remove(idx);
+		this.utilityFns.remove(idx);
 		this.satisfactions.remove(idx);
 		this.index.remove(needKey);
-		updateUrgency();
 		return true;
 	}
 
@@ -64,9 +61,8 @@ public final class Needs {
 	public void clear() {
 		this.index.clear();
 		this.decayFns.clear();
-		this.responseCurveFns.clear();
+		this.utilityFns.clear();
 		this.satisfactions.clear();
-		updateUrgency();
 	}
 
 	/// Slowly reduce [Need#satisfaction()] through [Need#decayFn()].
@@ -76,33 +72,30 @@ public final class Needs {
 		for (var i : index.values()) {
 			satisfactions.compute(i, (k, v) -> (v == null) ? 1.0d : decayFns.get(k).decay(v, deltaTime));
 		}
-		updateUrgency();
 	}
 
-	/// Calculate the total urgency of the collection of [Need]s.
-	private void updateUrgency() {
-		urgency = 1.0d - CollectionUtils.mean(satisfactions.values());
+	public double urgency() {
+		return 1.0d - CollectionUtils.mean(satisfactions.values());
 	}
 
 	/// If a [Need] matching the [Service] can be found, calculate a score based on
-	/// the need's [ResponseCurveFn]. Otherwise, return `0`. The score is based on
-	/// the [Service]'s data, the corresponding [Need]'s satisfaction level, the
-	/// overall urgency (i.e. `1 - mean(satisfaction)`), and any external context.
-	public <T> double score(Service svc, T context) {
+	/// the need's [UtilityFn]. Otherwise, return `0`. The score is based on the
+	/// [Service]'s data, the corresponding [Need]'s satisfaction level, the overall
+	/// urgency (i.e. `1 - mean(satisfaction)`), and any external context.
+	public double score(Service svc, NeedsContext context) {
 		var i = index.get(svc.key());
 		if (i == null) {
 			return 0.0d;
 		}
-		return responseCurveFns.get(i).score(svc, satisfactions.get(i), urgency, context);
+		return utilityFns.get(i).score(svc, satisfactions.get(i), context);
 	}
 
 	public void realise(ResourceKey<Need> key, double addedIntensity) {
 		Optional.ofNullable(index.get(key)).ifPresent(
 		    i -> satisfactions.compute(i, (k, v) -> (v == null) ? 1.0d : DoubleUtils.clamp01(addedIntensity + v)));
-		updateUrgency();
 	}
 
-	public record NeedData(ResourceKey<Need> key, DecayFn decayFn, ResponseCurveFn responseCurveFn,
+	public record NeedData(ResourceKey<Need> key, DecayFn decayFn, UtilityFn<NeedsContext> utilityFn,
 	    Double satisfaction) {
 	}
 }
