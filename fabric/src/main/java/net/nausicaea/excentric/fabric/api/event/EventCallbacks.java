@@ -12,16 +12,15 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.nausicaea.excentric.EveryN;
 import net.nausicaea.excentric.minecraft.world.block.entity.Bells;
 import net.nausicaea.excentric.minecraft.world.entity.npc.Villagers;
+import net.nausicaea.excentric.minecraft.world.level.VillageRefs;
 import net.nausicaea.excentric.minecraft.world.level.Villages;
 import net.nausicaea.excentric.minecraft.world.level.chunk.LevelChunks;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public final class EventCallbacks {
-	private static final int DEBUG_TICK_INTERVAL = 10;
-	private static final AtomicInteger tickCounter = new AtomicInteger(0);
+	private static final EveryN every10Ticks = new EveryN(8);
 
 	private EventCallbacks() {
 	}
@@ -35,11 +34,8 @@ public final class EventCallbacks {
 	}
 
 	private static void onEndTick(MinecraftServer server) {
-		var ctr = tickCounter.getAndIncrement();
-		if (ctr % DEBUG_TICK_INTERVAL == 0) {
-			server.getAllLevels().forEach(level -> Villages.get(level).debug(level));
-			tickCounter.set(0);
-		}
+		VillageRefs.drainDeferred();
+		every10Ticks.run(() -> server.getAllLevels().forEach(level -> Villages.get(level).debug(level)));
 	}
 
 	private static void onAfterBlockPlace(BlockState prevState, BlockPos pos, ServerLevel serverLevel) {

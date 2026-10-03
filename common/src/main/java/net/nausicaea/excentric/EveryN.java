@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.need;
+package net.nausicaea.excentric;
 
 /// Staggers a call to [EveryN#run(Runnable)] to an interval, calling
 /// [Runnable] only once every `n` ticks on [EveryN].
