@@ -7,6 +7,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.Level;
+import net.nausicaea.excentric.EveryN;
 import org.jetbrains.annotations.Nullable;
 
 /// Just a test entity

@@ -19,7 +19,7 @@ public final class Bells {
 		if (VillageRefs.get(bbe).isPresent()) {
 			return;
 		}
-		Villages.get(level).find(bbe.getBlockPos()).ifPresent(v -> VillageRefs.claim(bbe, v.id()));
+		Villages.get(level).find(bbe.getBlockPos()).ifPresent(v -> VillageRefs.claimDeferred(bbe, v.id()));
 	}
 
 	private Bells() {

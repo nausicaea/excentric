@@ -17,4 +17,9 @@ abstract class VillagerMixin {
 	    LivingEntity livingEntity) {
 		return false;
 	}
+
+	// @Inject(method = "tick()V", at=@At("TAIL"))
+	// public void villageMod$tickTail(CallbackInfo ci) {
+	// throw new Todo();
+	// }
 }
