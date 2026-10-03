@@ -6,5 +6,6 @@ public interface Need {
 	ResourceKey<Need> key();
 	DecayFn decayFn();
 	UtilityFn<NeedsContext> utilityFn();
-	double satisfaction();
+
+	double initialSatisfaction();
 }

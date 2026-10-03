@@ -38,7 +38,7 @@ public final class NeedsCollection {
 		this.index.put(need.key(), maxIndex);
 		this.decayFns.put(maxIndex, need.decayFn());
 		this.utilityFns.put(maxIndex, need.utilityFn());
-		this.satisfactions.put(maxIndex, need.satisfaction());
+		this.satisfactions.put(maxIndex, need.initialSatisfaction());
 		maxIndex += 1;
 		return true;
 	}
@@ -65,7 +65,7 @@ public final class NeedsCollection {
 		this.satisfactions.clear();
 	}
 
-	/// Slowly reduce [Need#satisfaction()] through [Need#decayFn()].
+	/// Slowly reduce [Need#initialSatisfaction()] through [Need#decayFn()].
 	public void decay(long monotonicTime) {
 		var deltaTime = (double) Math.max(0L, monotonicTime - lastUpdateTime);
 		lastUpdateTime = monotonicTime;
@@ -80,8 +80,9 @@ public final class NeedsCollection {
 
 	/// If a [Need] matching the [Service] can be found, calculate a score based on
 	/// the need's [UtilityFn]. Otherwise, return `0`. The score is based on the
-	/// [Service]'s data, the corresponding [Need]'s satisfaction level, the overall
-	/// urgency (i.e. `1 - mean(satisfaction)`), and any external context.
+	/// [Service]'s data, the corresponding [Need]'s initialSatisfaction level, the
+	/// overall urgency (i.e. `1 - mean(initialSatisfaction)`), and any
+	/// external context.
 	public double score(Service svc, NeedsContext context) {
 		var i = index.get(svc.key());
 		if (i == null) {

@@ -2,6 +2,7 @@ package net.nausicaea.excentric;
 
 import net.minecraft.resources.ResourceLocation;
 
+import net.nausicaea.excentric.minecraft.world.entity.ai.need.Needs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -16,6 +17,9 @@ public final class ExcentricCommon {
 	}
 
 	public static void onInitialize() {
+		ExcentricRegistryKeys.register();
+		ExcentricRegistries.register();
+		Needs.register();
 		LOG.info(MARKER, "Testing seed: -5038984067013596602");
 	}
 
