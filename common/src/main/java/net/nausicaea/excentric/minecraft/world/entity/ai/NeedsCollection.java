@@ -70,8 +70,18 @@ public final class NeedsCollection {
 		var deltaTime = (double) Math.max(0L, monotonicTime - lastUpdateTime);
 		lastUpdateTime = monotonicTime;
 		for (var i : index.values()) {
-			satisfactions.compute(i, (k, v) -> (v == null) ? 1.0d : decayFns.get(k).decay(v, deltaTime));
+			satisfactions.compute(i, (k, v) -> {
+				if (v == null) {
+					return 1.0d;
+				} else {
+					return DoubleUtils.clamp01(decayFns.get(k).decay(v, deltaTime));
+				}
+			});
 		}
+	}
+
+	public boolean isCritical() {
+		return satisfactions.values().stream().anyMatch(s -> s < Double.MIN_NORMAL);
 	}
 
 	public double urgency() {
