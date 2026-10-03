@@ -13,6 +13,7 @@ import net.nausicaea.excentric.EveryN;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsCollection;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsContext;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsReasoner;
+import net.nausicaea.excentric.minecraft.world.entity.ai.need.Needs;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,6 +39,10 @@ abstract class VillagerMixin {
 		villageMod$every32Ticks = new EveryN(32, level.random.nextInt(32));
 		villageMod$every8Ticks = new EveryN(8, level.random.nextInt(8));
 		villageMod$rng = level.random.fork();
+
+		// Add initial needs
+		// TODO: make need assignment data-driven
+		villageMod$needs.add(Needs.SATIATION);
 	}
 
 	/// [Villager]s shall not use their [Brain]: concretely, `Brain#tick()` may not
