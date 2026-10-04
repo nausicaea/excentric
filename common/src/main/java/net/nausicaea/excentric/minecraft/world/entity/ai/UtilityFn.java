@@ -8,8 +8,9 @@ public sealed interface UtilityFn<T> {
 		return new Urgency<>();
 	}
 
-	/// Score a [Service] by the existing [Need] initialSatisfaction value, the
-	/// current temperature, and the external context.
+	/// Score a [Service] by the existing
+	/// [net.nausicaea.excentric.minecraft.world.entity.ai.need.Need] initialSatisfaction
+	/// value, the current temperature, and the external context.
 	double score(Service svc, double satisfaction, T context);
 
 	record Urgency<T>() implements UtilityFn<T> {
