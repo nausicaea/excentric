@@ -20,7 +20,7 @@ public final class NeedsCollection {
 	private static final Logger LOG = LoggerFactory.getLogger(NeedsCollection.class);
 	final HashMap<ResourceKey<Need>, Integer> index = new HashMap<>();
 	final HashMap<Integer, DecayFn> decayFns = new HashMap<>();
-	final HashMap<Integer, UtilityFn<NeedsContext>> utilityFns = new HashMap<>();
+	final HashMap<Integer, UtilityFn> utilityFns = new HashMap<>();
 	final HashMap<Integer, Double> satisfactions = new HashMap<>();
 	private int maxIndex = 0;
 	private long lastUpdateTime = 0L;
@@ -116,7 +116,6 @@ public final class NeedsCollection {
 		    i -> satisfactions.compute(i, (k, v) -> (v == null) ? 1.0d : DoubleUtils.clamp01(addedIntensity + v)));
 	}
 
-	public record NeedData(ResourceKey<Need> key, DecayFn decayFn, UtilityFn<NeedsContext> utilityFn,
-	    Double satisfaction) {
+	public record NeedData(ResourceKey<Need> key, DecayFn decayFn, UtilityFn utilityFn, Double satisfaction) {
 	}
 }

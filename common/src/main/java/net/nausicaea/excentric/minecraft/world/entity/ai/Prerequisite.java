@@ -1,6 +1,6 @@
 package net.nausicaea.excentric.minecraft.world.entity.ai;
 
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.Todo;
 
 /// Denotes something that needs to be satisfied as a pre-condition to something
@@ -29,7 +29,7 @@ public sealed interface Prerequisite {
 
 	/// Denotes a [Prerequisite] position: the entity that wants to satisfy this
 	/// condition must navigate to the stored [BlockPos].
-	record Position(BlockPos pos) implements Prerequisite {
+	record Position(Vec3 pos) implements Prerequisite {
 		@Override
 		public State poll() {
 			throw new Todo();
