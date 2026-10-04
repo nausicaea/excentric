@@ -2,7 +2,7 @@ package net.nausicaea.excentric;
 
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.MappedRegistry;
-import net.nausicaea.excentric.minecraft.world.entity.ai.Need;
+import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

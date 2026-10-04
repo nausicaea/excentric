@@ -5,6 +5,8 @@ import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.ExcentricRegistries;
 import net.nausicaea.excentric.java.util.CollectionUtils;
 import net.nausicaea.excentric.java.util.DoubleUtils;
+import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
+import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
