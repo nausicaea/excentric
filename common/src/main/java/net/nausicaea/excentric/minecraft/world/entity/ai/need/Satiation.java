@@ -1,11 +1,12 @@
 package net.nausicaea.excentric.minecraft.world.entity.ai.need;
 
 import net.nausicaea.excentric.minecraft.world.entity.ai.decay.DecayFn;
+import net.nausicaea.excentric.minecraft.world.entity.ai.utility.Example;
 import net.nausicaea.excentric.minecraft.world.entity.ai.utility.UtilityFn;
 
 public record Satiation(DecayFn d, UtilityFn u) implements Need {
 	public Satiation() {
-		this(DecayFn.linear(1.0d), new UtilityFn.Example());
+		this(DecayFn.linear(1.0d), new Example());
 	}
 
 	@Override
