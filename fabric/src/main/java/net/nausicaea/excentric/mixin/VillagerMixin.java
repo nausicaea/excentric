@@ -10,6 +10,7 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.EveryN;
+import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsCollection;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsContext;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsReasoner;
@@ -42,7 +43,7 @@ abstract class VillagerMixin {
 
 		// Add initial needs
 		// TODO: make need assignment data-driven
-		villageMod$needs.add(Needs.SATIATION, 1.0d);
+		villageMod$needs.add(Needs.SATIATION, Probability.ONE);
 	}
 
 	/// [Villager]s shall not use their [Brain]: concretely, `Brain#tick()` may not

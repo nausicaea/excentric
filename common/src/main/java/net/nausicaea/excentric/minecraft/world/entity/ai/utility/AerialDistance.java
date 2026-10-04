@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.minecraft.world.entity.ai.utility;
 
 import net.minecraft.world.phys.Vec3;
+import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Position;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 
@@ -9,10 +10,10 @@ import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 /// crow flies).
 public record AerialDistance() implements UtilityFn {
 	@Override
-	public double score(Service svc, double satisfaction, UtilityFnContext context) {
+	public Probability score(Service svc, Probability satisfaction, UtilityFnContext context) {
 		if (!(svc.prerequisite() instanceof Position(Vec3 pos))) {
-			return 1.0d;
+			return Probability.ONE;
 		}
-		return 1.0d / Math.max(1.0d, Math.abs(context.entity().position().distanceTo(pos)));
+		return Probability.of(1.0d / Math.max(1.0d, Math.abs(context.entity().position().distanceTo(pos))));
 	}
 }
