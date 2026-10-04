@@ -55,13 +55,14 @@ abstract class VillagerMixin {
 
 	@Inject(method = "tick()V", at = @At("TAIL"))
 	public void villageMod$tickTail(CallbackInfo ci) {
-		if (!(((Villager) (Object) this).level() instanceof ServerLevel level)) {
+		var villager = ((Villager) (Object) this);
+		if (!(villager.level() instanceof ServerLevel level)) {
 			// We don't run this on the client.
 			return;
 		}
 
 		var gameTime = level.getGameTime();
-		var ctx = new NeedsContext(villageMod$needs, level);
+		var ctx = new NeedsContext(villageMod$needs, villager, level);
 		villageMod$reasoner.tryRealiseService(ctx);
 		villageMod$every8Ticks.run(() -> villageMod$needs.decay(gameTime));
 		villageMod$every32Ticks.run(() -> villageMod$reasoner.plan(ctx, villageMod$rng));

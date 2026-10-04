@@ -20,5 +20,5 @@ fileignoreconfig:
   - filename: common/src/main/java/net/nausicaea/excentric/minecraft/world/entity/ai/need/Satiation.java
     checksum: 143962d0deed69af238391f2b0c1714fef12b82d5de4499f1b58e6adf9882200
   - filename: common/src/main/java/net/nausicaea/excentric/minecraft/world/entity/ai/NeedsCollection.java
-    checksum: 5a5e82370a8a70ad5c2442c1d1c3ac2df2db07a0635883afbe052bc1d1e117b4
+    checksum: fdc48f3b28b1badc777a21e6396b00aa13b266b651e6e5570057e2fda003de07
 version: "1.0"
