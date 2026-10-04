@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.minecraft.world.entity.ai;
+package net.nausicaea.excentric.minecraft.world.entity.ai.utility;
 
 import net.minecraft.world.entity.Entity;
 

@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.minecraft.world.entity.ai;
+package net.nausicaea.excentric.minecraft.util;
 
 import net.minecraft.util.RandomSource;
 
