@@ -3,7 +3,7 @@ package net.nausicaea.excentric.minecraft.world.entity.ai;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.nausicaea.excentric.Todo;
-import net.nausicaea.excentric.java.util.DoubleUtils;
+import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.util.RandomSourceUtils;
 import net.nausicaea.excentric.minecraft.util.Weighted;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
@@ -37,7 +37,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	public Stream<Weighted<Service>> score(Stream<Service> services, NeedsContext context) {
 		var needs = context.needs();
 		var temp = needs.urgency();
-		return services.map(svc -> new Weighted<>(svc, DoubleUtils.boltzmann(needs.score(svc, context), temp)));
+		return services.map(svc -> new Weighted<>(svc, Probability.boltzmann(needs.score(svc, context), temp)));
 	}
 
 	/// Randomly select from the available [Service]s by their score.
@@ -87,6 +87,6 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 
 	/// Helper throwaway `record` that aims to make
 	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
-	private record SvcRealised(ResourceKey<Need> key, double addedAmount) {
+	private record SvcRealised(ResourceKey<Need> key, Probability addedAmount) {
 	}
 }

@@ -3,8 +3,7 @@ package net.nausicaea.excentric.minecraft.world.entity.ai;
 import net.minecraft.resources.ResourceKey;
 import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.ExcentricRegistries;
-import net.nausicaea.excentric.java.util.CollectionUtils;
-import net.nausicaea.excentric.java.util.DoubleUtils;
+import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.world.entity.ai.decay.DecayFn;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
@@ -17,13 +16,14 @@ import java.util.Optional;
 
 /// A mutable set of [Need]s that decay over time (see
 /// [NeedsCollection#decay(long)]), can be satisfied by [Service]s (see
-/// [NeedsCollection#realise(ResourceKey, double)]), and can score [Service]s.
+/// [NeedsCollection#realise(ResourceKey, Probability)]), and can
+/// score [Service]s.
 public final class NeedsCollection {
 	private static final Logger LOG = LoggerFactory.getLogger(NeedsCollection.class);
 	final HashMap<ResourceKey<Need>, Integer> index = new HashMap<>();
 	final HashMap<Integer, DecayFn> decayFns = new HashMap<>();
 	final HashMap<Integer, UtilityFn> utilityFns = new HashMap<>();
-	final HashMap<Integer, Double> satisfactions = new HashMap<>();
+	final HashMap<Integer, Probability> satisfactions = new HashMap<>();
 	private int maxIndex = 0;
 	private long lastUpdateTime = 0L;
 
@@ -40,7 +40,7 @@ public final class NeedsCollection {
 
 	/// Add a [Need] to the collection. Return `true` if a need was added, `false`
 	/// if this need was already present.
-	public boolean add(Need need, double initialSatisfaction) {
+	public boolean add(Need need, Probability initialSatisfaction) {
 		return ExcentricRegistries.NEEDS.getResourceKey(need).filter(k -> !this.index.containsKey(k)).map(k -> {
 			index.put(k, maxIndex);
 			decayFns.put(maxIndex, need.decayFn());
@@ -80,9 +80,10 @@ public final class NeedsCollection {
 		for (var i : index.values()) {
 			satisfactions.compute(i, (k, v) -> {
 				if (v == null) {
-					return 1.0d;
+					// Assume unknown needs have a satisfaction of one.
+					return Probability.ONE;
 				} else {
-					return DoubleUtils.clamp01(decayFns.get(k).decay(v, deltaTime));
+					return decayFns.get(k).decay(v, deltaTime);
 				}
 			});
 		}
@@ -93,11 +94,11 @@ public final class NeedsCollection {
 	}
 
 	public boolean isCritical() {
-		return satisfactions.values().stream().anyMatch(s -> s < Double.MIN_NORMAL);
+		return satisfactions.values().stream().anyMatch(Probability::isSubnormal);
 	}
 
-	public double urgency() {
-		return 1.0d - CollectionUtils.mean(satisfactions.values());
+	public Probability urgency() {
+		return Probability.mean(satisfactions.values()).inv();
 	}
 
 	/// If a [Need] matching the [Service] can be found, calculate a score based on
@@ -105,17 +106,22 @@ public final class NeedsCollection {
 	/// [Service]'s data, the corresponding [Need]'s initialSatisfaction level, the
 	/// overall urgency (i.e. `1 - mean(initialSatisfaction)`), and any
 	/// external context.
-	public double score(Service svc, NeedsContext context) {
+	public Probability score(Service svc, NeedsContext context) {
 		var i = index.get(svc.key());
 		if (i == null) {
-			return 0.0d;
+			return Probability.ZERO;
 		}
 		return utilityFns.get(i).score(svc, satisfactions.get(i), context);
 	}
 
-	public void realise(ResourceKey<Need> key, double addedIntensity) {
-		Optional.ofNullable(index.get(key)).ifPresent(
-		    i -> satisfactions.compute(i, (k, v) -> (v == null) ? 1.0d : DoubleUtils.clamp01(addedIntensity + v)));
+	public void realise(ResourceKey<Need> key, Probability addedIntensity) {
+		Optional.ofNullable(index.get(key)).ifPresent(i -> satisfactions.compute(i, (k, v) -> {
+			if (v == null) {
+				// Assume unknown needs are filled up by `addedIntensity`, starting at zero.
+				return addedIntensity;
+			}
+			return v.add(addedIntensity);
+		}));
 	}
 
 	public record NeedData(ResourceKey<Need> key, DecayFn decayFn, UtilityFn utilityFn, Double satisfaction) {

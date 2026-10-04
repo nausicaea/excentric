@@ -14,7 +14,7 @@ public final class RandomSourceUtils {
 	public static <T> Optional<T> chooseWeighted(RandomSource rng, List<Weighted<T>> items) {
 		double total = 0.0;
 		for (Weighted<T> w : items) {
-			double weight = w.weight();
+			double weight = w.weight().get();
 			if (!(weight >= 0.0) || Double.isInfinite(weight)) {
 				throw new IllegalArgumentException("Invalid weight: %s".formatted(weight));
 			}
@@ -26,9 +26,10 @@ public final class RandomSourceUtils {
 		double r = rng.nextDouble() * total;
 		T lastPositive = null;
 		for (Weighted<T> w : items) {
-			if (w.weight() <= 0.0)
+			var weight = w.weight().get();
+			if (weight <= 0.0)
 				continue;
-			r -= w.weight();
+			r -= weight;
 			if (r < 0.0) {
 				return Optional.of(w.item());
 			}
