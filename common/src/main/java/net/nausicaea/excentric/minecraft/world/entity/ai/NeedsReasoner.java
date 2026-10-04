@@ -4,7 +4,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.nausicaea.excentric.Todo;
 import net.nausicaea.excentric.java.util.DoubleUtils;
+import net.nausicaea.excentric.minecraft.util.RandomSourceUtils;
+import net.nausicaea.excentric.minecraft.util.Weighted;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
+import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 
 import java.util.*;

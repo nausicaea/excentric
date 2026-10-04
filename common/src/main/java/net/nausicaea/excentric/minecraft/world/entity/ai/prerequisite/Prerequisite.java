@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.minecraft.world.entity.ai;
+package net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite;
 
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.Todo;

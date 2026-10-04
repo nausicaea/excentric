@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.minecraft.world.entity.ai;
 
 import net.minecraft.util.RandomSource;
+import net.nausicaea.excentric.minecraft.util.Weighted;
 
 import java.util.Optional;
 import java.util.stream.Stream;

@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.minecraft.world.entity.ai;
+package net.nausicaea.excentric.minecraft.world.entity.ai.decay;
 
 public sealed interface DecayFn {
 	/// A positive `baseRate` will result in a negative slope for the linear decay.

@@ -1,7 +1,8 @@
-package net.nausicaea.excentric.minecraft.world.entity.ai;
+package net.nausicaea.excentric.minecraft.world.entity.ai.utility;
 
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.java.util.DoubleUtils;
+import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 
 /// Resource curves convert a [Service#baseUtility()] to a subjective utility.
