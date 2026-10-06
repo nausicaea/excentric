@@ -81,7 +81,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 			}
 
 			var svcKey = svc.key();
-			return svc.realise().map(amt -> new SvcRealised(svcKey, amt));
+			return Optional.of(new SvcRealised(svcKey, svc.realise()));
 		}
 	}
 
