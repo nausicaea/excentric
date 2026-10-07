@@ -2,6 +2,7 @@ package net.nausicaea.excentric.minecraft.world.entity.ai;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
+import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.Todo;
 import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.util.RandomSourceUtils;
@@ -9,11 +10,14 @@ import net.nausicaea.excentric.minecraft.util.Weighted;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
 import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Stream;
 
 public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
+	private static final Logger LOG = LoggerFactory.getLogger(NeedsReasoner.class);
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	private Optional<SvcPrq> currentService;
 
@@ -73,15 +77,18 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	/// Helper throwaway `record` that aims to make
 	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
 	private record SvcPolled(Service svc, Prerequisite.State state) {
-		/// Try to call [Service#realise()] if the [Prerequisite.State] is equal to
-		/// [Prerequisite.State.Satisfied]. Otherwise, return [Optional#empty()].
+		/// Evaluate [Prerequisite.State] and call [Service#realise()] only if `state`
+		/// matches [Prerequisite.State.Satisfied].
 		Optional<SvcRealised> tryRealise() {
-			if (!(state instanceof Prerequisite.State.Satisfied)) {
-				return Optional.empty();
-			}
-
 			var svcKey = svc.key();
-			return Optional.of(new SvcRealised(svcKey, svc.realise()));
+			return switch (state) {
+				case Prerequisite.State.Pending p -> Optional.empty();
+				case Prerequisite.State.Failed f -> {
+					LOG.warn(ExcentricCommon.MARKER, "Prerequisite of service has state failed");
+					yield Optional.of(new SvcRealised(svcKey, Probability.ZERO));
+				}
+				case Prerequisite.State.Satisfied s -> Optional.of(new SvcRealised(svcKey, svc.realise()));
+			};
 		}
 	}
 
