@@ -7,11 +7,9 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /// Describes a utility-based AI reasoning system.
-public interface Reasoner<A, C> {
+public interface Reasoner<A, C extends ReasonerContext<A>> {
 	/// Set the currently active action.
 	void setAction(A action);
-	/// Collect actions from a context.
-	Stream<A> collect(C context);
 	/// Score actions relative to a context.
 	Stream<Weighted<A>> score(Stream<A> actions, C context);
 	/// Based on the action weights, select at most one next action.
@@ -21,6 +19,6 @@ public interface Reasoner<A, C> {
 	/// 2. Score each action
 	/// 3. Select the next action
 	default void plan(C context, RandomSource rng) {
-		select(score(collect(context), context), rng).ifPresent(this::setAction);
+		select(score(context.collect(), context), rng).ifPresent(this::setAction);
 	}
 }
