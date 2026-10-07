@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-	private Optional<Service> currentService;
+	private Optional<SvcPrq> currentService;
 
 	public NeedsReasoner() {
 		this.currentService = Optional.empty();
@@ -23,7 +23,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 
 	@Override
 	public void setAction(Service action) {
-		this.currentService = Optional.of(action);
+		this.currentService = Optional.of(new SvcPrq(action));
 	}
 
 	/// Collect services from various sources.
@@ -53,7 +53,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	/// [Service#realise()] only if the prerequisite is satisfied (e.g. the return
 	/// value from [Prerequisite#poll()] is equal to [Prerequisite.State.Satisfied]).
 	public void tryRealiseService(NeedsContext context) {
-		currentService.map(SvcPrq::new).map(SvcPrq::poll).flatMap(SvcPolled::tryRealise)
+		currentService.map(SvcPrq::poll).flatMap(SvcPolled::tryRealise)
 		    .ifPresent(t -> context.needs().realise(t.key, t.addedAmount));
 	}
 
