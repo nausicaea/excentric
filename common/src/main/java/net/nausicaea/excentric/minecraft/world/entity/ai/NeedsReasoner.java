@@ -3,7 +3,6 @@ package net.nausicaea.excentric.minecraft.world.entity.ai;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.nausicaea.excentric.ExcentricCommon;
-import net.nausicaea.excentric.Todo;
 import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.util.RandomSourceUtils;
 import net.nausicaea.excentric.minecraft.util.Weighted;
@@ -28,12 +27,6 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	@Override
 	public void setAction(Service action) {
 		this.currentService = Optional.of(new SvcPrq(action));
-	}
-
-	/// Collect services from various sources.
-	@Override
-	public Stream<Service> collect(NeedsContext context) {
-		throw new Todo();
 	}
 
 	/// For every service, call [NeedsCollection#score(Service, NeedsContext)]
