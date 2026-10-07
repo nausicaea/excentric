@@ -11,8 +11,8 @@ import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.EveryN;
 import net.nausicaea.excentric.java.util.Probability;
+import net.nausicaea.excentric.minecraft.world.entity.ai.FabricNeedsContext;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsCollection;
-import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsContext;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsReasoner;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Needs;
 import org.spongepowered.asm.mixin.Mixin;
@@ -63,7 +63,7 @@ abstract class VillagerMixin {
 		}
 
 		var gameTime = level.getGameTime();
-		var ctx = new NeedsContext(villageMod$needs, villager, level);
+		var ctx = new FabricNeedsContext(villageMod$needs, villager);
 		villageMod$reasoner.tryRealiseService(ctx);
 		villageMod$every8Ticks.run(() -> villageMod$needs.decay(gameTime));
 		villageMod$every32Ticks.run(() -> villageMod$reasoner.plan(ctx, villageMod$rng));
