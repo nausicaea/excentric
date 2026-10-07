@@ -51,7 +51,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	/// words, try to satisfy the matching [Need] with the current [Service]. This
 	/// guarantees to call [Prerequisite#poll()] exactly once. Call
 	/// [Service#realise()] only if the prerequisite is satisfied (e.g. the return
-	/// value from [Prerequisite#poll()] is equal to [Prerequisite.State#SATISFIED]).
+	/// value from [Prerequisite#poll()] is equal to [Prerequisite.State.Satisfied]).
 	public void tryRealiseService(NeedsContext context) {
 		currentService.map(SvcPrq::new).map(SvcPrq::poll).flatMap(SvcPolled::tryRealise)
 		    .ifPresent(t -> context.needs().realise(t.key, t.addedAmount));
@@ -74,9 +74,9 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
 	private record SvcPolled(Service svc, Prerequisite.State state) {
 		/// Try to call [Service#realise()] if the [Prerequisite.State] is equal to
-		/// [Prerequisite.State#SATISFIED]. Otherwise, return [Optional#empty()].
+		/// [Prerequisite.State.Satisfied]. Otherwise, return [Optional#empty()].
 		Optional<SvcRealised> tryRealise() {
-			if (state != Prerequisite.State.SATISFIED) {
+			if (!(state instanceof Prerequisite.State.Satisfied)) {
 				return Optional.empty();
 			}
 

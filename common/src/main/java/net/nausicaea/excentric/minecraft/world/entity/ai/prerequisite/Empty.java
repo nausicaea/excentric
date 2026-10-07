@@ -4,6 +4,6 @@ package net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite;
 public record Empty() implements Prerequisite {
 	@Override
 	public State poll() {
-		return State.SATISFIED;
+		return new State.Satisfied();
 	}
 }

@@ -1,6 +1,0 @@
-fileignoreconfig:
-    - filename: common/src/main/java/net/nausicaea/excentric/minecraft/world/entity/ai/NeedsReasoner.java
-      checksum: ec661e8e54f2a1689a340a52b47e2d81ec7489bac6fa8096c25dcf18ba3696f9
-    - filename: common/src/main/java/net/nausicaea/excentric/minecraft/world/entity/ai/NeedsCollection.java
-      checksum: f288958f5391c1097acc5dd411fb29fc61e5c12e87bf390b2e44e31ff6730520
-version: "1.0"
