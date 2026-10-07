@@ -1,7 +1,7 @@
 [versions]
 spotbugs = '4.10.4'
 gradle-spotless = '8.10.3'
-gradle-spotbugs = '6.5.11'
+gradle-spotbugs = '6.5.12'
 minecraft = '1.21.4'
 mixin = '0.8.7'
 fabric-loom = '1.18.2'
