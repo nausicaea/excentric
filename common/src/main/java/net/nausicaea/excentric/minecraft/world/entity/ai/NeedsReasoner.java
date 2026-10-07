@@ -61,8 +61,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 		    .ifPresent(t -> context.needs().realise(t.key, t.addedAmount));
 	}
 
-	/// Helper throwaway `record` that aims to make
-	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
+	/// Denotes a service with an unfulfilled prerequisite.
 	private record SvcPrq(Service svc, Prerequisite prq) {
 		SvcPrq(Service svc) {
 			this(svc, svc.prerequisite());
@@ -74,8 +73,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 		}
 	}
 
-	/// Helper throwaway `record` that aims to make
-	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
+	/// Denotes a service whose prerequisite was just polled.
 	private record SvcPolled(Service svc, Prerequisite.State state) {
 		/// Evaluate [Prerequisite.State] and call [Service#realise()] only if `state`
 		/// matches [Prerequisite.State.Satisfied].
@@ -92,8 +90,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 		}
 	}
 
-	/// Helper throwaway `record` that aims to make
-	/// [NeedsReasoner#tryRealiseService(NeedsContext context)] more easily readable.
+	/// Denotes a realised service.
 	private record SvcRealised(ResourceKey<Need> key, Probability addedAmount) {
 	}
 }
