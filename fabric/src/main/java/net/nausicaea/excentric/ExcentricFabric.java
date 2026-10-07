@@ -8,5 +8,6 @@ public class ExcentricFabric implements ModInitializer {
 	public void onInitialize() {
 		ExcentricCommon.onInitialize();
 		EventCallbacks.register();
+		ExcentricServiceApi.register();
 	}
 }
