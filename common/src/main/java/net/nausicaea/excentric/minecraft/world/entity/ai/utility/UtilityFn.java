@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.minecraft.world.entity.ai.utility;
 
 import net.nausicaea.excentric.ai.service.Service;
+import net.nausicaea.excentric.ai.utility.UtilityFnContext;
 import net.nausicaea.excentric.java.util.Probability;
 
 /// Resource curves convert a [Service#baseUtility()] to a subjective utility.

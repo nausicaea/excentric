@@ -2,6 +2,7 @@ package net.nausicaea.excentric.minecraft.world.entity.ai.utility;
 
 import net.nausicaea.excentric.ai.prerequisite.Position;
 import net.nausicaea.excentric.ai.service.Service;
+import net.nausicaea.excentric.ai.utility.UtilityFnContext;
 import net.nausicaea.excentric.java.util.Probability;
 
 /// Calculate the utility as the multiplicative inverse (`1/x`) of the
