@@ -18,7 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.*;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxUtils;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxVisualiser;
-import net.nausicaea.excentric.minecraft.world.phys.Vec3Utils;
+import net.nausicaea.excentric.minecraft.world.phys.Vec3ExtKt;
+import net.nausicaea.excentric.util.OptionKt;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,9 +94,10 @@ public final class Villages extends SavedData implements VillageManager {
                         .toList();
         LOG.info(ExcentricCommon.MARKER, "Found {} homes / beds", homes.size());
         var centroid =
-                Vec3Utils.toBlockPosFloor(
-                        Vec3Utils.mapMean(homes, p -> new Vec3(p.getPos()))
-                                .orElseGet(() -> new Vec3(anchor)));
+                Vec3ExtKt.toBlockPosFloor(
+                        OptionKt.unwrapOr(
+                                Vec3ExtKt.mapMean(homes, p -> new Vec3(p.getPos())),
+                                new Vec3(anchor)));
         var village = new Village(UUID.randomUUID(), anchor, centroid, extents);
         villages.put(village.id(), village);
         claimLoadedChunks(level, village);

@@ -12,12 +12,12 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.nausicaea.excentric.EveryN;
 import net.nausicaea.excentric.minecraft.world.block.entity.Bells;
 import net.nausicaea.excentric.minecraft.world.entity.npc.Villagers;
 import net.nausicaea.excentric.minecraft.world.level.VillageRefs;
 import net.nausicaea.excentric.minecraft.world.level.Villages;
 import net.nausicaea.excentric.minecraft.world.level.chunk.LevelChunks;
+import net.nausicaea.excentric.util.EveryN;
 
 public final class EventCallbacks {
     private static final EveryN every10Ticks = new EveryN(8);

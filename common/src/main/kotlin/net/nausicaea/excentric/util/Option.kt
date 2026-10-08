@@ -17,6 +17,8 @@ sealed interface Option<out T> {
     fun isSome(): Boolean
 
     fun toOptional(): Optional<out T>
+
+    fun unwrap(): T
 }
 
 object None : Option<Nothing> {
@@ -25,6 +27,8 @@ object None : Option<Nothing> {
     override fun isSome(): Boolean = false
 
     override fun toOptional(): Optional<out Nothing> = Optional.empty()
+
+    override fun unwrap(): Nothing = throw NoSuchElementException("None")
 }
 
 @JvmInline
@@ -36,4 +40,13 @@ value class Some<out T : Any>(
     override fun isSome(): Boolean = true
 
     override fun toOptional(): Optional<out T> = Optional.of(value)
+
+    override fun unwrap(): T = value
 }
+
+fun <T> Option<T>.unwrapOr(default: T): T =
+    if (this.isNone()) {
+        default
+    } else {
+        this.unwrap()
+    }
