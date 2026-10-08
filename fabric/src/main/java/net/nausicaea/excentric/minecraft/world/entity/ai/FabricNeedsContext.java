@@ -40,9 +40,9 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
                     .flatMap(
                             stack ->
                                     ExcentricServiceApi.findItemService(
-                                            stack.value(),
+                                            stack.getValue(),
                                             entity,
-                                            new StackSource.Inventory(inventory, stack.index()))
+                                            new StackSource.Inventory(inventory, stack.getIndex()))
                                             .stream())
                     .forEach(svcBuffer::add);
         }
