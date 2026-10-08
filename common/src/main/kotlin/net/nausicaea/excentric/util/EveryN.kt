@@ -1,4 +1,4 @@
-package net.nausicaea.excentric
+package net.nausicaea.excentric.util
 
 /**
  * Staggers a call to [EveryN.run] to an interval, calling
