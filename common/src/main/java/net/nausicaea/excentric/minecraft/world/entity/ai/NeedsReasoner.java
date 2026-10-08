@@ -8,10 +8,10 @@ import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.ai.prerequisite.PrerequisiteState;
 import net.nausicaea.excentric.java.util.Probability;
-import net.nausicaea.excentric.minecraft.util.RandomSourceUtils;
-import net.nausicaea.excentric.minecraft.util.Weighted;
+import net.nausicaea.excentric.minecraft.util.RandomSourceExtKt;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
+import net.nausicaea.excentric.util.Weighted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +40,14 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
                                 new Weighted<>(
                                         svc,
                                         Probability.boltzmann(needs.score(svc, context), temp)))
-                .filter(svc -> svc.weight().isNonZero());
+                .filter(svc -> svc.getWeight().isNonZero());
     }
 
     /// Randomly select from the available [Service]s by their score.
     @Override
     public Optional<Service> select(Stream<Weighted<Service>> rankedServices, RandomSource rng) {
-        return RandomSourceUtils.chooseWeighted(rng, rankedServices.toList());
+        return (Optional<Service>)
+                RandomSourceExtKt.chooseWeighted(rng, rankedServices.toList()).toOptional();
     }
 
     /// If a [Service] is currently selected as a target, try to

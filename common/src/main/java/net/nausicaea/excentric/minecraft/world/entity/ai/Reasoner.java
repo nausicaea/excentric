@@ -3,7 +3,7 @@ package net.nausicaea.excentric.minecraft.world.entity.ai;
 import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.util.RandomSource;
-import net.nausicaea.excentric.minecraft.util.Weighted;
+import net.nausicaea.excentric.util.Weighted;
 
 /// Describes a utility-based AI reasoning system.
 public interface Reasoner<A, C extends ReasonerContext<A>> {
