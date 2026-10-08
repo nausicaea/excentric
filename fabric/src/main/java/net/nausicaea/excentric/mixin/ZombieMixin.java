@@ -10,13 +10,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Zombie.class)
 abstract class ZombieMixin {
-	/// Don't let [Zombie] target and attack
-	/// [net.minecraft.world.entity.npc.Villager] and
-	/// [net.minecraft.world.entity.animal.IronGolem].
-	@Inject(method = "addBehaviourGoals()V", at = @At("TAIL"))
-	public void villageMod$zombieTargetSelectorException(CallbackInfo ci) {
-		var mob = (MobAccessor) this;
-		var targetSelector = mob.villageMod$getTargetSelector();
-		GoalSelectorUtils.removeVillagerAndGolemTargeting(targetSelector);
-	}
+    /// Don't let [Zombie] target and attack
+    /// [net.minecraft.world.entity.npc.Villager] and
+    /// [net.minecraft.world.entity.animal.IronGolem].
+    @Inject(method = "addBehaviourGoals()V", at = @At("TAIL"))
+    public void villageMod$zombieTargetSelectorException(CallbackInfo ci) {
+        var mob = (MobAccessor) this;
+        var targetSelector = mob.villageMod$getTargetSelector();
+        GoalSelectorUtils.removeVillagerAndGolemTargeting(targetSelector);
+    }
 }

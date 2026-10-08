@@ -10,13 +10,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Drowned.class)
 abstract class DrownedMixin {
-	/// Don't let [Drowned] target and attack
-	/// [net.minecraft.world.entity.npc.Villager] and
-	/// [net.minecraft.world.entity.animal.IronGolem].
-	@Inject(method = "addBehaviourGoals()V", at = @At("TAIL"))
-	public void villageMod$drownedTargetSelectorException(CallbackInfo ci) {
-		var mob = (MobAccessor) this;
-		var targetSelector = mob.villageMod$getTargetSelector();
-		GoalSelectorUtils.removeVillagerAndGolemTargeting(targetSelector);
-	}
+    /// Don't let [Drowned] target and attack
+    /// [net.minecraft.world.entity.npc.Villager] and
+    /// [net.minecraft.world.entity.animal.IronGolem].
+    @Inject(method = "addBehaviourGoals()V", at = @At("TAIL"))
+    public void villageMod$drownedTargetSelectorException(CallbackInfo ci) {
+        var mob = (MobAccessor) this;
+        var targetSelector = mob.villageMod$getTargetSelector();
+        GoalSelectorUtils.removeVillagerAndGolemTargeting(targetSelector);
+    }
 }

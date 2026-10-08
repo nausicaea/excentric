@@ -9,11 +9,12 @@ import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 /// [net.minecraft.world.entity.Entity] distance to the service (as the
 /// crow flies).
 public record AerialDistance() implements UtilityFn {
-	@Override
-	public Probability score(Service svc, Probability satisfaction, UtilityFnContext context) {
-		if (!(svc.prerequisite() instanceof Position(Vec3 pos))) {
-			return Probability.ONE;
-		}
-		return Probability.of(1.0d / Math.max(1.0d, Math.abs(context.entity().position().distanceTo(pos))));
-	}
+    @Override
+    public Probability score(Service svc, Probability satisfaction, UtilityFnContext context) {
+        if (!(svc.prerequisite() instanceof Position(Vec3 pos))) {
+            return Probability.ONE;
+        }
+        return Probability.of(
+                1.0d / Math.max(1.0d, Math.abs(context.entity().position().distanceTo(pos))));
+    }
 }

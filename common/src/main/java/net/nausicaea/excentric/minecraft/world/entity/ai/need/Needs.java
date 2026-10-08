@@ -7,16 +7,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Needs {
-	private static final Logger LOG = LoggerFactory.getLogger(Needs.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Needs.class);
 
-	private Needs() {
-	}
+    private Needs() {}
 
-	public static final Need SATIATION = Registry.register(ExcentricRegistries.NEEDS, ExcentricCommon.id("satiation"),
-	    new Satiation());
+    public static final Need SATIATION =
+            Registry.register(
+                    ExcentricRegistries.NEEDS, ExcentricCommon.id("satiation"), new Satiation());
 
-	public static void register() {
-		LOG.info(ExcentricCommon.MARKER, "Registering needs");
-		ExcentricRegistries.NEEDS.freeze();
-	}
+    public static void register() {
+        LOG.info(ExcentricCommon.MARKER, "Registering needs");
+        ExcentricRegistries.NEEDS.freeze();
+    }
 }

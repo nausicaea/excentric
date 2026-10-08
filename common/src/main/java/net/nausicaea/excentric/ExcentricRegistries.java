@@ -7,15 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ExcentricRegistries {
-	private static final Logger LOG = LoggerFactory.getLogger(ExcentricRegistries.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExcentricRegistries.class);
 
-	private ExcentricRegistries() {
-	}
+    private ExcentricRegistries() {}
 
-	public static final MappedRegistry<Need> NEEDS = new MappedRegistry<>(ExcentricRegistryKeys.NEED,
-	    Lifecycle.stable());
+    public static final MappedRegistry<Need> NEEDS =
+            new MappedRegistry<>(ExcentricRegistryKeys.NEED, Lifecycle.stable());
 
-	public static void register() {
-		LOG.info(ExcentricCommon.MARKER, "Creating custom registries");
-	}
+    public static void register() {
+        LOG.info(ExcentricCommon.MARKER, "Creating custom registries");
+    }
 }

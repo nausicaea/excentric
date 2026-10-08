@@ -5,8 +5,8 @@ import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 
 /// Calculate the utility as [Service#baseUtility()].
 public record BaseUtility() implements UtilityFn {
-	@Override
-	public Probability score(Service svc, Probability satisfaction, UtilityFnContext context) {
-		return svc.baseUtility();
-	}
+    @Override
+    public Probability score(Service svc, Probability satisfaction, UtilityFnContext context) {
+        return svc.baseUtility();
+    }
 }

@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(JigsawStructure.class)
 public interface JigsawStructureAccessor {
-	@Accessor("startPool")
-	Holder<StructureTemplatePool> villageMod$getStartPool();
+    @Accessor("startPool")
+    Holder<StructureTemplatePool> villageMod$getStartPool();
 }

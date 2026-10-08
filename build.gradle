@@ -1,14 +1,9 @@
-import com.github.spotbugs.snom.Confidence
-import com.github.spotbugs.snom.Effort
-
 plugins {
 	alias(libs.plugins.gradle.spotless) apply false
-	alias(libs.plugins.gradle.spotbugs) apply false
 }
 
 allprojects {
 	apply plugin: rootProject.libs.plugins.gradle.spotless.get().pluginId
-	apply plugin: rootProject.libs.plugins.gradle.spotbugs.get().pluginId
 
 	group = rootProject.group
 	version = rootProject.version
@@ -18,12 +13,14 @@ allprojects {
 	}
 
 	spotless {
+		kotlin {
+			target 'src/*/kotlin/**/*.kt'
+			ktlint()
+		}
+
 		java {
 			target 'src/*/java/**/*.java'
-			eclipse().configFile(rootProject.file('config/spotless/eclipse-formatter.xml'))
-			removeUnusedImports()
-			trimTrailingWhitespace()
-			endWithNewline()
+			googleJavaFormat().aosp()
 		}
 
 		groovyGradle {
@@ -32,14 +29,5 @@ allprojects {
 			trimTrailingWhitespace()
 			endWithNewline()
 		}
-	}
-
-	spotbugs {
-		toolVersion = rootProject.libs.versions.spotbugs
-		ignoreFailures = false
-		showStackTraces = false
-		effort = Effort.valueOf("MAX")
-		reportLevel = Confidence.valueOf("MEDIUM")
-		excludeFilter = rootProject.file('config/spotbugs/filter.xml')
 	}
 }

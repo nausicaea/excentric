@@ -13,16 +13,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockBehaviour.class)
 abstract class BlockBehaviourMixin {
-	/// Hook into [net.minecraft.world.level.block.Block] placement.
-	@Inject(method = "onPlace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V", at = @At("TAIL"))
-	protected void villageMod$onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2,
-	    boolean bl, CallbackInfo ci) {
-		if (!(level instanceof ServerLevel serverLevel)) {
-			return;
-		}
-		if (bl || blockState.is(blockState2.getBlock())) {
-			return;
-		}
-		ExcentricEvents.AFTER_BLOCK_PLACE.invoker().afterBlockPlace(blockState, blockPos, serverLevel);
-	}
+    /// Hook into [net.minecraft.world.level.block.Block] placement.
+    @Inject(
+            method =
+                    "onPlace(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)V",
+            at = @At("TAIL"))
+    protected void villageMod$onPlace(
+            BlockState blockState,
+            Level level,
+            BlockPos blockPos,
+            BlockState blockState2,
+            boolean bl,
+            CallbackInfo ci) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        if (bl || blockState.is(blockState2.getBlock())) {
+            return;
+        }
+        ExcentricEvents.AFTER_BLOCK_PLACE
+                .invoker()
+                .afterBlockPlace(blockState, blockPos, serverLevel);
+    }
 }

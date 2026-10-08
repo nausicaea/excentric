@@ -4,17 +4,16 @@ package net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite;
 /// else. The interface is modeled after a `Promise` or
 /// [java.util.concurrent.Future].
 public interface Prerequisite {
-	/// The state of the [Prerequisite] after [Prerequisite#poll()] was last called.
-	sealed interface State {
-		record Pending() implements State {
-		}
-		record Satisfied() implements State {
-		}
-		record Failed() implements State {
-		}
-	}
+    /// The state of the [Prerequisite] after [Prerequisite#poll()] was last called.
+    sealed interface State {
+        record Pending() implements State {}
 
-	/// Poll the [Prerequisite], bringing it closer to satisfaction. Return the
-	/// current [Prerequisite.State].
-	State poll();
+        record Satisfied() implements State {}
+
+        record Failed() implements State {}
+    }
+
+    /// Poll the [Prerequisite], bringing it closer to satisfaction. Return the
+    /// current [Prerequisite.State].
+    State poll();
 }

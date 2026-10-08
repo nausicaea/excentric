@@ -4,14 +4,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public final class StreamUtils {
-	private StreamUtils() {
-	}
+    private StreamUtils() {}
 
-	public static <T> Stream<Enumerated<T>> enumerate(Stream<T> stream) {
-		AtomicInteger index = new AtomicInteger();
-		return stream.map(item -> new Enumerated<>(index.getAndIncrement(), item));
-	}
+    public static <T> Stream<Enumerated<T>> enumerate(Stream<T> stream) {
+        AtomicInteger index = new AtomicInteger();
+        return stream.map(item -> new Enumerated<>(index.getAndIncrement(), item));
+    }
 
-	public record Enumerated<T>(int index, T value) {
-	}
+    public record Enumerated<T>(int index, T value) {}
 }
