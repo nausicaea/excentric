@@ -11,6 +11,7 @@ import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.ExcentricServiceApi;
+import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.minecraft.world.SimpleContainerUtils;
 import net.nausicaea.excentric.minecraft.world.entity.EquipmentUserUtils;

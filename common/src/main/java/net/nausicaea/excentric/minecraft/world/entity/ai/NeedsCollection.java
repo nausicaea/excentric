@@ -5,6 +5,7 @@ import java.util.Optional;
 import net.minecraft.resources.ResourceKey;
 import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.ExcentricRegistries;
+import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.decay.DecayFn;
 import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.java.util.Probability;
