@@ -62,7 +62,11 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity) imp
 		        .findItemService(itemEntity.getItem(), entity, new StackSource.World(itemEntity)).stream())
 		    .forEach(svcBuffer::add);
 
-		// TODO: Find items lying in containers somewhere.
+		// TODO: Find services of items lying in containers somewhere.
+
+		// TODO: Collect services from blocks in the world.
+
+		// TODO: Collect services from other entities in the World.
 
 		return svcBuffer.stream();
 	}
