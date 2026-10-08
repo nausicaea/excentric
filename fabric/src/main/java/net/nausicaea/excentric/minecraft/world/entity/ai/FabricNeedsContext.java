@@ -14,7 +14,7 @@ import net.nausicaea.excentric.ExcentricServiceApi;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.minecraft.world.SimpleContainerExtKt;
-import net.nausicaea.excentric.minecraft.world.entity.EquipmentUserUtils;
+import net.nausicaea.excentric.minecraft.world.entity.EquipmentUserExtKt;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.StackSource;
 
 public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
@@ -49,7 +49,8 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
 
         // If the entity can carry equipment.
         if (entity instanceof EquipmentUser eu) {
-            EquipmentUserUtils.getItemBySlot(eu, EquipmentSlot.MAINHAND)
+            EquipmentUserExtKt.getItemBySlot(eu, EquipmentSlot.MAINHAND)
+                    .toOptional()
                     .flatMap(
                             s ->
                                     ExcentricServiceApi.findItemService(
@@ -57,7 +58,8 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
                                             entity,
                                             new StackSource.Held(EquipmentSlot.MAINHAND)))
                     .ifPresent(svcBuffer::add);
-            EquipmentUserUtils.getItemBySlot(eu, EquipmentSlot.OFFHAND)
+            EquipmentUserExtKt.getItemBySlot(eu, EquipmentSlot.OFFHAND)
+                    .toOptional()
                     .flatMap(
                             s ->
                                     ExcentricServiceApi.findItemService(
