@@ -1,7 +1,5 @@
 package net.nausicaea.excentric;
 
-import static net.nausicaea.excentric.minecraft.core.component.DataComponentHolderUtils.tryGet;
-
 import java.util.Optional;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.lookup.v1.entity.EntityApiLookup;
@@ -9,6 +7,7 @@ import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.nausicaea.excentric.minecraft.core.component.DataComponentHolderExtKt;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.ItemServiceContext;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.SatiationItemService;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
@@ -31,7 +30,8 @@ public final class ExcentricServiceApi {
         // Right now, only item services that offer satiation are supported.
         ITEM_SERVICE.registerFallback(
                 (itemStack, ctx) ->
-                        tryGet(itemStack, DataComponents.FOOD)
+                        DataComponentHolderExtKt.tryGet(itemStack, DataComponents.FOOD)
+                                .toOptional()
                                 .map(props -> new SatiationItemService(props, ctx))
                                 .orElse(null));
         BLOCK_SERVICE.registerFallback(
