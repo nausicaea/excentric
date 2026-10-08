@@ -1,10 +1,12 @@
 package net.nausicaea.excentric;
 
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
+import net.fabricmc.fabric.api.lookup.v1.entity.EntityApiLookup;
 import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.nausicaea.excentric.minecraft.world.entity.ai.service.FoodItemService;
+import net.nausicaea.excentric.minecraft.world.entity.ai.service.SatiationItemService;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.ItemServiceContext;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.StackSource;
@@ -19,11 +21,22 @@ public final class ExcentricServiceApi {
 	private static final Logger LOG = LoggerFactory.getLogger(ExcentricServiceApi.class);
 	public static final ItemApiLookup<Service, ItemServiceContext> ITEM_SERVICE = ItemApiLookup
 	    .get(ExcentricCommon.id("item_service"), Service.class, ItemServiceContext.class);
+	public static final BlockApiLookup<Service, Void> BLOCK_SERVICE = BlockApiLookup
+	    .get(ExcentricCommon.id("block_service"), Service.class, Void.class);
+	public static final EntityApiLookup<Service, Void> ENTITY_SERVICE = EntityApiLookup
+	    .get(ExcentricCommon.id("entity_service"), Service.class, Void.class);
 
 	public static void register() {
 		LOG.info(ExcentricCommon.MARKER, "Creating custom Service-API-Lookup APIs");
+		// Right now, only item services that offer satiation are supported.
 		ITEM_SERVICE.registerFallback((itemStack, ctx) -> tryGet(itemStack, DataComponents.FOOD)
-		    .map(props -> new FoodItemService(props, ctx)).orElse(null));
+		    .map(props -> new SatiationItemService(props, ctx)).orElse(null));
+		BLOCK_SERVICE.registerFallback((level, blockPos, blockState, blockEntity, ctx) -> {
+			throw new Todo();
+		});
+		ENTITY_SERVICE.registerFallback((entity, ctx) -> {
+			throw new Todo();
+		});
 	}
 
 	public static Optional<Service> findItemService(ItemStack stack, LivingEntity consumer, StackSource source) {

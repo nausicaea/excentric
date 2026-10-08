@@ -11,7 +11,7 @@ import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Empty;
 import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Position;
 import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Prerequisite;
 
-public record FoodItemService(FoodProperties props, ItemServiceContext ctx) implements Service {
+public record SatiationItemService(FoodProperties props, ItemServiceContext ctx) implements Service {
 	public static final double MAX_NUTRITION = 20.0d;
 
 	@Override
