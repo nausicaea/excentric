@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.ExcentricServiceApi;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.service.Service;
-import net.nausicaea.excentric.minecraft.world.SimpleContainerUtils;
+import net.nausicaea.excentric.minecraft.world.SimpleContainerExtKt;
 import net.nausicaea.excentric.minecraft.world.entity.EquipmentUserUtils;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.StackSource;
 
@@ -36,7 +36,7 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
         // If the entity has an inventory.
         if (entity instanceof InventoryCarrier ic) {
             var inventory = ic.getInventory();
-            SimpleContainerUtils.getItems(inventory)
+            SimpleContainerExtKt.stream(inventory)
                     .flatMap(
                             stack ->
                                     ExcentricServiceApi.findItemService(
