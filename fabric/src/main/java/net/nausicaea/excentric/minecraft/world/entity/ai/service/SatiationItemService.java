@@ -4,12 +4,12 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
 import net.nausicaea.excentric.ExcentricRegistries;
+import net.nausicaea.excentric.ai.prerequisite.Empty;
+import net.nausicaea.excentric.ai.prerequisite.Position;
+import net.nausicaea.excentric.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Needs;
-import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Empty;
-import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Position;
-import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Prerequisite;
 
 public record SatiationItemService(FoodProperties props, ItemServiceContext ctx)
         implements Service {
@@ -28,8 +28,8 @@ public record SatiationItemService(FoodProperties props, ItemServiceContext ctx)
     @Override
     public Prerequisite prerequisite() {
         return switch (ctx.source()) {
-            case StackSource.Held h -> new Empty();
-            case StackSource.Inventory i -> new Empty();
+            case StackSource.Held h -> Empty.INSTANCE;
+            case StackSource.Inventory i -> Empty.INSTANCE;
             case StackSource.ForeignInventory f -> new Position(f.pos());
             case StackSource.World w -> new Position(w.entity().position());
         };

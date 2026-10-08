@@ -5,11 +5,12 @@ import java.util.stream.Stream;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.nausicaea.excentric.ExcentricCommon;
+import net.nausicaea.excentric.ai.prerequisite.Prerequisite;
+import net.nausicaea.excentric.ai.prerequisite.PrerequisiteState;
 import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.util.RandomSourceUtils;
 import net.nausicaea.excentric.minecraft.util.Weighted;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
-import net.nausicaea.excentric.minecraft.world.entity.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
     /// words, try to satisfy the matching [Need] with the current [Service]. This
     /// guarantees to call [Prerequisite#poll()] exactly once. Call
     /// [Service#realise()] only if the prerequisite is satisfied (e.g. the return
-    /// value from [Prerequisite#poll()] is equal to [Prerequisite.State.Satisfied]).
+    /// value from [Prerequisite#poll()] is equal to [PrerequisiteState#SATISFIED]).
     public void tryRealiseService(NeedsContext context) {
         currentService
                 .map(SvcPrq::poll)
@@ -74,18 +75,18 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
     }
 
     /// Denotes a service whose prerequisite was just polled.
-    private record SvcPolled(Service svc, Prerequisite.State state) {
-        /// Evaluate [Prerequisite.State] and call [Service#realise()] only if `state`
-        /// matches [Prerequisite.State.Satisfied].
+    private record SvcPolled(Service svc, PrerequisiteState state) {
+        /// Evaluate [PrerequisiteState] and call [Service#realise()] only if `state`
+        /// matches [PrerequisiteState#SATISFIED].
         Optional<SvcRealised> tryRealise() {
             var svcKey = svc.key();
             return switch (state) {
-                case Prerequisite.State.Pending p -> Optional.empty();
-                case Prerequisite.State.Failed f -> {
+                case PrerequisiteState.PENDING -> Optional.empty();
+                case PrerequisiteState.FAILED -> {
                     LOG.warn(ExcentricCommon.MARKER, "Prerequisite of service has state failed");
                     yield Optional.of(new SvcRealised(svcKey, Probability.ZERO));
                 }
-                case Prerequisite.State.Satisfied s ->
+                case PrerequisiteState.SATISFIED ->
                         Optional.of(new SvcRealised(svcKey, svc.realise()));
             };
         }
