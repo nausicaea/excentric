@@ -1,8 +1,8 @@
 package net.nausicaea.excentric.minecraft.world.entity.ai.utility;
 
 import net.nausicaea.excentric.ai.prerequisite.Position;
+import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.java.util.Probability;
-import net.nausicaea.excentric.minecraft.world.entity.ai.service.Service;
 
 /// Calculate the utility as the multiplicative inverse (`1/x`) of the
 /// [net.minecraft.world.entity.Entity] distance to the service (as the

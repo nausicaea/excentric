@@ -7,6 +7,7 @@ import net.nausicaea.excentric.ExcentricRegistries;
 import net.nausicaea.excentric.ai.prerequisite.Empty;
 import net.nausicaea.excentric.ai.prerequisite.Position;
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite;
+import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Needs;
