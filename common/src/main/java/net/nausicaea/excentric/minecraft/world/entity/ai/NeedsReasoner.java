@@ -34,7 +34,8 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 	public Stream<Weighted<Service>> score(Stream<Service> services, NeedsContext context) {
 		var needs = context.needs();
 		var temp = needs.urgency();
-		return services.map(svc -> new Weighted<>(svc, Probability.boltzmann(needs.score(svc, context), temp)));
+		return services.map(svc -> new Weighted<>(svc, Probability.boltzmann(needs.score(svc, context), temp)))
+		    .filter(svc -> svc.weight().isNonZero());
 	}
 
 	/// Randomly select from the available [Service]s by their score.

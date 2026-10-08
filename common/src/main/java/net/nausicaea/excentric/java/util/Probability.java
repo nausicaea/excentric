@@ -36,6 +36,10 @@ public final class Probability {
 		return this.value < Double.MIN_NORMAL;
 	}
 
+	public boolean isNonZero() {
+		return !isSubnormal();
+	}
+
 	public static Probability sum(Probability a, Probability b) {
 		return Probability.of(a.value + b.value);
 	}
