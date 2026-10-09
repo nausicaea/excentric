@@ -1,7 +1,7 @@
 package net.nausicaea.excentric.ai.utility
 
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.java.util.Probability
+import net.nausicaea.excentric.util.Probability
 
 /**
  * The utility is the product of the [BaseUtility], [Urgency], and [AerialDistance].

@@ -1,6 +1,6 @@
 package net.nausicaea.excentric.ai.decay
 
-import net.nausicaea.excentric.java.util.Probability
+import net.nausicaea.excentric.util.Probability
 
 interface DecayFn {
     /**

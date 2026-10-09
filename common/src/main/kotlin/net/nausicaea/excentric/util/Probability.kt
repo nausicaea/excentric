@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.java.util
+package net.nausicaea.excentric.util
 
 import kotlin.math.expm1
 

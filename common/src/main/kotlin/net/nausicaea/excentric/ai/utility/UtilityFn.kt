@@ -1,7 +1,7 @@
 package net.nausicaea.excentric.ai.utility
 
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.java.util.Probability
+import net.nausicaea.excentric.util.Probability
 
 /**
  * Resource curves convert a [Service#baseUtility()] to a subjective utility.

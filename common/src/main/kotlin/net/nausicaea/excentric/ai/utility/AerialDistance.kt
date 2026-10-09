@@ -2,8 +2,8 @@ package net.nausicaea.excentric.ai.utility
 
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.java.util.Probability
-import net.nausicaea.excentric.java.util.Probability.Companion.of
+import net.nausicaea.excentric.util.Probability
+import net.nausicaea.excentric.util.Probability.Companion.of
 import kotlin.math.abs
 import kotlin.math.max
 
