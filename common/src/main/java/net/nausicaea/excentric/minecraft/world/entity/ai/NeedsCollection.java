@@ -8,9 +8,9 @@ import net.nausicaea.excentric.ExcentricRegistries;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.decay.DecayFn;
 import net.nausicaea.excentric.ai.service.Service;
+import net.nausicaea.excentric.ai.utility.UtilityFn;
 import net.nausicaea.excentric.java.util.Probability;
 import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
-import net.nausicaea.excentric.minecraft.world.entity.ai.utility.UtilityFn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
