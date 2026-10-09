@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.ai.NeedsContext;
+import net.nausicaea.excentric.ai.Reasoner;
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.ai.prerequisite.PrerequisiteState;
 import net.nausicaea.excentric.ai.service.Service;
