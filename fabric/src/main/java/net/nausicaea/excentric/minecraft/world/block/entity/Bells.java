@@ -12,7 +12,7 @@ public final class Bells {
             return;
         }
         var village = Villages.get(level).findOrClaim(level, pos);
-        VillageRefs.claim(bbe, village.id());
+        VillageRefs.claim(bbe, village.getId());
     }
 
     public static void onLoad(ServerLevel level, BellBlockEntity bbe) {
@@ -21,7 +21,7 @@ public final class Bells {
         }
         Villages.get(level)
                 .find(bbe.getBlockPos())
-                .ifPresent(v -> VillageRefs.claimDeferred(bbe, v.id()));
+                .ifPresent(v -> VillageRefs.claimDeferred(bbe, v.getId()));
     }
 
     private Bells() {}

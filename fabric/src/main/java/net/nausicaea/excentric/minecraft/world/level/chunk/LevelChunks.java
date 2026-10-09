@@ -17,7 +17,7 @@ public abstract class LevelChunks {
                 .or(() -> vman.findOrClaimByStructure(level, chunkPos))
                 // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
                 // on the chunk itself) here because it will trigger a complete chunk load.
-                .ifPresent(village -> VillageRefs.claim(chunk, village.id()));
+                .ifPresent(village -> VillageRefs.claim(chunk, village.getId()));
     }
 
     private LevelChunks() {}

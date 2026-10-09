@@ -55,7 +55,7 @@ public final class Villages extends SavedData implements VillageManager {
                                         ExcentricCommon.MARKER,
                                         "Failed to parse village data: {}",
                                         err))
-                .ifPresent(data -> data.villages().forEach(v -> state.villages.put(v.id(), v)));
+                .ifPresent(data -> data.villages().forEach(v -> state.villages.put(v.getId(), v)));
         return state;
     }
 
@@ -67,11 +67,11 @@ public final class Villages extends SavedData implements VillageManager {
 
     /// Claim a new village
     ///
-    /// 1. Determine [Village#anchor()]
+    /// 1. Determine [Village#getAnchor()]
     /// 2. Determine all beds
     ///    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
     ///    [CHUNK_RADIUS]
-    /// 3. Calculate [Village#center()] from the beds
+    /// 3. Calculate [Village#getCenter()] from the beds
     /// 4. Claim only the chunks within the bounding box of the village.
     @Override
     public Village claim(ServerLevel level, BlockPos anchor, BoundingBox extents) {
@@ -99,7 +99,7 @@ public final class Villages extends SavedData implements VillageManager {
                                 Vec3ExtKt.mapMean(homes, p -> new Vec3(p.getPos())),
                                 new Vec3(anchor)));
         var village = new Village(UUID.randomUUID(), anchor, centroid, extents);
-        villages.put(village.id(), village);
+        villages.put(village.getId(), village);
         claimLoadedChunks(level, village);
         return village;
     }
@@ -107,13 +107,15 @@ public final class Villages extends SavedData implements VillageManager {
     /// This silently discards multiple matching villages
     @Override
     public Optional<Village> find(BlockPos anchor) {
-        return villages.values().stream().filter(v -> v.boundingBox().isInside(anchor)).findFirst();
+        return villages.values().stream()
+                .filter(v -> v.getBoundingBox().isInside(anchor))
+                .findFirst();
     }
 
     private static void claimLoadedChunks(ServerLevel level, Village village) {
         var chunkSource = level.getChunkSource();
-        var villageId = village.id();
-        BoundingBoxUtils.containedChunks(village.boundingBox())
+        var villageId = village.getId();
+        BoundingBoxUtils.containedChunks(village.getBoundingBox())
                 .filter(chunkPos -> ServerChunkCacheUtils.hasChunk(chunkSource, chunkPos))
                 .flatMap(
                         chunkPos ->
@@ -128,7 +130,7 @@ public final class Villages extends SavedData implements VillageManager {
                         v ->
                                 BoundingBoxVisualiser.showEdges(
                                         level,
-                                        v.boundingBox(),
+                                        v.getBoundingBox(),
                                         new DustParticleOptions(particleColor, 1),
                                         1));
     }
@@ -137,7 +139,7 @@ public final class Villages extends SavedData implements VillageManager {
             RecordCodecBuilder.create(
                     i ->
                             i.group(
-                                            Codec.list(Village.CODEC)
+                                            Codec.list(Village.Companion.getCODEC())
                                                     .fieldOf("villages")
                                                     .forGetter(Data::villages))
                                     .apply(i, Data::new));

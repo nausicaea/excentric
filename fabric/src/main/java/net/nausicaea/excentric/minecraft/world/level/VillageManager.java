@@ -35,7 +35,7 @@ public interface VillageManager {
         // [Village#anchor].
         var startPiece = villageStructurePieces.getFirst();
         var village = findOrClaim(serverLevel, startPiece.getLocatorPosition(), boundingBox);
-        if (BoundingBoxUtils.containedChunks(village.boundingBox()).noneMatch(pos::equals)) {
+        if (BoundingBoxUtils.containedChunks(village.getBoundingBox()).noneMatch(pos::equals)) {
             return Optional.empty();
         }
         return Optional.of(village);
