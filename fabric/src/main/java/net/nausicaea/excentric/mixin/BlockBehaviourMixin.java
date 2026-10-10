@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.nausicaea.excentric.fabric.api.event.ExcentricEvents;
+import net.nausicaea.excentric.fabric.api.event.EventsKt;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,8 +31,6 @@ abstract class BlockBehaviourMixin {
         if (bl || blockState.is(blockState2.getBlock())) {
             return;
         }
-        ExcentricEvents.AFTER_BLOCK_PLACE
-                .invoker()
-                .afterBlockPlace(blockState, blockPos, serverLevel);
+        EventsKt.AFTER_BLOCK_PLACE.invoker().afterBlockPlace(blockState, blockPos, serverLevel);
     }
 }

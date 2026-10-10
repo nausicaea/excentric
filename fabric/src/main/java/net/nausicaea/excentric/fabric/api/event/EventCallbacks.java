@@ -29,7 +29,7 @@ public final class EventCallbacks {
         ServerChunkEvents.CHUNK_LOAD.register(LevelChunks::onLoad);
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(EventCallbacks::onBlockEntityLoad);
         ServerEntityEvents.ENTITY_LOAD.register(EventCallbacks::onEntityLoad);
-        ExcentricEvents.AFTER_BLOCK_PLACE.register(EventCallbacks::onAfterBlockPlace);
+        EventsKt.AFTER_BLOCK_PLACE.register(EventCallbacks::onAfterBlockPlace);
     }
 
     private static void onEndTick(MinecraftServer server) {
