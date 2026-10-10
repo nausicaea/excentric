@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Optional;
 import net.minecraft.resources.ResourceKey;
 import net.nausicaea.excentric.ExcentricCommon;
-import net.nausicaea.excentric.ExcentricRegistries;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.decay.DecayFn;
 import net.nausicaea.excentric.ai.need.Need;
 import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.ai.utility.UtilityFn;
+import net.nausicaea.excentric.minecraft.core.registries.RegistriesKt;
 import net.nausicaea.excentric.util.Probability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public final class NeedsCollection {
     /// Add a [Need] to the collection. Return `true` if a need was added, `false`
     /// if this need was already present.
     public boolean add(Need need, Probability initialSatisfaction) {
-        return ExcentricRegistries.NEEDS
+        return RegistriesKt.NEED_REGISTRY
                 .getResourceKey(need)
                 .filter(k -> !this.index.containsKey(k))
                 .map(

@@ -15,8 +15,6 @@ public final class ExcentricCommon {
     private ExcentricCommon() {}
 
     public static void onInitialize() {
-        ExcentricRegistryKeys.register();
-        ExcentricRegistries.register();
         Needs.register();
         LOG.info(MARKER, "Testing seed: -5038984067013596602");
     }
