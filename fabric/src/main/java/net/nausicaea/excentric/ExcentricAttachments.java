@@ -7,7 +7,7 @@ import net.minecraft.core.UUIDUtil;
 
 public final class ExcentricAttachments {
     public static final AttachmentType<UUID> VILLAGE_ID =
-            AttachmentRegistry.createPersistent(ExcentricCommon.id("village_id"), UUIDUtil.CODEC);
+            AttachmentRegistry.createPersistent(CommonKt.id("village_id"), UUIDUtil.CODEC);
 
     private ExcentricAttachments() {}
 }

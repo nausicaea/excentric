@@ -3,7 +3,7 @@ package net.nausicaea.excentric.minecraft.world.entity.ai;
 import java.util.HashMap;
 import java.util.Optional;
 import net.minecraft.resources.ResourceKey;
-import net.nausicaea.excentric.ExcentricCommon;
+import net.nausicaea.excentric.CommonKt;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.decay.DecayFn;
 import net.nausicaea.excentric.ai.need.Need;
@@ -96,7 +96,7 @@ public final class NeedsCollection {
         }
 
         if (isCritical()) {
-            LOG.info(ExcentricCommon.MARKER, "At least one need is in critical condition");
+            LOG.info(CommonKt.LOG_MARKER, "At least one need is in critical condition");
         }
     }
 

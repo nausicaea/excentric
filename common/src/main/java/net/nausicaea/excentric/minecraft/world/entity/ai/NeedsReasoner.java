@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Stream;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
-import net.nausicaea.excentric.ExcentricCommon;
+import net.nausicaea.excentric.CommonKt;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.Reasoner;
 import net.nausicaea.excentric.ai.need.Need;
@@ -89,7 +89,7 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
             return switch (state) {
                 case PrerequisiteState.PENDING -> Optional.empty();
                 case PrerequisiteState.FAILED -> {
-                    LOG.warn(ExcentricCommon.MARKER, "Prerequisite of service has state failed");
+                    LOG.warn(CommonKt.LOG_MARKER, "Prerequisite of service has state failed");
                     yield Optional.of(new SvcRealised(svcKey, Probability.ZERO));
                 }
                 case PrerequisiteState.SATISFIED ->

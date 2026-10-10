@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public final class Villages extends SavedData implements VillageManager {
     private static final Logger LOG = LoggerFactory.getLogger(Villages.class);
-    private static final String ID = ExcentricCommon.MOD_ID + "_villages";
+    private static final String ID = CommonKt.MOD_ID + "_villages";
     private static final SavedData.Factory<Villages> FACTORY =
             new SavedData.Factory<>(Villages::new, Villages::load, DataFixTypes.LEVEL);
     private static final int CHUNK_RADIUS = 4;
@@ -51,7 +51,7 @@ public final class Villages extends SavedData implements VillageManager {
                 .resultOrPartial(
                         err ->
                                 LOG.error(
-                                        ExcentricCommon.MARKER,
+                                        CommonKt.LOG_MARKER,
                                         "Failed to parse village data: {}",
                                         err))
                 .ifPresent(data -> data.villages().forEach(v -> state.villages.put(v.getId(), v)));
@@ -76,7 +76,7 @@ public final class Villages extends SavedData implements VillageManager {
     public Village claim(ServerLevel level, BlockPos anchor, BoundingBox extents) {
         var poiManager = level.getPoiManager();
         LOG.info(
-                ExcentricCommon.MARKER,
+                CommonKt.LOG_MARKER,
                 "New village with volume centered at {}: {}x{}x{}",
                 anchor,
                 extents.getXSpan(),
@@ -91,7 +91,7 @@ public final class Villages extends SavedData implements VillageManager {
                                 PoiManager.Occupancy.ANY)
                         .filter(p -> extents.isInside(p.getPos()))
                         .toList();
-        LOG.info(ExcentricCommon.MARKER, "Found {} homes / beds", homes.size());
+        LOG.info(CommonKt.LOG_MARKER, "Found {} homes / beds", homes.size());
         var centroid =
                 Vec3ExtKt.toBlockPosFloor(
                         OptionKt.unwrapOr(

@@ -18,15 +18,14 @@ import org.slf4j.LoggerFactory;
 public final class ExcentricServiceApi {
     private static final Logger LOG = LoggerFactory.getLogger(ExcentricServiceApi.class);
     public static final ItemApiLookup<Service, ItemServiceContext> ITEM_SERVICE =
-            ItemApiLookup.get(
-                    ExcentricCommon.id("item_service"), Service.class, ItemServiceContext.class);
+            ItemApiLookup.get(CommonKt.id("item_service"), Service.class, ItemServiceContext.class);
     public static final BlockApiLookup<Service, Void> BLOCK_SERVICE =
-            BlockApiLookup.get(ExcentricCommon.id("block_service"), Service.class, Void.class);
+            BlockApiLookup.get(CommonKt.id("block_service"), Service.class, Void.class);
     public static final EntityApiLookup<Service, Void> ENTITY_SERVICE =
-            EntityApiLookup.get(ExcentricCommon.id("entity_service"), Service.class, Void.class);
+            EntityApiLookup.get(CommonKt.id("entity_service"), Service.class, Void.class);
 
     public static void register() {
-        LOG.info(ExcentricCommon.MARKER, "Creating custom Service-API-Lookup APIs");
+        LOG.info(CommonKt.LOG_MARKER, "Creating custom Service-API-Lookup APIs");
         // Right now, only item services that offer satiation are supported.
         ITEM_SERVICE.registerFallback(
                 (itemStack, ctx) ->
