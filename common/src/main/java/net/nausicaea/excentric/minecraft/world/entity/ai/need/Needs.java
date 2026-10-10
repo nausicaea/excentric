@@ -3,6 +3,8 @@ package net.nausicaea.excentric.minecraft.world.entity.ai.need;
 import net.minecraft.core.Registry;
 import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.ExcentricRegistries;
+import net.nausicaea.excentric.ai.need.Need;
+import net.nausicaea.excentric.ai.need.Satiation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

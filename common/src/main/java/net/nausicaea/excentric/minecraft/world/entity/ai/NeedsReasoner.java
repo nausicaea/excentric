@@ -7,13 +7,14 @@ import net.minecraft.util.RandomSource;
 import net.nausicaea.excentric.ExcentricCommon;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.Reasoner;
+import net.nausicaea.excentric.ai.need.Need;
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.ai.prerequisite.PrerequisiteState;
 import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.minecraft.util.RandomSourceExtKt;
-import net.nausicaea.excentric.minecraft.world.entity.ai.need.Need;
 import net.nausicaea.excentric.util.Probability;
 import net.nausicaea.excentric.util.Weighted;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,8 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 
     /// For every service, call [NeedsCollection#score(Service, NeedsContext)]
     @Override
-    public Stream<Weighted<Service>> score(Stream<Service> services, NeedsContext context) {
+    public @NotNull Stream<Weighted<Service>> score(
+            Stream<Service> services, NeedsContext context) {
         var needs = context.needs();
         var temp = needs.urgency();
         return services.map(
@@ -47,7 +49,8 @@ public final class NeedsReasoner implements Reasoner<Service, NeedsContext> {
 
     /// Randomly select from the available [Service]s by their score.
     @Override
-    public Optional<Service> select(Stream<Weighted<Service>> rankedServices, RandomSource rng) {
+    public @NotNull Optional<Service> select(
+            Stream<Weighted<Service>> rankedServices, @NotNull RandomSource rng) {
         return (Optional<Service>)
                 RandomSourceExtKt.chooseWeighted(rng, rankedServices.toList()).toOptional();
     }
