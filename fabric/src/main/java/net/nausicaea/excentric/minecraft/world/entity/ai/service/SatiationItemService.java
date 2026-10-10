@@ -4,12 +4,12 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.food.FoodProperties;
 import net.nausicaea.excentric.ai.need.Need;
+import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
 import net.nausicaea.excentric.ai.prerequisite.Empty;
 import net.nausicaea.excentric.ai.prerequisite.Position;
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite;
 import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.minecraft.core.registries.RegistriesKt;
-import net.nausicaea.excentric.minecraft.world.entity.ai.need.Needs;
 import net.nausicaea.excentric.util.Probability;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +20,7 @@ public record SatiationItemService(FoodProperties props, ItemServiceContext ctx)
     @Override
     public @NotNull ResourceKey<Need> key() {
         return RegistriesKt.NEED_REGISTRY
-                .getResourceKey(Needs.SATIATION)
+                .getResourceKey(NeedSingletonsKt.SATIATION)
                 .orElseThrow(
                         () ->
                                 new RuntimeException(

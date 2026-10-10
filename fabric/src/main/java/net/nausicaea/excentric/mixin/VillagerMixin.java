@@ -9,10 +9,10 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.level.Level;
+import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
 import net.nausicaea.excentric.minecraft.world.entity.ai.FabricNeedsContext;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsCollection;
 import net.nausicaea.excentric.minecraft.world.entity.ai.NeedsReasoner;
-import net.nausicaea.excentric.minecraft.world.entity.ai.need.Needs;
 import net.nausicaea.excentric.util.EveryN;
 import net.nausicaea.excentric.util.Probability;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,7 +44,7 @@ abstract class VillagerMixin {
 
         // Add initial needs
         // TODO: make need assignment data-driven
-        villageMod$needs.add(Needs.SATIATION, Probability.ONE);
+        villageMod$needs.add(NeedSingletonsKt.SATIATION, Probability.ONE);
     }
 
     /// [Villager]s shall not use their [Brain]: concretely, `Brain#tick()` may not
