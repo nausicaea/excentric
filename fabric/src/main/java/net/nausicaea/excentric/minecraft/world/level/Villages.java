@@ -17,7 +17,6 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.*;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxExtKt;
-import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxVisualiser;
 import net.nausicaea.excentric.minecraft.world.phys.Vec3ExtKt;
 import net.nausicaea.excentric.util.OptionKt;
 import org.jetbrains.annotations.NotNull;
@@ -128,9 +127,9 @@ public final class Villages extends SavedData implements VillageManager {
         villages.values()
                 .forEach(
                         v ->
-                                BoundingBoxVisualiser.showEdges(
-                                        level,
+                                BoundingBoxExtKt.showEdges(
                                         v.getBoundingBox(),
+                                        level,
                                         new DustParticleOptions(particleColor, 1),
                                         1));
     }
