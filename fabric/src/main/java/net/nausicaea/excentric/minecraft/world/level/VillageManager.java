@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxUtils;
+import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxExtKt;
 
 public interface VillageManager {
     default Village findOrClaim(ServerLevel level, BlockPos anchor) {
@@ -35,7 +35,7 @@ public interface VillageManager {
         // [Village#anchor].
         var startPiece = villageStructurePieces.getFirst();
         var village = findOrClaim(serverLevel, startPiece.getLocatorPosition(), boundingBox);
-        if (BoundingBoxUtils.containedChunks(village.getBoundingBox()).noneMatch(pos::equals)) {
+        if (BoundingBoxExtKt.containedChunks(village.getBoundingBox()).noneMatch(pos::equals)) {
             return Optional.empty();
         }
         return Optional.of(village);

@@ -16,7 +16,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.*;
-import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxUtils;
+import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxExtKt;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxVisualiser;
 import net.nausicaea.excentric.minecraft.world.phys.Vec3ExtKt;
 import net.nausicaea.excentric.util.OptionKt;
@@ -115,7 +115,7 @@ public final class Villages extends SavedData implements VillageManager {
     private static void claimLoadedChunks(ServerLevel level, Village village) {
         var chunkSource = level.getChunkSource();
         var villageId = village.getId();
-        BoundingBoxUtils.containedChunks(village.getBoundingBox())
+        BoundingBoxExtKt.containedChunks(village.getBoundingBox())
                 .filter(chunkPos -> ServerChunkCacheUtils.hasChunk(chunkSource, chunkPos))
                 .flatMap(
                         chunkPos ->

@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.UUIDUtil
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.level.levelgen.structure.BoundingBox
-import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxUtils
+import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BOUNDING_BOX_STREAM_CODEC
 import java.util.UUID
 import java.util.function.Function
 
@@ -44,7 +44,7 @@ data class Village(
                 Village::anchor,
                 BlockPos.STREAM_CODEC,
                 Village::center,
-                BoundingBoxUtils.STREAM_CODEC,
+                BOUNDING_BOX_STREAM_CODEC,
                 Village::boundingBox,
                 ::Village,
             )
