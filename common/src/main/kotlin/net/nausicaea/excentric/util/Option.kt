@@ -64,3 +64,16 @@ fun <T, U> Option<T>.andThen(f: (T) -> Option<U>): Option<U> =
     } else {
         None
     }
+
+fun <T, U : Any> Option<T>.map(f: (T) -> U): Option<U> =
+    if (isSome()) {
+        Some(f(unwrap()))
+    } else {
+        None
+    }
+
+fun <T> Option<T>.forEach(f: (T) -> Unit) {
+    if (isSome()) {
+        f(unwrap())
+    }
+}
