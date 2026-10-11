@@ -1,9 +1,14 @@
+@file:Suppress("UnstableApiUsage")
+
 package net.nausicaea.excentric.fabric.api.attachment
 
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry
 import net.fabricmc.fabric.api.attachment.v1.AttachmentTarget
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType
+import net.minecraft.core.UUIDUtil
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.nausicaea.excentric.ExcentricAttachments
 import net.nausicaea.excentric.LOG_MARKER
+import net.nausicaea.excentric.id
 import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.filter
 import net.nausicaea.excentric.util.forEach
@@ -13,24 +18,25 @@ import java.util.ArrayDeque
 import java.util.Queue
 import java.util.UUID
 
-@Suppress("UnstableApiUsage")
+val VILLAGE_ID: AttachmentType<UUID> = AttachmentRegistry.createPersistent(id("village_id"), UUIDUtil.CODEC)
+
 object VillageRefs {
     private val LOG: Logger = LoggerFactory.getLogger(VillageRefs::class.java)
     private val PENDING: Queue<PendingClaim> = ArrayDeque()
 
     @JvmStatic
-    fun get(target: AttachmentTarget): Option<UUID> = Option.of(target.getAttached(ExcentricAttachments.VILLAGE_ID))
+    fun get(target: AttachmentTarget): Option<UUID> = Option.of(target.getAttached(VILLAGE_ID))
 
     @JvmStatic
     fun claim(
         target: AttachmentTarget,
         id: UUID,
     ): Boolean {
-        if (target.hasAttached(ExcentricAttachments.VILLAGE_ID)) {
+        if (target.hasAttached(VILLAGE_ID)) {
             return false
         }
         LOG.info(LOG_MARKER, "Setting village id of {} to {}", target, id)
-        target.setAttached(ExcentricAttachments.VILLAGE_ID, id)
+        target.setAttached(VILLAGE_ID, id)
         return true
     }
 
@@ -52,7 +58,7 @@ object VillageRefs {
                     !(
                         (p.target is BlockEntity && p.target.isRemoved) ||
                             p.target.hasAttached(
-                                ExcentricAttachments.VILLAGE_ID,
+                                VILLAGE_ID,
                             )
                     )
                 }.forEach { p -> claim(p.target, p.id) }
