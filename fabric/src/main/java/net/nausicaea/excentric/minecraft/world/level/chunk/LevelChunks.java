@@ -2,13 +2,13 @@ package net.nausicaea.excentric.minecraft.world.level.chunk;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.nausicaea.excentric.minecraft.world.level.VillageRefs;
+import net.nausicaea.excentric.fabric.api.attachment.VillageRefs;
 import net.nausicaea.excentric.minecraft.world.level.Villages;
 import net.nausicaea.excentric.util.OptionKt;
 
 public abstract class LevelChunks {
     public static void onLoad(ServerLevel level, ChunkAccess chunk) {
-        if (VillageRefs.get(chunk).isPresent()) {
+        if (VillageRefs.get(chunk).isSome()) {
             return;
         }
 

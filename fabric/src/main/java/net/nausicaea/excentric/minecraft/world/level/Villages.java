@@ -19,6 +19,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.CommonKt;
+import net.nausicaea.excentric.fabric.api.attachment.VillageRefs;
 import net.nausicaea.excentric.java.util.OptionalExtKt;
 import net.nausicaea.excentric.minecraft.server.level.ServerChunkCacheExtKt;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxExtKt;
