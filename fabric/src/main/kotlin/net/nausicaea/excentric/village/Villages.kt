@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.minecraft.world.level
+package net.nausicaea.excentric.village
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -58,7 +58,7 @@ class Villages :
      *
      * 1. Determine [Village.anchor]
      * 2. Determine all beds
-     *    ([net.minecraft.world.entity.ai.village.poi.PoiTypes.HOME]) within
+     *    ([PoiTypes.HOME]) within
      *    [CHUNK_RADIUS]
      * 3. Calculate [Village.center] from the beds
      * 4. Claim only the chunks within the bounding box of the village.

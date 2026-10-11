@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.minecraft.world.level
+package net.nausicaea.excentric.village
 
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel

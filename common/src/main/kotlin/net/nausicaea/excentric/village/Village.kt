@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.minecraft.world.level
+package net.nausicaea.excentric.village
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
