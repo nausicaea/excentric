@@ -19,29 +19,29 @@ sealed interface Option<out T> {
     fun toOptional(): Optional<out T>
 
     fun unwrap(): T
-}
 
-object None : Option<Nothing> {
-    override fun isNone(): Boolean = true
+    object None : Option<Nothing> {
+        override fun isNone(): Boolean = true
 
-    override fun isSome(): Boolean = false
+        override fun isSome(): Boolean = false
 
-    override fun toOptional(): Optional<out Nothing> = Optional.empty()
+        override fun toOptional(): Optional<out Nothing> = Optional.empty()
 
-    override fun unwrap(): Nothing = throw NoSuchElementException("None")
-}
+        override fun unwrap(): Nothing = throw NoSuchElementException("None")
+    }
 
-@JvmInline
-value class Some<out T : Any>(
-    private val value: T,
-) : Option<T> {
-    override fun isNone(): Boolean = false
+    @JvmInline
+    value class Some<out T : Any>(
+        private val value: T,
+    ) : Option<T> {
+        override fun isNone(): Boolean = false
 
-    override fun isSome(): Boolean = true
+        override fun isSome(): Boolean = true
 
-    override fun toOptional(): Optional<out T> = Optional.of(value)
+        override fun toOptional(): Optional<out T> = Optional.of(value)
 
-    override fun unwrap(): T = value
+        override fun unwrap(): T = value
+    }
 }
 
 fun <T> Option<T>.unwrapOr(default: T): T =
@@ -69,7 +69,7 @@ fun <T> Option<T>.filter(predicate: (T) -> Boolean): Option<T> =
     if (isSome() && predicate(unwrap())) {
         this
     } else {
-        None
+        Option.None
     }
 
 fun <T> Option<T>.orElse(f: () -> Option<T>): Option<T> =
@@ -83,14 +83,14 @@ fun <T, U> Option<T>.andThen(f: (T) -> Option<U>): Option<U> =
     if (isSome()) {
         f(unwrap())
     } else {
-        None
+        Option.None
     }
 
 fun <T, U : Any> Option<T>.map(f: (T) -> U): Option<U> =
     if (isSome()) {
-        Some(f(unwrap()))
+        Option.Some(f(unwrap()))
     } else {
-        None
+        Option.None
     }
 
 fun <T> Option<T>.forEach(f: (T) -> Unit) {

@@ -11,9 +11,9 @@ import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
 import net.nausicaea.excentric.java.util.toOption
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.structures.startPool
-import net.nausicaea.excentric.util.None
 import net.nausicaea.excentric.util.Option
-import net.nausicaea.excentric.util.Some
+import net.nausicaea.excentric.util.Option.None
+import net.nausicaea.excentric.util.Option.Some
 import net.nausicaea.excentric.util.map
 import net.nausicaea.excentric.util.unwrapOr
 import net.nausicaea.excentric.util.unwrapOrElse

@@ -8,11 +8,11 @@ import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.prerequisite.PrerequisiteState
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.minecraft.util.chooseWeighted
-import net.nausicaea.excentric.util.None
 import net.nausicaea.excentric.util.Option
+import net.nausicaea.excentric.util.Option.None
+import net.nausicaea.excentric.util.Option.Some
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
-import net.nausicaea.excentric.util.Some
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.andThen
 import net.nausicaea.excentric.util.forEach
