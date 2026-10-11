@@ -20,13 +20,10 @@ data class Probability private constructor(
 
         @JvmField val ONE = Probability(1.0)
 
-        @JvmStatic
         fun of(value: Double) = Probability(value.coerceIn(0.0, 1.0))
 
-        @JvmStatic
         fun mean(src: Collection<Probability>): Probability = if (src.isEmpty()) ZERO else of(src.sumOf { it.value } / src.size)
 
-        @JvmStatic
         fun boltzmann(
             utility: Probability,
             temperature: Probability,

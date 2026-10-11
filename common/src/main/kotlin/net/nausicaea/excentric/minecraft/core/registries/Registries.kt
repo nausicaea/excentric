@@ -9,5 +9,4 @@ import net.nausicaea.excentric.id
 
 val NEED_KEY: ResourceKey<Registry<Need>> = ResourceKey.createRegistryKey(id("need"))
 
-@JvmField
 val NEED_REGISTRY: Registry<Need> = MappedRegistry(NEED_KEY, Lifecycle.stable())

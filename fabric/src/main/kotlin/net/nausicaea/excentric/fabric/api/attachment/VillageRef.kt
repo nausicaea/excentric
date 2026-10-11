@@ -24,10 +24,8 @@ object VillageRef {
     private val LOG: Logger = LoggerFactory.getLogger(VillageRef::class.java)
     private val PENDING: Queue<PendingClaim> = ArrayDeque()
 
-    @JvmStatic
     fun get(target: AttachmentTarget): Option<UUID> = Option.of(target.getAttached(VILLAGE_REF))
 
-    @JvmStatic
     fun claim(
         target: AttachmentTarget,
         id: UUID,
@@ -40,7 +38,6 @@ object VillageRef {
         return true
     }
 
-    @JvmStatic
     fun claimDeferred(
         target: AttachmentTarget,
         id: UUID,
@@ -49,7 +46,6 @@ object VillageRef {
         PENDING.add(PendingClaim(target, id))
     }
 
-    @JvmStatic
     fun drainDeferred() {
         while (!PENDING.isEmpty()) {
             Option
