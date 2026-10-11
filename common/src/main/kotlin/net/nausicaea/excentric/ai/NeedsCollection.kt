@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceKey
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.decay.DecayFn
 import net.nausicaea.excentric.ai.need.Need
+import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.utility.UtilityFn
 import net.nausicaea.excentric.java.util.toOption
@@ -129,10 +130,11 @@ class NeedsCollection {
      */
     fun score(
         svc: Service,
+        prq: Prerequisite,
         context: NeedsContext,
     ): Probability {
         val i = index[svc.key()] ?: return Probability.ZERO
-        return utilityFns[i]!!.score(svc, satisfactions[i]!!, context)
+        return utilityFns[i]!!.score(svc, prq, satisfactions[i]!!, context)
     }
 
     fun realise(

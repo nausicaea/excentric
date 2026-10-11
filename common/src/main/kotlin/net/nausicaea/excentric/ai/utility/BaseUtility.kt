@@ -1,5 +1,6 @@
 package net.nausicaea.excentric.ai.utility
 
+import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.util.Probability
 
@@ -9,6 +10,7 @@ import net.nausicaea.excentric.util.Probability
 object BaseUtility : UtilityFn {
     override fun score(
         svc: Service,
+        prq: Prerequisite,
         sat: Probability,
         ctx: UtilityFnContext,
     ): Probability = svc.baseUtility()

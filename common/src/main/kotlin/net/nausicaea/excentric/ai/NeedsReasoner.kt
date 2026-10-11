@@ -39,7 +39,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .map { svc ->
                 Weighted(
                     svc,
-                    boltzmann(needs.score(svc, context), temp),
+                    boltzmann(needs.score(svc, svc.prerequisite(), context), temp),
                 )
             }.filter { svc -> svc.weight.isNonZero }
     }

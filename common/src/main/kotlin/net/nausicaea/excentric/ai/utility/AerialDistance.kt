@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.ai.utility
 
 import net.nausicaea.excentric.ai.prerequisite.Position
+import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of
@@ -15,11 +16,11 @@ import kotlin.math.max
 object AerialDistance : UtilityFn {
     override fun score(
         svc: Service,
+        prq: Prerequisite,
         sat: Probability,
         ctx: UtilityFnContext,
     ): Probability {
-        // FIXME: this keeps recreating the prerequisite
-        return when (val prq = svc.prerequisite()) {
+        return when (prq) {
             is Position -> {
                 of(
                     1.0 /
