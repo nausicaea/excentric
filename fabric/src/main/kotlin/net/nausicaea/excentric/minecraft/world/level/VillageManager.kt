@@ -3,14 +3,23 @@ package net.nausicaea.excentric.minecraft.world.level
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ChunkPos
+import net.minecraft.world.level.StructureManager
 import net.minecraft.world.level.levelgen.structure.BoundingBox
+import net.minecraft.world.level.levelgen.structure.Structure
 import net.minecraft.world.level.levelgen.structure.StructurePiece
 import net.minecraft.world.level.levelgen.structure.StructureStart
+import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
+import net.nausicaea.excentric.java.util.toOption
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
+import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.structures.startPool
+import net.nausicaea.excentric.mixin.accessor.JigsawStructureAccessor
 import net.nausicaea.excentric.util.None
 import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.Some
+import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.unwrapOr
 import net.nausicaea.excentric.util.unwrapOrElse
+import java.util.function.Predicate
 
 // TODO: candidate for common source set
 interface VillageManager {
@@ -32,7 +41,7 @@ interface VillageManager {
         serverLevel: ServerLevel,
         pos: ChunkPos,
     ): Option<Village> {
-        val villageStructures = VillageUtils.findStarts(serverLevel.structureManager(), pos)
+        val villageStructures = findStarts(serverLevel.structureManager(), pos)
         if (villageStructures.isEmpty()) {
             return None
         }
@@ -68,4 +77,22 @@ interface VillageManager {
         anchor: BlockPos,
         extents: BoundingBox,
     ): Village
+}
+
+/**
+ * Find StructureStart instances for any villages that extend into the
+ * given chunk.
+ */
+private fun findStarts(structureManager: StructureManager, chunkPos: ChunkPos): MutableList<StructureStart> {
+    return structureManager.startsForStructure(
+        chunkPos
+    ) { structure ->
+        structure is JigsawStructure && structure.startPool
+            .unwrapKey()
+            .toOption()
+            .map { key ->
+                key.location().path.endsWith("town_centers")
+            }
+            .unwrapOr(false)
+    }
 }

@@ -32,7 +32,7 @@ import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.UUID
+import java.util.*
 
 class Villages :
     SavedData(),
@@ -51,18 +51,20 @@ class Villages :
         level: ServerLevel,
         anchor: BlockPos,
     ): Village {
-        val extents = VillageUtils.extents(anchor, CHUNK_RADIUS, SECTION_HEIGHT)
+        val extents = extents(anchor, CHUNK_RADIUS, SECTION_HEIGHT)
         return claim(level, anchor, extents)
     }
 
-    // / Claim a new village
-    // /
-    // / 1. Determine [Village#getAnchor()]
-    // / 2. Determine all beds
-    // /    ([net.minecraft.world.entity.ai.village.poi.PoiTypes#HOME]) within
-    // /    [CHUNK_RADIUS]
-    // / 3. Calculate [Village#getCenter()] from the beds
-    // / 4. Claim only the chunks within the bounding box of the village.
+    /**
+     * Claim a new village
+     *
+     * 1. Determine [Village.anchor]
+     * 2. Determine all beds
+     *    ([net.minecraft.world.entity.ai.village.poi.PoiTypes.HOME]) within
+     *    [CHUNK_RADIUS]
+     * 3. Calculate [Village.center] from the beds
+     * 4. Claim only the chunks within the bounding box of the village.
+     */
     override fun claim(
         level: ServerLevel,
         anchor: BlockPos,
@@ -182,4 +184,18 @@ class Villages :
                     ).apply(i, ::Data)
             }
     }
+}
+
+@Suppress("SameParameterValue")
+private fun extents(anchor: BlockPos, chunkRadius: Int, sectionHeight: Int): BoundingBox {
+    val halfWidth = 8 * chunkRadius
+    val halfHeight = 8 * sectionHeight
+    return BoundingBox(
+        anchor.x - halfWidth,
+        anchor.y - halfHeight,
+        anchor.z - halfWidth,
+        anchor.x + halfWidth,
+        anchor.y + halfHeight,
+        anchor.z + halfWidth
+    )
 }
