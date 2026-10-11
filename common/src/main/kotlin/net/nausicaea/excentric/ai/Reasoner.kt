@@ -4,7 +4,6 @@ import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.forEach
-import java.util.Optional
 import java.util.stream.Stream
 
 /**

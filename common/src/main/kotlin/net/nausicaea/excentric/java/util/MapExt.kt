@@ -1,3 +1,5 @@
+@file:Suppress("ReplaceGetOrSet")
+
 package net.nausicaea.excentric.java.util
 
 import net.nausicaea.excentric.util.Option

@@ -5,21 +5,18 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.StructureManager
 import net.minecraft.world.level.levelgen.structure.BoundingBox
-import net.minecraft.world.level.levelgen.structure.Structure
 import net.minecraft.world.level.levelgen.structure.StructurePiece
 import net.minecraft.world.level.levelgen.structure.StructureStart
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
 import net.nausicaea.excentric.java.util.toOption
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.structures.startPool
-import net.nausicaea.excentric.mixin.accessor.JigsawStructureAccessor
 import net.nausicaea.excentric.util.None
 import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.Some
 import net.nausicaea.excentric.util.map
 import net.nausicaea.excentric.util.unwrapOr
 import net.nausicaea.excentric.util.unwrapOrElse
-import java.util.function.Predicate
 
 interface VillageManager {
     fun findOrClaim(

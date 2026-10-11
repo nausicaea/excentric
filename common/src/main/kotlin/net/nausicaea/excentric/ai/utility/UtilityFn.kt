@@ -9,7 +9,7 @@ import net.nausicaea.excentric.util.Probability
 interface UtilityFn {
     /**
      * Score a [Service] by the existing
-     * [net.nausicaea.excentric.minecraft.world.entity.ai.need.Need] initialSatisfaction
+     * [net.nausicaea.excentric.ai.need.Need] initialSatisfaction
      * value, the current temperature, and the external context.
      *
      * The return value is guaranteed to be normalised to [0..1].

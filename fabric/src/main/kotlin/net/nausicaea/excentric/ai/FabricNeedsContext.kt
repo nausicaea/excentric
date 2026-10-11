@@ -13,6 +13,7 @@ import net.nausicaea.excentric.ai.service.Inventory
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.service.World
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
+import net.nausicaea.excentric.minecraft.world.entity.tryGetItemBySlot
 import net.nausicaea.excentric.minecraft.world.stream
 import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.andThen
@@ -50,8 +51,8 @@ data class FabricNeedsContext(
 
         // If the entity can carry equipment.
         if (entity is EquipmentUser) {
-            Option
-                .of(entity.getItemBySlot(EquipmentSlot.MAINHAND))
+            entity
+                .tryGetItemBySlot(EquipmentSlot.MAINHAND)
                 .andThen { s ->
                     ServiceApi.findItemService(
                         s,

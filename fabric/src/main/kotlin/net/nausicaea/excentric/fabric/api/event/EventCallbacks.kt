@@ -55,7 +55,7 @@ object EventCallbacks {
         val chunkPos = chunk.pos
         vman
             .find(chunkPos.getMiddleBlockPosition(80))
-            .orElse<Village> { vman.findOrClaimByStructure(level, chunkPos) }
+            .orElse { vman.findOrClaimByStructure(level, chunkPos) }
             .toOptional() // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
             // on the chunk itself) here because it will trigger a complete chunk load.
             .ifPresent { village: Village? -> claim(chunk, village!!.id) }

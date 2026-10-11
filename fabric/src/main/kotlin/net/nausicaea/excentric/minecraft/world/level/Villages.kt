@@ -13,8 +13,6 @@ import net.minecraft.util.datafix.DataFixTypes
 import net.minecraft.world.entity.ai.village.poi.PoiManager
 import net.minecraft.world.entity.ai.village.poi.PoiRecord
 import net.minecraft.world.entity.ai.village.poi.PoiTypes
-import net.minecraft.world.level.ChunkPos
-import net.minecraft.world.level.chunk.LevelChunk
 import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.saveddata.SavedData
 import net.minecraft.world.phys.Vec3
@@ -168,9 +166,9 @@ class Villages :
             val villageId = village.id
             village.boundingBox
                 .containedChunks()
-                .filter { chunkPos: ChunkPos? -> chunkSource.hasChunk(chunkPos!!) }
-                .flatMap<LevelChunk> { chunkPos: ChunkPos? -> chunkSource.getChunkNow(chunkPos!!).stream() }
-                .forEach { chunk: LevelChunk? -> VillageRef.claim(chunk!!, villageId) }
+                .filter { chunkPos -> chunkSource.hasChunk(chunkPos) }
+                .flatMap { chunkPos -> chunkSource.getChunkNow(chunkPos).stream() }
+                .forEach { chunk -> VillageRef.claim(chunk, villageId) }
         }
 
         private val CODEC: Codec<Data> =

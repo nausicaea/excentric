@@ -100,12 +100,12 @@ class NeedsCollection {
         for (i in index.values) {
             satisfactions.compute(
                 i,
-            ) { k: Int?, v: Probability? ->
+            ) { k, v ->
                 if (v == null) {
                     // Assume unknown needs have a satisfaction of one.
                     return@compute Probability.ONE
                 } else {
-                    return@compute decayFns.get(k)!!.decay(v, deltaTime)
+                    return@compute decayFns[k]!!.decay(v, deltaTime)
                 }
             }
         }
@@ -131,8 +131,8 @@ class NeedsCollection {
         svc: Service,
         context: NeedsContext,
     ): Probability {
-        val i = index.get(svc.key()) ?: return Probability.ZERO
-        return utilityFns.get(i)!!.score(svc, satisfactions.get(i)!!, context)
+        val i = index[svc.key()] ?: return Probability.ZERO
+        return utilityFns[i]!!.score(svc, satisfactions[i]!!, context)
     }
 
     fun realise(
@@ -159,11 +159,3 @@ class NeedsCollection {
         private val LOG: Logger = LoggerFactory.getLogger(NeedsCollection::class.java)
     }
 }
-
-@JvmRecord
-private data class NeedData(
-    val key: ResourceKey<Need>,
-    val decayFn: DecayFn,
-    val utilityFn: UtilityFn,
-    val satisfaction: Double,
-)

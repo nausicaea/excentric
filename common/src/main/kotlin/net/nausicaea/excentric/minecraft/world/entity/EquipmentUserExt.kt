@@ -7,4 +7,4 @@ import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.Some
 import net.nausicaea.excentric.util.filter
 
-fun EquipmentUser.getItemBySlot(slot: EquipmentSlot): Option<ItemStack> = Some(this.getItemBySlot(slot)).filter { s -> !s.isEmpty }
+fun EquipmentUser.tryGetItemBySlot(slot: EquipmentSlot): Option<ItemStack> = Some(this.getItemBySlot(slot)).filter { s -> !s.isEmpty }

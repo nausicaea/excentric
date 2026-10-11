@@ -10,6 +10,7 @@ interface Prerequisite {
      * Poll the [Prerequisite], bringing it closer to satisfaction. Return the
      * current [PrerequisiteState].
      */
+    @Suppress("SameReturnValue")
     fun poll(): PrerequisiteState
 }
 

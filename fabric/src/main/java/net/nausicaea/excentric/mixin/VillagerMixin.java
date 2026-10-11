@@ -49,6 +49,7 @@ abstract class VillagerMixin {
 
     /// [Villager]s shall not use their [Brain]: concretely, `Brain#tick()` may not
     /// be called on villagers during the AI ticking call.
+    @SuppressWarnings("SameReturnValue")
     @WrapWithCondition(
             method = "customServerAiStep(Lnet/minecraft/server/level/ServerLevel;)V",
             at =

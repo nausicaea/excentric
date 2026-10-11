@@ -5,7 +5,6 @@ import net.minecraft.world.phys.Vec3
 import net.nausicaea.excentric.util.None
 import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.Some
-import java.util.function.Function
 import java.util.stream.Stream
 
 fun Vec3.toBlockPosFloor(): BlockPos = BlockPos(this.x().toInt(), this.y().toInt(), this.z().toInt())

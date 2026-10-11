@@ -34,7 +34,7 @@ fun BoundingBox.showEdges(
     val maxZ = (this.maxZ() + 1).toDouble()
 
     val corners =
-        arrayOf<Vec3>(
+        arrayOf(
             Vec3(minX, minY, minZ),
             Vec3(maxX, minY, minZ),
             Vec3(maxX, minY, maxZ),
