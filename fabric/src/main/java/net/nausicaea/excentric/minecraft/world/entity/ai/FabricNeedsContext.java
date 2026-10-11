@@ -13,10 +13,12 @@ import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.ExcentricServiceApi;
 import net.nausicaea.excentric.ai.NeedsCollection;
 import net.nausicaea.excentric.ai.NeedsContext;
+import net.nausicaea.excentric.ai.service.Held;
+import net.nausicaea.excentric.ai.service.Inventory;
 import net.nausicaea.excentric.ai.service.Service;
+import net.nausicaea.excentric.ai.service.World;
 import net.nausicaea.excentric.minecraft.world.SimpleContainerExtKt;
 import net.nausicaea.excentric.minecraft.world.entity.EquipmentUserExtKt;
-import net.nausicaea.excentric.minecraft.world.entity.ai.service.StackSource;
 
 public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
         implements NeedsContext {
@@ -43,7 +45,7 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
                                     ExcentricServiceApi.findItemService(
                                             stack.getValue(),
                                             entity,
-                                            new StackSource.Inventory(inventory, stack.getIndex()))
+                                            new Inventory(inventory, stack.getIndex()))
                                             .stream())
                     .forEach(svcBuffer::add);
         }
@@ -55,16 +57,14 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
                     .flatMap(
                             s ->
                                     ExcentricServiceApi.findItemService(
-                                            s,
-                                            entity,
-                                            new StackSource.Held(EquipmentSlot.MAINHAND)))
+                                            s, entity, new Held(EquipmentSlot.MAINHAND)))
                     .ifPresent(svcBuffer::add);
             EquipmentUserExtKt.getItemBySlot(eu, EquipmentSlot.OFFHAND)
                     .toOptional()
                     .flatMap(
                             s ->
                                     ExcentricServiceApi.findItemService(
-                                            s, entity, new StackSource.Held(EquipmentSlot.OFFHAND)))
+                                            s, entity, new Held(EquipmentSlot.OFFHAND)))
                     .ifPresent(svcBuffer::add);
         }
 
@@ -75,9 +75,7 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
                 .flatMap(
                         itemEntity ->
                                 ExcentricServiceApi.findItemService(
-                                        itemEntity.getItem(),
-                                        entity,
-                                        new StackSource.World(itemEntity))
+                                        itemEntity.getItem(), entity, new World(itemEntity))
                                         .stream())
                 .forEach(svcBuffer::add);
 
