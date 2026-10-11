@@ -21,7 +21,6 @@ import net.nausicaea.excentric.util.unwrapOr
 import net.nausicaea.excentric.util.unwrapOrElse
 import java.util.function.Predicate
 
-// TODO: candidate for common source set
 interface VillageManager {
     fun findOrClaim(
         level: ServerLevel,
