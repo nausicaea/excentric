@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.nausicaea.excentric.fabric.api.attachment.VillageRefs;
 import net.nausicaea.excentric.fabric.api.event.EventsKt;
+import net.nausicaea.excentric.fabric.api.lookup.ServiceApi;
 import net.nausicaea.excentric.minecraft.world.block.entity.Bells;
 import net.nausicaea.excentric.minecraft.world.entity.npc.Villagers;
 import net.nausicaea.excentric.minecraft.world.level.Villages;
@@ -32,7 +33,7 @@ public class ExcentricFabric implements ModInitializer {
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(ExcentricFabric::onBlockEntityLoad);
         ServerEntityEvents.ENTITY_LOAD.register(ExcentricFabric::onEntityLoad);
         EventsKt.AFTER_BLOCK_PLACE.register(ExcentricFabric::onAfterBlockPlace);
-        ExcentricServiceApi.register();
+        ServiceApi.register();
     }
 
     private static void onEndTick(MinecraftServer server) {

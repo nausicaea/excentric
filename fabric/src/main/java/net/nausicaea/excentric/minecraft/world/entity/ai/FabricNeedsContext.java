@@ -10,15 +10,16 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.InventoryCarrier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.nausicaea.excentric.ExcentricServiceApi;
 import net.nausicaea.excentric.ai.NeedsCollection;
 import net.nausicaea.excentric.ai.NeedsContext;
 import net.nausicaea.excentric.ai.service.Held;
 import net.nausicaea.excentric.ai.service.Inventory;
 import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.ai.service.World;
+import net.nausicaea.excentric.fabric.api.lookup.ServiceApi;
 import net.nausicaea.excentric.minecraft.world.SimpleContainerExtKt;
 import net.nausicaea.excentric.minecraft.world.entity.EquipmentUserExtKt;
+import net.nausicaea.excentric.util.OptionKt;
 import org.jetbrains.annotations.NotNull;
 
 public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
@@ -43,29 +44,30 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
             SimpleContainerExtKt.stream(inventory)
                     .flatMap(
                             stack ->
-                                    ExcentricServiceApi.findItemService(
+                                    ServiceApi.findItemService(
                                             stack.getValue(),
                                             entity,
                                             new Inventory(inventory, stack.getIndex()))
+                                            .toOptional()
                                             .stream())
                     .forEach(svcBuffer::add);
         }
 
         // If the entity can carry equipment.
         if (entity instanceof EquipmentUser eu) {
-            EquipmentUserExtKt.getItemBySlot(eu, EquipmentSlot.MAINHAND)
-                    .toOptional()
-                    .flatMap(
+            OptionKt.andThen(
+                            EquipmentUserExtKt.getItemBySlot(eu, EquipmentSlot.MAINHAND),
                             s ->
-                                    ExcentricServiceApi.findItemService(
+                                    ServiceApi.findItemService(
                                             s, entity, new Held(EquipmentSlot.MAINHAND)))
-                    .ifPresent(svcBuffer::add);
-            EquipmentUserExtKt.getItemBySlot(eu, EquipmentSlot.OFFHAND)
                     .toOptional()
-                    .flatMap(
+                    .ifPresent(svcBuffer::add);
+            OptionKt.andThen(
+                            EquipmentUserExtKt.getItemBySlot(eu, EquipmentSlot.OFFHAND),
                             s ->
-                                    ExcentricServiceApi.findItemService(
+                                    ServiceApi.findItemService(
                                             s, entity, new Held(EquipmentSlot.OFFHAND)))
+                    .toOptional()
                     .ifPresent(svcBuffer::add);
         }
 
@@ -75,8 +77,9 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
         serverLevel.getEntitiesOfClass(ItemEntity.class, aabb).stream()
                 .flatMap(
                         itemEntity ->
-                                ExcentricServiceApi.findItemService(
+                                ServiceApi.findItemService(
                                         itemEntity.getItem(), entity, new World(itemEntity))
+                                        .toOptional()
                                         .stream())
                 .forEach(svcBuffer::add);
 

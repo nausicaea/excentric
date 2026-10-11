@@ -51,6 +51,13 @@ fun <T> Option<T>.unwrapOr(default: T): T =
         this.unwrap()
     }
 
+fun <T> Option<T>.unwrapOrNull(): T? =
+    if (this.isNone()) {
+        null
+    } else {
+        this.unwrap()
+    }
+
 fun <T> Option<T>.unwrapOrElse(defaultFn: () -> T): T =
     if (this.isNone()) {
         defaultFn()
