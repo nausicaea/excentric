@@ -6,13 +6,13 @@ import net.nausicaea.excentric.fabric.api.attachment.VillageRefs;
 import net.nausicaea.excentric.minecraft.world.level.Villages;
 import net.nausicaea.excentric.util.OptionKt;
 
-public abstract class LevelChunks {
+public final class LevelChunks {
     public static void onLoad(ServerLevel level, ChunkAccess chunk) {
         if (VillageRefs.get(chunk).isSome()) {
             return;
         }
 
-        var vman = Villages.get(level);
+        var vman = Villages.Companion.get(level);
         var chunkPos = chunk.getPos();
         OptionKt.orElse(
                         vman.find(chunkPos.getMiddleBlockPosition(80)),

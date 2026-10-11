@@ -11,7 +11,7 @@ public final class Villagers {
             return;
         }
 
-        Villages.get(serverLevel)
+        Villages.Companion.get(serverLevel)
                 .find(villager.blockPosition())
                 .toOptional()
                 .ifPresent(village -> VillageRefs.claim(villager, village.getId()));

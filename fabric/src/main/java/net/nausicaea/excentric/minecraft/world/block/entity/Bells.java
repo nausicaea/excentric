@@ -11,7 +11,7 @@ public final class Bells {
         if (VillageRefs.get(bbe).isSome()) {
             return;
         }
-        var village = Villages.get(level).findOrClaim(level, pos);
+        var village = Villages.Companion.get(level).findOrClaim(level, pos);
         VillageRefs.claim(bbe, village.getId());
     }
 
@@ -19,7 +19,7 @@ public final class Bells {
         if (VillageRefs.get(bbe).isSome()) {
             return;
         }
-        Villages.get(level)
+        Villages.Companion.get(level)
                 .find(bbe.getBlockPos())
                 .toOptional()
                 .ifPresent(v -> VillageRefs.claimDeferred(bbe, v.getId()));

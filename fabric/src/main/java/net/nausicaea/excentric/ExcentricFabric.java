@@ -37,7 +37,9 @@ public class ExcentricFabric implements ModInitializer {
     private static void onEndTick(MinecraftServer server) {
         VillageRefs.drainDeferred();
         every10Ticks.run(
-                () -> server.getAllLevels().forEach(level -> Villages.get(level).debug(level)));
+                () ->
+                        server.getAllLevels()
+                                .forEach(level -> Villages.Companion.get(level).debug(level)));
     }
 
     private static void onAfterBlockPlace(
