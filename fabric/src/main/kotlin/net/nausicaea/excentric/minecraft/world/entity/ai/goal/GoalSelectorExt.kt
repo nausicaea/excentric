@@ -11,13 +11,18 @@ import net.nausicaea.excentric.mixin.accessor.NearestAttackableTargetGoalAccesso
  * [AbstractVillager] and [IronGolem].
  */
 fun GoalSelector.removeVillagerAndGolemTargeting() {
-    this.removeAllGoals({ goal ->
-        if (goal !is NearestAttackableTargetGoal<*>) {
-            return@removeAllGoals false
+    this.removeAllGoals { goal ->
+        when (goal) {
+            is NearestAttackableTargetGoal<*> -> {
+                val targetType =
+                    (goal as NearestAttackableTargetGoalAccessor)
+                        .`villageMod$getTargetType`()
+                targetType == AbstractVillager::class.java || targetType == IronGolem::class.java
+            }
+
+            else -> {
+                false
+            }
         }
-        val targetType =
-            (goal as NearestAttackableTargetGoalAccessor)
-                .`villageMod$getTargetType`()
-        targetType == AbstractVillager::class.java || targetType == IronGolem::class.java
-    })
+    }
 }
