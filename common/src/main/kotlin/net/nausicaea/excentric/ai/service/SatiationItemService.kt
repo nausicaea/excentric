@@ -30,10 +30,10 @@ data class SatiationItemService(
 
     override fun prerequisite(): Prerequisite =
         when (ctx.source) {
-            is Held -> Empty
-            is Inventory -> Empty
-            is ForeignInventory -> Position(ctx.source.pos)
-            is World -> Position(ctx.source.entity.position())
+            is StackSource.ForeignInventory -> Position(ctx.source.pos)
+            is StackSource.Held -> Empty
+            is StackSource.Inventory -> Empty
+            is StackSource.World -> Position(ctx.source.entity.position())
         }
 
     override fun baseUtility(): Probability = of(props.nutrition().toDouble() / MAX_NUTRITION)

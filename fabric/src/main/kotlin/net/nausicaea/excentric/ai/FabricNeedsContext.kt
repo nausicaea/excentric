@@ -8,10 +8,8 @@ import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.npc.InventoryCarrier
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
-import net.nausicaea.excentric.ai.service.Held
-import net.nausicaea.excentric.ai.service.Inventory
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.ai.service.World
+import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.entity.tryGetItemBySlot
 import net.nausicaea.excentric.minecraft.world.stream
@@ -43,7 +41,7 @@ data class FabricNeedsContext(
                         .findItemService(
                             stack.value,
                             entity,
-                            Inventory(inventory, stack.index),
+                            StackSource.Inventory(inventory, stack.index),
                         ).toOptional()
                         .stream()
                 }.forEach(svcBuffer::add)
@@ -57,7 +55,7 @@ data class FabricNeedsContext(
                     ServiceApi.findItemService(
                         s,
                         entity,
-                        Held(EquipmentSlot.MAINHAND),
+                        StackSource.Held(EquipmentSlot.MAINHAND),
                     )
                 }.forEach(svcBuffer::add)
             Option
@@ -66,7 +64,7 @@ data class FabricNeedsContext(
                     ServiceApi.findItemService(
                         s,
                         entity,
-                        Held(EquipmentSlot.OFFHAND),
+                        StackSource.Held(EquipmentSlot.OFFHAND),
                     )
                 }.forEach(svcBuffer::add)
         }
@@ -82,7 +80,7 @@ data class FabricNeedsContext(
                     .findItemService(
                         itemEntity.item,
                         entity,
-                        World(itemEntity),
+                        StackSource.World(itemEntity),
                     ).toOptional()
                     .stream()
             }.forEach(svcBuffer::add)

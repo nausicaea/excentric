@@ -9,10 +9,10 @@ data class ItemServiceContext(
 ) {
     fun itemStack(): ItemStack =
         when (source) {
-            is ForeignInventory -> source.container.getItem(source.slot)
-            is Held -> consumer.getItemBySlot(source.slot)
-            is Inventory -> source.container.getItem(source.slot)
-            is World -> source.entity.item
+            is StackSource.ForeignInventory -> source.container.getItem(source.slot)
+            is StackSource.Held -> consumer.getItemBySlot(source.slot)
+            is StackSource.Inventory -> source.container.getItem(source.slot)
+            is StackSource.World -> source.entity.item
         }
 
     /**
@@ -20,10 +20,10 @@ data class ItemServiceContext(
      */
     fun putBack(stack: ItemStack) {
         when (this.source) {
-            is ForeignInventory -> source.container.setItem(source.slot, stack)
-            is Held -> consumer.setItemSlot(source.slot, stack)
-            is Inventory -> source.container.setItem(source.slot, stack)
-            is World -> source.entity.item = stack
+            is StackSource.ForeignInventory -> source.container.setItem(source.slot, stack)
+            is StackSource.Held -> consumer.setItemSlot(source.slot, stack)
+            is StackSource.Inventory -> source.container.setItem(source.slot, stack)
+            is StackSource.World -> source.entity.item = stack
         }
     }
 }
