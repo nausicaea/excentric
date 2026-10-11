@@ -62,9 +62,9 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
         currentService
             .map(SvcPrq::poll)
             .andThen(SvcPolled::tryRealise)
-            .forEach(fun(t: SvcRealised) {
+            .forEach { t ->
                 context.needs().realise(t.key, t.addedAmount)
-            })
+            }
     }
 }
 
