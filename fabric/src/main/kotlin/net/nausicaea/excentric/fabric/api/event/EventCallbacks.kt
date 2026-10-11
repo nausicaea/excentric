@@ -17,11 +17,11 @@ import net.nausicaea.excentric.fabric.api.attachment.VillageRef.claim
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.claimDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.drainDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.get
-import net.nausicaea.excentric.village.Village
-import net.nausicaea.excentric.village.Villages
 import net.nausicaea.excentric.util.EveryN
 import net.nausicaea.excentric.util.forEach
 import net.nausicaea.excentric.util.orElse
+import net.nausicaea.excentric.village.Village
+import net.nausicaea.excentric.village.Villages
 
 object EventCallbacks {
     private val every10Ticks = EveryN(8)

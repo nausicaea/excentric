@@ -32,6 +32,7 @@ repos:
     hooks:
       - id: spotless-apply
         name: Spotless (auto-format Java/Gradle files)
+        stages: [pre-commit]
         entry: ./gradlew spotlessApply
         language: system
         pass_filenames: false

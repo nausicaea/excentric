@@ -19,8 +19,8 @@ object AerialDistance : UtilityFn {
         prq: Prerequisite,
         sat: Probability,
         ctx: UtilityFnContext,
-    ): Probability {
-        return when (prq) {
+    ): Probability =
+        when (prq) {
             is Position -> {
                 of(
                     1.0 /
@@ -35,5 +35,4 @@ object AerialDistance : UtilityFn {
                 Probability.ONE
             }
         }
-    }
 }
