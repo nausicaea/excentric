@@ -19,6 +19,7 @@ import net.nausicaea.excentric.ai.service.Service;
 import net.nausicaea.excentric.ai.service.World;
 import net.nausicaea.excentric.minecraft.world.SimpleContainerExtKt;
 import net.nausicaea.excentric.minecraft.world.entity.EquipmentUserExtKt;
+import org.jetbrains.annotations.NotNull;
 
 public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
         implements NeedsContext {
@@ -27,7 +28,7 @@ public record FabricNeedsContext(NeedsCollection needs, LivingEntity entity)
     private static final Vec3 SEARCH_MIN = new Vec3(-HALF_WIDTH, -HALF_HEIGHT, -HALF_WIDTH);
     private static final Vec3 SEARCH_MAX = new Vec3(HALF_WIDTH, HALF_HEIGHT, HALF_WIDTH);
 
-    public Stream<Service> collect() {
+    public @NotNull Stream<Service> collect() {
         var level = entity.level();
         // The service collection is not designed to run on clients.
         if (!(level instanceof ServerLevel serverLevel)) {

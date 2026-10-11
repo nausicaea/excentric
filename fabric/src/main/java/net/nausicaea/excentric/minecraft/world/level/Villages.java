@@ -2,7 +2,10 @@ package net.nausicaea.excentric.minecraft.world.level;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -16,8 +19,10 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.Vec3;
 import net.nausicaea.excentric.CommonKt;
+import net.nausicaea.excentric.java.util.OptionalExtKt;
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BoundingBoxExtKt;
 import net.nausicaea.excentric.minecraft.world.phys.Vec3ExtKt;
+import net.nausicaea.excentric.util.Option;
 import net.nausicaea.excentric.util.OptionKt;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -59,7 +64,7 @@ public final class Villages extends SavedData implements VillageManager {
     }
 
     @Override
-    public Village claim(ServerLevel level, BlockPos anchor) {
+    public @NotNull Village claim(@NotNull ServerLevel level, @NotNull BlockPos anchor) {
         var extents = VillageUtils.extents(anchor, CHUNK_RADIUS, SECTION_HEIGHT);
         return claim(level, anchor, extents);
     }
@@ -73,7 +78,8 @@ public final class Villages extends SavedData implements VillageManager {
     /// 3. Calculate [Village#getCenter()] from the beds
     /// 4. Claim only the chunks within the bounding box of the village.
     @Override
-    public Village claim(ServerLevel level, BlockPos anchor, BoundingBox extents) {
+    public @NotNull Village claim(
+            ServerLevel level, @NotNull BlockPos anchor, BoundingBox extents) {
         var poiManager = level.getPoiManager();
         LOG.info(
                 CommonKt.LOG_MARKER,
@@ -105,10 +111,11 @@ public final class Villages extends SavedData implements VillageManager {
 
     /// This silently discards multiple matching villages
     @Override
-    public Optional<Village> find(BlockPos anchor) {
-        return villages.values().stream()
-                .filter(v -> v.getBoundingBox().isInside(anchor))
-                .findFirst();
+    public @NotNull Option<Village> find(@NotNull BlockPos anchor) {
+        return OptionalExtKt.toOption(
+                villages.values().stream()
+                        .filter(v -> v.getBoundingBox().isInside(anchor))
+                        .findFirst());
     }
 
     private static void claimLoadedChunks(ServerLevel level, Village village) {

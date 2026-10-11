@@ -21,6 +21,7 @@ public final class Bells {
         }
         Villages.get(level)
                 .find(bbe.getBlockPos())
+                .toOptional()
                 .ifPresent(v -> VillageRefs.claimDeferred(bbe, v.getId()));
     }
 

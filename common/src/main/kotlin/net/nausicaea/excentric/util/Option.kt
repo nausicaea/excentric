@@ -51,11 +51,25 @@ fun <T> Option<T>.unwrapOr(default: T): T =
         this.unwrap()
     }
 
+fun <T> Option<T>.unwrapOrElse(defaultFn: () -> T): T =
+    if (this.isNone()) {
+        defaultFn()
+    } else {
+        this.unwrap()
+    }
+
 fun <T> Option<T>.filter(predicate: (T) -> Boolean): Option<T> =
     if (isSome() && predicate(unwrap())) {
         this
     } else {
         None
+    }
+
+fun <T> Option<T>.orElse(f: () -> Option<T>): Option<T> =
+    if (isNone()) {
+        f()
+    } else {
+        this
     }
 
 fun <T, U> Option<T>.andThen(f: (T) -> Option<U>): Option<U> =
