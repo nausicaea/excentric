@@ -17,7 +17,6 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef;
 import net.nausicaea.excentric.fabric.api.event.EventsKt;
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi;
-import net.nausicaea.excentric.minecraft.world.block.entity.Bells;
 import net.nausicaea.excentric.minecraft.world.entity.npc.Villagers;
 import net.nausicaea.excentric.minecraft.world.level.Villages;
 import net.nausicaea.excentric.util.EveryN;
@@ -65,14 +64,24 @@ public class ExcentricFabric implements ModInitializer {
         if (!(serverLevel.getBlockEntity(pos) instanceof BellBlockEntity bbe)) {
             return;
         }
-        Bells.onPlace(serverLevel, pos, bbe);
+        if (VillageRef.get(bbe).isSome()) {
+            return;
+        }
+        var village = Villages.Companion.get(serverLevel).findOrClaim(serverLevel, pos);
+        VillageRef.claim(bbe, village.getId());
     }
 
     private static void onBlockEntityLoad(BlockEntity blockEntity, ServerLevel serverLevel) {
         if (!(blockEntity instanceof BellBlockEntity bbe)) {
             return;
         }
-        Bells.onLoad(serverLevel, bbe);
+        if (VillageRef.get(bbe).isSome()) {
+            return;
+        }
+        Villages.Companion.get(serverLevel)
+                .find(bbe.getBlockPos())
+                .toOptional()
+                .ifPresent(v -> VillageRef.claimDeferred(bbe, v.getId()));
     }
 
     private static void onEntityLoad(Entity entity, ServerLevel serverLevel) {
