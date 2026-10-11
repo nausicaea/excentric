@@ -17,7 +17,6 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef;
 import net.nausicaea.excentric.fabric.api.event.EventsKt;
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi;
-import net.nausicaea.excentric.minecraft.world.entity.npc.Villagers;
 import net.nausicaea.excentric.minecraft.world.level.Villages;
 import net.nausicaea.excentric.util.EveryN;
 import net.nausicaea.excentric.util.OptionKt;
@@ -88,6 +87,13 @@ public class ExcentricFabric implements ModInitializer {
         if (!(entity instanceof Villager villager)) {
             return;
         }
-        Villagers.onLoad(serverLevel, villager);
+        if (VillageRef.get(villager).isSome()) {
+            return;
+        }
+
+        Villages.Companion.get(serverLevel)
+                .find(villager.blockPosition())
+                .toOptional()
+                .ifPresent(village -> VillageRef.claim(villager, village.getId()));
     }
 }

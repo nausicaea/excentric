@@ -83,16 +83,18 @@ interface VillageManager {
  * Find StructureStart instances for any villages that extend into the
  * given chunk.
  */
-private fun findStarts(structureManager: StructureManager, chunkPos: ChunkPos): MutableList<StructureStart> {
-    return structureManager.startsForStructure(
-        chunkPos
+private fun findStarts(
+    structureManager: StructureManager,
+    chunkPos: ChunkPos,
+): MutableList<StructureStart> =
+    structureManager.startsForStructure(
+        chunkPos,
     ) { structure ->
-        structure is JigsawStructure && structure.startPool
-            .unwrapKey()
-            .toOption()
-            .map { key ->
-                key.location().path.endsWith("town_centers")
-            }
-            .unwrapOr(false)
+        structure is JigsawStructure &&
+            structure.startPool
+                .unwrapKey()
+                .toOption()
+                .map { key ->
+                    key.location().path.endsWith("town_centers")
+                }.unwrapOr(false)
     }
-}

@@ -32,7 +32,7 @@ import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.*
+import java.util.UUID
 
 class Villages :
     SavedData(),
@@ -187,7 +187,11 @@ class Villages :
 }
 
 @Suppress("SameParameterValue")
-private fun extents(anchor: BlockPos, chunkRadius: Int, sectionHeight: Int): BoundingBox {
+private fun extents(
+    anchor: BlockPos,
+    chunkRadius: Int,
+    sectionHeight: Int,
+): BoundingBox {
     val halfWidth = 8 * chunkRadius
     val halfHeight = 8 * sectionHeight
     return BoundingBox(
@@ -196,6 +200,6 @@ private fun extents(anchor: BlockPos, chunkRadius: Int, sectionHeight: Int): Bou
         anchor.z - halfWidth,
         anchor.x + halfWidth,
         anchor.y + halfHeight,
-        anchor.z + halfWidth
+        anchor.z + halfWidth,
     )
 }
