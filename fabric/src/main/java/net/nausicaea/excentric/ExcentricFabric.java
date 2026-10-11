@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.nausicaea.excentric.fabric.api.attachment.VillageRefs;
+import net.nausicaea.excentric.fabric.api.attachment.VillageRef;
 import net.nausicaea.excentric.fabric.api.event.EventsKt;
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi;
 import net.nausicaea.excentric.minecraft.world.block.entity.Bells;
@@ -37,7 +37,7 @@ public class ExcentricFabric implements ModInitializer {
     }
 
     private static void onEndTick(MinecraftServer server) {
-        VillageRefs.drainDeferred();
+        VillageRef.drainDeferred();
         every10Ticks.run(
                 () ->
                         server.getAllLevels()
@@ -45,7 +45,7 @@ public class ExcentricFabric implements ModInitializer {
     }
 
     private static void onChunkLoad(ServerLevel level, ChunkAccess chunk) {
-        if (VillageRefs.get(chunk).isSome()) {
+        if (VillageRef.get(chunk).isSome()) {
             return;
         }
 
@@ -57,7 +57,7 @@ public class ExcentricFabric implements ModInitializer {
                 .toOptional()
                 // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
                 // on the chunk itself) here because it will trigger a complete chunk load.
-                .ifPresent(village -> VillageRefs.claim(chunk, village.getId()));
+                .ifPresent(village -> VillageRef.claim(chunk, village.getId()));
     }
 
     private static void onAfterBlockPlace(

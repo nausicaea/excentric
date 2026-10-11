@@ -18,25 +18,25 @@ import java.util.ArrayDeque
 import java.util.Queue
 import java.util.UUID
 
-val VILLAGE_ID: AttachmentType<UUID> = AttachmentRegistry.createPersistent(id("village_id"), UUIDUtil.CODEC)
+val VILLAGE_REF: AttachmentType<UUID> = AttachmentRegistry.createPersistent(id("village_ref"), UUIDUtil.CODEC)
 
-object VillageRefs {
-    private val LOG: Logger = LoggerFactory.getLogger(VillageRefs::class.java)
+object VillageRef {
+    private val LOG: Logger = LoggerFactory.getLogger(VillageRef::class.java)
     private val PENDING: Queue<PendingClaim> = ArrayDeque()
 
     @JvmStatic
-    fun get(target: AttachmentTarget): Option<UUID> = Option.of(target.getAttached(VILLAGE_ID))
+    fun get(target: AttachmentTarget): Option<UUID> = Option.of(target.getAttached(VILLAGE_REF))
 
     @JvmStatic
     fun claim(
         target: AttachmentTarget,
         id: UUID,
     ): Boolean {
-        if (target.hasAttached(VILLAGE_ID)) {
+        if (target.hasAttached(VILLAGE_REF)) {
             return false
         }
         LOG.info(LOG_MARKER, "Setting village id of {} to {}", target, id)
-        target.setAttached(VILLAGE_ID, id)
+        target.setAttached(VILLAGE_REF, id)
         return true
     }
 
@@ -58,7 +58,7 @@ object VillageRefs {
                     !(
                         (p.target is BlockEntity && p.target.isRemoved) ||
                             p.target.hasAttached(
-                                VILLAGE_ID,
+                                VILLAGE_REF,
                             )
                     )
                 }.forEach { p -> claim(p.target, p.id) }

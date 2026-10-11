@@ -20,7 +20,7 @@ import net.minecraft.world.level.saveddata.SavedData
 import net.minecraft.world.phys.Vec3
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.MOD_ID
-import net.nausicaea.excentric.fabric.api.attachment.VillageRefs
+import net.nausicaea.excentric.fabric.api.attachment.VillageRef
 import net.nausicaea.excentric.java.util.toOption
 import net.nausicaea.excentric.minecraft.server.level.getChunkNow
 import net.nausicaea.excentric.minecraft.server.level.hasChunk
@@ -168,7 +168,7 @@ class Villages :
                 .containedChunks()
                 .filter { chunkPos: ChunkPos? -> chunkSource.hasChunk(chunkPos!!) }
                 .flatMap<LevelChunk> { chunkPos: ChunkPos? -> chunkSource.getChunkNow(chunkPos!!).stream() }
-                .forEach { chunk: LevelChunk? -> VillageRefs.claim(chunk!!, villageId) }
+                .forEach { chunk: LevelChunk? -> VillageRef.claim(chunk!!, villageId) }
         }
 
         private val CODEC: Codec<Data> =
