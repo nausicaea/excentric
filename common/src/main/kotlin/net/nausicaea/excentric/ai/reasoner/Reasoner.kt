@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.ai
+package net.nausicaea.excentric.ai.reasoner
 
 import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.util.Weighted
@@ -7,7 +7,7 @@ import java.util.stream.Stream
 /**
  * Describes a utility-based AI reasoning system.
  */
-interface Reasoner<A, C : ReasonerContext<A>> {
+interface Reasoner<A : Action, C : ReasonerContext<A>> {
     /**
      * Set the currently active action.
      */

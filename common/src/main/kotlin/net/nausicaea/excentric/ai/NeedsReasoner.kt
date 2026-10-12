@@ -2,13 +2,11 @@ package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.RandomSource
-import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
-import net.nausicaea.excentric.ai.prerequisite.Prerequisite
+import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.minecraft.util.chooseWeighted
 import net.nausicaea.excentric.util.Future
-import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Try
@@ -18,8 +16,6 @@ import net.nausicaea.excentric.util.forEach
 import net.nausicaea.excentric.util.map
 import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.stream.Stream
 
 
@@ -27,7 +23,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
     private var currentService: SvcFut? = null
 
     override fun setAction(action: Service) {
-        this.currentService = SvcFut(action.key(), action.use())
+        this.currentService = SvcFut(action.key(), action.apply())
     }
 
     // / For every service, call [NeedsCollection#score(Service, NeedsContext)]
@@ -54,7 +50,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
 
     /**
      * If a [Service] is currently selected as a target, try to
-     * [Service.use] the [Service] against the corresponding [Need]. In other
+     * [Service.apply] the [Service] against the corresponding [Need]. In other
      * words, try to satisfy the matching [Need] with the current [Service].
      */
     fun tryRealiseService(context: NeedsContext) {

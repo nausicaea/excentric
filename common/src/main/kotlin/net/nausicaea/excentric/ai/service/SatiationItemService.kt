@@ -42,7 +42,7 @@ data class SatiationItemService(
 
     override fun baseUtility(): Probability = of(props.nutrition().toDouble() / MAX_NUTRITION)
 
-    override fun use(): Future<Try<Probability>> {
+    override fun apply(): Future<Try<Probability>> {
         return SatiationItemFuture(props, ctx, prerequisite())
     }
 }

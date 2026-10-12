@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.ai
+package net.nausicaea.excentric.ai.reasoner
 
 import java.util.stream.Stream
 
