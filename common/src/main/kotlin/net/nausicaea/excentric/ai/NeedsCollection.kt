@@ -130,11 +130,10 @@ class NeedsCollection {
      */
     fun score(
         svc: Service,
-        prq: Prerequisite,
         context: NeedsContext,
     ): Probability {
         val i = index[svc.key()] ?: return Probability.ZERO
-        return utilityFns[i]!!.score(svc, prq, satisfactions[i]!!, context)
+        return utilityFns[i]!!.score(svc, satisfactions[i]!!, context)
     }
 
     fun realise(

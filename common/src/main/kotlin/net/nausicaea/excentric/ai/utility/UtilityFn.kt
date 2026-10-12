@@ -17,7 +17,6 @@ interface UtilityFn {
      */
     fun score(
         svc: Service,
-        prq: Prerequisite,
         sat: Probability,
         ctx: UtilityFnContext,
     ): Probability

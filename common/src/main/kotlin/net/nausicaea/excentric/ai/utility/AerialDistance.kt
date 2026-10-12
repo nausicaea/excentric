@@ -16,23 +16,26 @@ import kotlin.math.max
 object AerialDistance : UtilityFn {
     override fun score(
         svc: Service,
-        prq: Prerequisite,
         sat: Probability,
         ctx: UtilityFnContext,
-    ): Probability =
-        when (prq) {
+    ): Probability {
+        val prq = svc.prerequisite()
+        if (prq.isNone()) {
+            return Probability.ONE
+        }
+        return when (val prq = prq.unwrap()) {
             is Position -> {
                 of(
                     1.0 /
-                        max(
-                            1.0,
-                            abs(ctx.entity().position().distanceTo(prq.pos)),
-                        ),
+                            max(
+                                1.0,
+                                abs(ctx.entity().position().distanceTo(prq.pos)),
+                            ),
                 )
             }
-
             else -> {
                 Probability.ONE
             }
         }
+    }
 }

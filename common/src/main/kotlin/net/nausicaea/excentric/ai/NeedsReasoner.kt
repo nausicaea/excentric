@@ -5,16 +5,19 @@ import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
-import net.nausicaea.excentric.ai.prerequisite.PrerequisiteState
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.minecraft.util.chooseWeighted
 import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.Option.None
 import net.nausicaea.excentric.util.Option.Some
+import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.andThen
+import net.nausicaea.excentric.util.filter
 import net.nausicaea.excentric.util.forEach
 import net.nausicaea.excentric.util.map
 import org.slf4j.Logger
@@ -22,10 +25,10 @@ import org.slf4j.LoggerFactory
 import java.util.stream.Stream
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
-    private var currentService: Option<SvcPrq> = None
+    private var currentService: Option<Future<Try<Probability>>> = None
 
     override fun setAction(action: Service) {
-        this.currentService = Some(SvcPrq(action))
+        this.currentService = Some(action.use())
     }
 
     // / For every service, call [NeedsCollection#score(Service, NeedsContext)]
@@ -39,7 +42,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .map { svc ->
                 Weighted(
                     svc,
-                    boltzmann(needs.score(svc, svc.prerequisite(), context), temp),
+                    boltzmann(needs.score(svc, context), temp),
                 )
             }.filter { svc -> svc.weight.isNonZero }
     }
@@ -52,17 +55,15 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
 
     /**
      * If a [Service] is currently selected as a target, try to
-     * [Service.realise] the [Service] against the corresponding [Need]. In other
-     * words, try to satisfy the matching [Need] with the current [Service]. This
-     * guarantees to call [Prerequisite.poll] exactly once. Call
-     * [Service.realise] only if the prerequisite is satisfied (e.g. the return
-     * value from [Prerequisite.poll] is equal to [PrerequisiteState.SATISFIED]).
+     * [Service.use] the [Service] against the corresponding [Need]. In other
+     * words, try to satisfy the matching [Need] with the current [Service].
      */
     fun tryRealiseService(context: NeedsContext) {
         currentService
-            .map(SvcPrq::poll)
-            .andThen(SvcPolled::tryRealise)
-            .forEach { t ->
+            .map { f -> f.poll() }
+            .filter { p -> p.isReady() }
+            .forEach { p ->
+                val t = p.
                 context.needs().realise(t.key, t.addedAmount)
             }
     }
@@ -91,7 +92,7 @@ private data class SvcPolled(
     val state: PrerequisiteState,
 ) {
     /**
-     * Evaluate [PrerequisiteState] and call [Service.realise] only if `state`
+     * Evaluate [PrerequisiteState] and call [Service.use] only if `state`
      * matches [PrerequisiteState.SATISFIED].
      */
     fun tryRealise(): Option<SvcRealised> {
@@ -107,7 +108,7 @@ private data class SvcPolled(
             }
 
             PrerequisiteState.SATISFIED -> {
-                Some(SvcRealised(svcKey, svc.realise()))
+                Some(SvcRealised(svcKey, svc.use()))
             }
         }
     }

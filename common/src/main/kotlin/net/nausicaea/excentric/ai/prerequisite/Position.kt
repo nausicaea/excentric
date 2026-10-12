@@ -8,8 +8,4 @@ import net.minecraft.world.phys.Vec3
  */
 data class Position(
     val pos: Vec3,
-) : Prerequisite {
-    override fun poll(): PrerequisiteState {
-        TODO("Not yet implemented")
-    }
-}
+) : Prerequisite

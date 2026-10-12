@@ -10,7 +10,6 @@ import net.nausicaea.excentric.util.Probability
 object Urgency : UtilityFn {
     override fun score(
         svc: Service,
-        prq: Prerequisite,
         sat: Probability,
         ctx: UtilityFnContext,
     ): Probability = sat.inv()

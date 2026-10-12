@@ -10,8 +10,7 @@ import net.nausicaea.excentric.util.Probability
 object CompoundBarUrAe : UtilityFn {
     override fun score(
         svc: Service,
-        prq: Prerequisite,
         sat: Probability,
         ctx: UtilityFnContext,
-    ): Probability = BaseUtility.score(svc, prq, sat, ctx) * Urgency.score(svc, prq, sat, ctx) * AerialDistance.score(svc, prq, sat, ctx)
+    ): Probability = BaseUtility.score(svc, sat, ctx) * Urgency.score(svc, sat, ctx) * AerialDistance.score(svc, sat, ctx)
 }
