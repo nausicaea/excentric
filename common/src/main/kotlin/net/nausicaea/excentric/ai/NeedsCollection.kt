@@ -4,19 +4,16 @@ import net.minecraft.resources.ResourceKey
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.decay.DecayFn
 import net.nausicaea.excentric.ai.need.Need
-import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.utility.UtilityFn
-import net.nausicaea.excentric.java.util.toOption
-import net.nausicaea.excentric.java.util.tryGet
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.filter
-import net.nausicaea.excentric.util.forEach
 import net.nausicaea.excentric.util.map
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.max
 
 /**
@@ -55,16 +52,17 @@ class NeedsCollection {
     ): Boolean =
         NEED_REGISTRY
             .getResourceKey(need)
-            .toOption()
-            .filter { k -> !this.index.containsKey(k) }
-            .map { k ->
-                index[k] = maxIndex
+            .getOrNull()
+            .filter { !this.index.containsKey(it) }
+            .map {
+                index[it] = maxIndex
                 decayFns[maxIndex] = need.decayFn()
                 utilityFns[maxIndex] = need.utilityFn()
                 satisfactions[maxIndex] = initialSatisfaction
                 maxIndex += 1
                 true
-            }.unwrapOr(false)
+            }
+            .unwrapOr(false)
 
     /**
      * Remove a particular [Need] by its resource key. Return `true` if a need was
@@ -140,19 +138,12 @@ class NeedsCollection {
         key: ResourceKey<Need>,
         addedIntensity: Probability,
     ) {
-        index
-            .tryGet(key)
-            .forEach { i ->
+        index[key]?.let { i ->
+            // Assume unknown needs are filled up by
+            // `addedIntensity`, starting at zero.
                 satisfactions.compute(
                     i,
-                ) { _, v ->
-                    if (v == null) {
-                        // Assume unknown needs are filled up by
-                        // `addedIntensity`, starting at zero.
-                        return@compute addedIntensity
-                    }
-                    v.plus(addedIntensity)
-                }
+                ) { _, v -> v?.plus(addedIntensity) ?: addedIntensity }
             }
     }
 

@@ -19,6 +19,7 @@ import net.nausicaea.excentric.fabric.api.attachment.VillageRef.drainDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.get
 import net.nausicaea.excentric.util.EveryN
 import net.nausicaea.excentric.util.forEach
+import net.nausicaea.excentric.util.isSome
 import net.nausicaea.excentric.util.orElse
 import net.nausicaea.excentric.village.Village
 import net.nausicaea.excentric.village.Villages
@@ -47,7 +48,7 @@ object EventCallbacks {
         level: ServerLevel,
         chunk: ChunkAccess,
     ) {
-        if (get(chunk).isSome()) {
+        if (get(chunk).isSome) {
             return
         }
 
@@ -56,9 +57,9 @@ object EventCallbacks {
         vman
             .find(chunkPos.getMiddleBlockPosition(80))
             .orElse { vman.findOrClaimByStructure(level, chunkPos) }
-            .toOptional() // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
+            // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
             // on the chunk itself) here because it will trigger a complete chunk load.
-            .ifPresent { village: Village? -> claim(chunk, village!!.id) }
+            .forEach { claim(chunk, it.id) }
     }
 
     private fun onAfterBlockPlace(
@@ -70,7 +71,7 @@ object EventCallbacks {
         if (be !is BellBlockEntity) {
             return
         }
-        if (get(be).isSome()) {
+        if (get(be).isSome) {
             return
         }
         val village = Villages.get(serverLevel).findOrClaim(serverLevel, pos)
@@ -84,7 +85,7 @@ object EventCallbacks {
         if (blockEntity !is BellBlockEntity) {
             return
         }
-        if (get(blockEntity).isSome()) {
+        if (get(blockEntity).isSome) {
             return
         }
         Villages
@@ -100,7 +101,7 @@ object EventCallbacks {
         if (entity !is Villager) {
             return
         }
-        if (get(entity).isSome()) {
+        if (get(entity).isSome) {
             return
         }
 

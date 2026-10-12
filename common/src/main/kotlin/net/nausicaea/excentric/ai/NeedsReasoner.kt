@@ -7,28 +7,27 @@ import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.minecraft.util.chooseWeighted
-import net.nausicaea.excentric.util.Option
-import net.nausicaea.excentric.util.Option.None
-import net.nausicaea.excentric.util.Option.Some
-import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
+import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.andThen
-import net.nausicaea.excentric.util.filter
 import net.nausicaea.excentric.util.forEach
 import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.ok
+import net.nausicaea.excentric.util.ready
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.stream.Stream
 
+
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
-    private var currentService: Option<Future<Try<Probability>>> = None
+    private var currentService: SvcFut? = null
 
     override fun setAction(action: Service) {
-        this.currentService = Some(action.use())
+        this.currentService = SvcFut(action.key(), action.use())
     }
 
     // / For every service, call [NeedsCollection#score(Service, NeedsContext)]
@@ -51,7 +50,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
     override fun select(
         scoredActions: Stream<Weighted<Service>>,
         rng: RandomSource,
-    ): Option<Service> = rng.chooseWeighted(scoredActions.toList())
+    ): Service? = rng.chooseWeighted(scoredActions.toList())
 
     /**
      * If a [Service] is currently selected as a target, try to
@@ -60,68 +59,17 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
      */
     fun tryRealiseService(context: NeedsContext) {
         currentService
-            .map { f -> f.poll() }
-            .filter { p -> p.isReady() }
-            .forEach { p ->
-                val t = p.
-                context.needs().realise(t.key, t.addedAmount)
-            }
+            .map { Pair(it.key, it.fut.poll()) }
+            .andThen { it.second.ready().map { iit -> Pair(it.first, iit) } }
+            .andThen { it.second.ok().map { iit -> Pair(it.first, iit) } }
+            .forEach { context.needs().realise(it.first, it.second) }
     }
 }
 
 /**
- * Denotes a service with an unfulfilled prerequisite.
+ * Denotes an unused service.
  */
-private data class SvcPrq(
-    val svc: Service,
-    val prq: Prerequisite,
-) {
-    constructor(svc: Service) : this(svc, svc.prerequisite())
-
-    /**
-     * Poll the [Prerequisite] once.
-     */
-    fun poll(): SvcPolled = SvcPolled(svc, prq.poll())
-}
-
-/**
- * Denotes a service whose prerequisite was just polled.
- */
-private data class SvcPolled(
-    val svc: Service,
-    val state: PrerequisiteState,
-) {
-    /**
-     * Evaluate [PrerequisiteState] and call [Service.use] only if `state`
-     * matches [PrerequisiteState.SATISFIED].
-     */
-    fun tryRealise(): Option<SvcRealised> {
-        val svcKey: ResourceKey<Need> = svc.key()
-        return when (state) {
-            PrerequisiteState.PENDING -> {
-                None
-            }
-
-            PrerequisiteState.FAILED -> {
-                LOG.warn(LOG_MARKER, "Prerequisite of service has state failed")
-                Some(SvcRealised(svcKey, Probability.ZERO))
-            }
-
-            PrerequisiteState.SATISFIED -> {
-                Some(SvcRealised(svcKey, svc.use()))
-            }
-        }
-    }
-
-    companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(NeedsReasoner::class.java)
-    }
-}
-
-/**
- * Denotes a realised service.
- */
-private data class SvcRealised(
+private data class SvcFut(
     val key: ResourceKey<Need>,
-    val addedAmount: Probability,
+    val fut: Future<Try<Probability>>,
 )

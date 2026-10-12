@@ -1,6 +1,6 @@
 package net.nausicaea.excentric.util
 
-sealed interface Poll<T> {
+sealed interface Poll<out T> {
     fun isPending(): Boolean
     fun isReady(): Boolean
 
@@ -18,9 +18,9 @@ sealed interface Poll<T> {
     }
 }
 
-fun <T> Poll<T>.ready(): Option<T> {
+fun <T> Poll<T>.ready(): T? {
     return when (this) {
-        is Poll.Ready -> Option.Some(this.value)
-        is Poll.Pending -> Option.None
+        is Poll.Ready -> this.value
+        is Poll.Pending -> null
     }
 }

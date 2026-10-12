@@ -11,11 +11,11 @@ import net.minecraft.world.phys.Vec3
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
-import net.nausicaea.excentric.minecraft.world.entity.tryGetItemBySlot
+import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
 import net.nausicaea.excentric.minecraft.world.stream
-import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.andThen
 import net.nausicaea.excentric.util.forEach
+import net.nausicaea.excentric.util.toOptional
 import java.util.stream.Stream
 
 data class FabricNeedsContext(
@@ -50,19 +50,18 @@ data class FabricNeedsContext(
         // If the entity can carry equipment.
         if (entity is EquipmentUser) {
             entity
-                .tryGetItemBySlot(EquipmentSlot.MAINHAND)
-                .andThen { s ->
+                .getNonemptyItemBySlot(EquipmentSlot.MAINHAND)
+                .andThen {
                     ServiceApi.findItemService(
-                        s,
+                        it,
                         entity,
                         StackSource.Held(EquipmentSlot.MAINHAND),
                     )
                 }.forEach(svcBuffer::add)
-            Option
-                .of(entity.getItemBySlot(EquipmentSlot.OFFHAND))
-                .andThen { s ->
+            entity.getNonemptyItemBySlot(EquipmentSlot.OFFHAND)
+                .andThen {
                     ServiceApi.findItemService(
-                        s,
+                        it,
                         entity,
                         StackSource.Held(EquipmentSlot.OFFHAND),
                     )

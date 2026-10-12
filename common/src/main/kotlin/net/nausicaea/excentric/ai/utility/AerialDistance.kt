@@ -19,11 +19,8 @@ object AerialDistance : UtilityFn {
         sat: Probability,
         ctx: UtilityFnContext,
     ): Probability {
-        val prq = svc.prerequisite()
-        if (prq.isNone()) {
-            return Probability.ONE
-        }
-        return when (val prq = prq.unwrap()) {
+        val prq = svc.prerequisite() ?: return Probability.ONE
+        return when (prq) {
             is Position -> {
                 of(
                     1.0 /

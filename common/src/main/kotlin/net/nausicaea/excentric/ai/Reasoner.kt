@@ -1,9 +1,7 @@
 package net.nausicaea.excentric.ai
 
 import net.minecraft.util.RandomSource
-import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.Weighted
-import net.nausicaea.excentric.util.forEach
 import java.util.stream.Stream
 
 /**
@@ -29,7 +27,7 @@ interface Reasoner<A, C : ReasonerContext<A>> {
     fun select(
         scoredActions: Stream<Weighted<A>>,
         rng: RandomSource,
-    ): Option<A>
+    ): A?
 
     /**
      * Plan the next action for the [Reasoner]:
@@ -41,6 +39,6 @@ interface Reasoner<A, C : ReasonerContext<A>> {
         context: C,
         rng: RandomSource,
     ) {
-        select(score(context.collect(), context), rng).forEach(this::setAction)
+        select(score(context.collect(), context), rng)?.let(this::setAction)
     }
 }

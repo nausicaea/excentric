@@ -12,10 +12,7 @@ import net.nausicaea.excentric.ai.service.SatiationItemService
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.id
-import net.nausicaea.excentric.minecraft.core.component.tryGet
-import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.map
-import net.nausicaea.excentric.util.unwrapOrNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -38,9 +35,8 @@ object ServiceApi {
         // Right now, only item services that offer satiation are supported.
         ITEM_SERVICE.registerFallback { itemStack, ctx ->
             itemStack
-                .tryGet(DataComponents.FOOD)
-                .map { props -> SatiationItemService(props, ctx) }
-                .unwrapOrNull()
+                .get(DataComponents.FOOD)
+                .map { SatiationItemService(it, ctx) }
         }
         BLOCK_SERVICE.registerFallback { level, blockPos, blockState, blockEntity, ctx ->
             TODO()
@@ -55,14 +51,8 @@ object ServiceApi {
         stack: ItemStack,
         consumer: LivingEntity,
         source: StackSource,
-    ): Option<Service> {
+    ): Service? {
         val ctx = ItemServiceContext(consumer, source)
-        return tryFindItemApi(ITEM_SERVICE, stack, ctx)
+        return ITEM_SERVICE.find(stack, ctx)
     }
-
-    private fun <A, C> tryFindItemApi(
-        api: ItemApiLookup<A, C>,
-        itemStack: ItemStack,
-        context: C?,
-    ): Option<A> = Option.of(api.find(itemStack, context))
 }

@@ -19,18 +19,17 @@ import net.minecraft.world.phys.Vec3
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.MOD_ID
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef
-import net.nausicaea.excentric.java.util.toOption
 import net.nausicaea.excentric.minecraft.server.level.getChunkNow
 import net.nausicaea.excentric.minecraft.server.level.hasChunk
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.showEdges
 import net.nausicaea.excentric.minecraft.world.phys.mapMean
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
-import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.UUID
+import kotlin.jvm.optionals.getOrNull
 
 class Villages :
     SavedData(),
@@ -99,12 +98,12 @@ class Villages :
     }
 
     // / This silently discards multiple matching villages
-    override fun find(anchor: BlockPos): Option<Village> =
+    override fun find(anchor: BlockPos): Village? =
         villages.values
             .stream()
             .filter { v -> v.boundingBox.isInside(anchor) }
             .findFirst()
-            .toOption()
+            .getOrNull()
 
     fun debug(level: ServerLevel) {
         val particleColor = 0x0088ff

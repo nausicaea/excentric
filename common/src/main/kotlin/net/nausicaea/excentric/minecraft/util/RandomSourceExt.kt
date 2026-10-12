@@ -1,15 +1,13 @@
 package net.nausicaea.excentric.minecraft.util
 
 import net.minecraft.util.RandomSource
-import net.nausicaea.excentric.util.Option
-import net.nausicaea.excentric.util.Option.None
 import net.nausicaea.excentric.util.Weighted
 import kotlin.require
 
 /**
  * Perform a weighted random selection from a list.
  */
-fun <T> RandomSource.chooseWeighted(items: List<Weighted<T>>): Option<T> {
+fun <T> RandomSource.chooseWeighted(items: List<Weighted<T>>): T? {
     var total = 0.0
     for ((_, weight1) in items) {
         val weight = weight1.value
@@ -17,7 +15,7 @@ fun <T> RandomSource.chooseWeighted(items: List<Weighted<T>>): Option<T> {
         total += weight
     }
     if (total <= 0.0) {
-        return None
+        return null
     }
 
     var r: Double = this.nextDouble() * total
@@ -27,9 +25,9 @@ fun <T> RandomSource.chooseWeighted(items: List<Weighted<T>>): Option<T> {
         if (weight <= 0.0) continue
         r -= weight
         if (r < 0.0) {
-            return Option.of(item)
+            return item
         }
         lastPositive = item
     }
-    return Option.of(lastPositive)
+    return lastPositive
 }

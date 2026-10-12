@@ -9,7 +9,6 @@ import net.minecraft.core.UUIDUtil
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.id
-import net.nausicaea.excentric.util.Option
 import net.nausicaea.excentric.util.filter
 import net.nausicaea.excentric.util.forEach
 import org.slf4j.Logger
@@ -24,7 +23,7 @@ object VillageRef {
     private val LOG: Logger = LoggerFactory.getLogger(VillageRef::class.java)
     private val PENDING: Queue<PendingClaim> = ArrayDeque()
 
-    fun get(target: AttachmentTarget): Option<UUID> = Option.of(target.getAttached(VILLAGE_REF))
+    fun get(target: AttachmentTarget): UUID? = target.getAttached(VILLAGE_REF)
 
     fun claim(
         target: AttachmentTarget,
@@ -48,16 +47,15 @@ object VillageRef {
 
     fun drainDeferred() {
         while (!PENDING.isEmpty()) {
-            Option
-                .of(PENDING.poll())
-                .filter { p ->
+            PENDING.poll()
+                .filter {
                     !(
-                        (p.target is BlockEntity && p.target.isRemoved) ||
-                            p.target.hasAttached(
+                        (it.target is BlockEntity && it.target.isRemoved) ||
+                            it.target.hasAttached(
                                 VILLAGE_REF,
                             )
                     )
-                }.forEach { p -> claim(p.target, p.id) }
+                }.forEach { claim(it.target, it.id) }
         }
     }
 

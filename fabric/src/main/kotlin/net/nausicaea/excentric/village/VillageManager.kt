@@ -8,15 +8,12 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.levelgen.structure.StructurePiece
 import net.minecraft.world.level.levelgen.structure.StructureStart
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
-import net.nausicaea.excentric.java.util.toOption
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.structures.startPool
-import net.nausicaea.excentric.util.Option
-import net.nausicaea.excentric.util.Option.None
-import net.nausicaea.excentric.util.Option.Some
 import net.nausicaea.excentric.util.map
 import net.nausicaea.excentric.util.unwrapOr
 import net.nausicaea.excentric.util.unwrapOrElse
+import kotlin.jvm.optionals.getOrNull
 
 interface VillageManager {
     fun findOrClaim(
@@ -36,10 +33,10 @@ interface VillageManager {
     fun findOrClaimByStructure(
         serverLevel: ServerLevel,
         pos: ChunkPos,
-    ): Option<Village> {
+    ): Village? {
         val villageStructures = findStarts(serverLevel.structureManager(), pos)
         if (villageStructures.isEmpty()) {
-            return None
+            return null
         }
 
         // Assume there is only one village structure in the loaded chunk.
@@ -47,7 +44,7 @@ interface VillageManager {
         val boundingBox = villageStructureStart.getBoundingBox()
         val villageStructurePieces = villageStructureStart.pieces
         if (villageStructurePieces.isEmpty()) {
-            return None
+            return null
         }
 
         // The first element starts the village. Note that the start may not be in the
@@ -56,12 +53,12 @@ interface VillageManager {
         val startPiece: StructurePiece = villageStructurePieces.first()
         val village = findOrClaim(serverLevel, startPiece.locatorPosition, boundingBox)
         if (village.boundingBox.containedChunks().noneMatch { p -> pos == p }) {
-            return None
+            return null
         }
-        return Some(village)
+        return village
     }
 
-    fun find(anchor: BlockPos): Option<Village>
+    fun find(anchor: BlockPos): Village?
 
     fun claim(
         level: ServerLevel,
@@ -89,8 +86,8 @@ private fun findStarts(
         structure is JigsawStructure &&
             structure.startPool
                 .unwrapKey()
-                .toOption()
-                .map { key ->
-                    key.location().path.endsWith("town_centers")
+                .getOrNull()
+                .map {
+                    it.location().path.endsWith("town_centers")
                 }.unwrapOr(false)
     }
