@@ -52,7 +52,7 @@ interface VillageManager {
         // [Village#anchor].
         val startPiece: StructurePiece = villageStructurePieces.first()
         val village = findOrClaim(serverLevel, startPiece.locatorPosition, boundingBox)
-        if (village.boundingBox.containedChunks().noneMatch { p -> pos == p }) {
+        if (!village.boundingBox.containedChunks().any { p -> pos == p }) {
             return Opt(null)
         }
         return Opt(village)

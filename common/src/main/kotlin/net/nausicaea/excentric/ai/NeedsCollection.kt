@@ -59,8 +59,7 @@ class NeedsCollection {
                 satisfactions[maxIndex] = initialSatisfaction
                 maxIndex += 1
                 true
-            }
-            .unwrapOr(false)
+            }.unwrapOr(false)
 
     /**
      * Remove a particular [Need] by its resource key. Return `true` if a need was
@@ -113,7 +112,7 @@ class NeedsCollection {
     }
 
     val isCritical: Boolean
-        get() = satisfactions.values.stream().anyMatch(Probability::isSubnormal)
+        get() = satisfactions.values.any(Probability::isSubnormal)
 
     fun urgency(): Probability = Probability.mean(satisfactions.values).inv()
 
@@ -139,10 +138,10 @@ class NeedsCollection {
         index[key]?.let { i ->
             // Assume unknown needs are filled up by
             // `addedIntensity`, starting at zero.
-                satisfactions.compute(
-                    i,
-                ) { _, v -> v?.plus(addedIntensity) ?: addedIntensity }
-            }
+            satisfactions.compute(
+                i,
+            ) { _, v -> v?.plus(addedIntensity) ?: addedIntensity }
+        }
     }
 
     companion object {

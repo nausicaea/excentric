@@ -2,6 +2,7 @@ package net.nausicaea.excentric.util
 
 sealed interface Poll<out T : Any> {
     fun isPending(): Boolean
+
     fun isReady(): Boolean
 
     object Pending : Poll<Nothing> {
@@ -11,16 +12,17 @@ sealed interface Poll<out T : Any> {
     }
 
     @JvmInline
-    value class Ready<V : Any>(val value: V): Poll<V> {
+    value class Ready<V : Any>(
+        val value: V,
+    ) : Poll<V> {
         override fun isPending(): Boolean = false
 
         override fun isReady(): Boolean = true
     }
 }
 
-fun <T: Any> Poll<T>.ready(): Opt<T> {
-    return when (this) {
+fun <T : Any> Poll<T>.ready(): Opt<T> =
+    when (this) {
         is Poll.Ready -> this.value.asOpt
         is Poll.Pending -> Opt(null)
     }
-}

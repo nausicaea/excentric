@@ -47,7 +47,8 @@ object VillageRef {
 
     fun drainDeferred() {
         while (!PENDING.isEmpty()) {
-            PENDING.poll()
+            PENDING
+                .poll()
                 .asOpt
                 .filter {
                     !(

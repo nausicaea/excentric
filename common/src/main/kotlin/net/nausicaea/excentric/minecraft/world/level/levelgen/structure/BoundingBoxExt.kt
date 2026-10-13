@@ -9,16 +9,16 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.phys.Vec3
-import java.util.stream.Stream
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlin.streams.asSequence
 
-fun BoundingBox.containedChunks(): Stream<ChunkPos> {
+fun BoundingBox.containedChunks(): Sequence<ChunkPos> {
     val i = SectionPos.blockToSectionCoord(this.minX() + 15)
     val j = SectionPos.blockToSectionCoord(this.minZ() + 15)
     val k = SectionPos.blockToSectionCoord(this.maxX() + 1) - 1
     val l = SectionPos.blockToSectionCoord(this.maxZ() + 1) - 1
-    return ChunkPos.rangeClosed(ChunkPos(i, j), ChunkPos(k, l))
+    return ChunkPos.rangeClosed(ChunkPos(i, j), ChunkPos(k, l)).asSequence()
 }
 
 fun BoundingBox.showEdges(

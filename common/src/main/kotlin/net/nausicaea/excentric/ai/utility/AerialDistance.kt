@@ -24,12 +24,13 @@ object AerialDistance : UtilityFn {
             is Position -> {
                 of(
                     1.0 /
-                            max(
-                                1.0,
-                                abs(ctx.entity().position().distanceTo(prq.pos)),
-                            ),
+                        max(
+                            1.0,
+                            abs(ctx.entity().position().distanceTo(prq.pos)),
+                        ),
                 )
             }
+
             else -> {
                 Probability.ONE
             }

@@ -3,18 +3,16 @@ package net.nausicaea.excentric.util
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-val None: Opt<Nothing> = Opt(null)
-fun <T: Any> Some(value: T): Opt<T> = Opt(value)
-
 @JvmInline
-value class Opt<out T : Any>(val orNull: T?) {
+value class Opt<out T : Any>(
+    val orNull: T?,
+) {
     val isSome: Boolean get() = orNull != null
     val isNone: Boolean get() = orNull == null
 
     inline fun <U : Any> map(f: (T) -> U): Opt<U> = Opt(orNull?.let(f))
 
-    inline fun <U : Any> andThen(f: (T) -> Opt<U>): Opt<U> =
-        orNull?.let(f) ?: Opt(null)
+    inline fun <U : Any> andThen(f: (T) -> Opt<U>): Opt<U> = orNull?.let(f) ?: Opt(null)
 
     inline fun filter(predicate: (T) -> Boolean): Opt<T> {
         val v = orNull
@@ -26,11 +24,9 @@ value class Opt<out T : Any>(val orNull: T?) {
     }
 }
 
-fun <T : Any> Opt<T>.or(other: Opt<T>): Opt<T> =
-    if (isSome) this else other
+fun <T : Any> Opt<T>.or(other: Opt<T>): Opt<T> = if (isSome) this else other
 
-inline fun <T : Any> Opt<T>.orElse(f: () -> Opt<T>): Opt<T> =
-    if (isSome) this else f()
+inline fun <T : Any> Opt<T>.orElse(f: () -> Opt<T>): Opt<T> = if (isSome) this else f()
 
 fun <T : Any> Opt<T>.unwrapOr(default: T): T = orNull ?: default
 

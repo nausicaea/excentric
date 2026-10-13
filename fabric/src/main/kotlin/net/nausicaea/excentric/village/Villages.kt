@@ -26,7 +26,9 @@ import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.showEdge
 import net.nausicaea.excentric.minecraft.world.phys.mapMean
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
 import net.nausicaea.excentric.util.Opt
+import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.toOpt
+import net.nausicaea.excentric.util.toSequence
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -102,10 +104,8 @@ class Villages :
     // / This silently discards multiple matching villages
     override fun find(anchor: BlockPos): Opt<Village> =
         villages.values
-            .stream()
-            .filter { v -> v.boundingBox.isInside(anchor) }
-            .findFirst()
-            .toOpt()
+            .firstOrNull { v -> v.boundingBox.isInside(anchor) }
+            .asOpt
 
     fun debug(level: ServerLevel) {
         val particleColor = 0x0088ff
@@ -168,7 +168,7 @@ class Villages :
             village.boundingBox
                 .containedChunks()
                 .filter { chunkPos -> chunkSource.hasChunk(chunkPos) }
-                .flatMap { chunkPos -> chunkSource.getChunkNow(chunkPos).stream() }
+                .flatMap { chunkPos -> chunkSource.getChunkNow(chunkPos).toSequence() }
                 .forEach { chunk -> VillageRef.claim(chunk, villageId) }
         }
 

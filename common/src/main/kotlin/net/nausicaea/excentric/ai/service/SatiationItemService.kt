@@ -42,19 +42,23 @@ data class SatiationItemService(
 
     override fun baseUtility(): Probability = of(props.nutrition().toDouble() / MAX_NUTRITION)
 
-    override fun apply(): Future<Try<Probability>> {
-        return SatiationItemFuture(props, ctx, prerequisite())
-    }
+    override fun apply(): Future<Try<Probability>> = SatiationItemFuture(props, ctx, prerequisite())
 }
 
-data class SatiationItemFuture(val props: FoodProperties, val ctx: ItemServiceContext, val prq: Prerequisite?) :
-    Future<Try<Probability>> {
+data class SatiationItemFuture(
+    val props: FoodProperties,
+    val ctx: ItemServiceContext,
+    val prq: Prerequisite?,
+) : Future<Try<Probability>> {
     override fun poll(): Poll<Try<Probability>> {
         val prq = prq ?: return Poll.Ready(Try.Ok(useNow(props, ctx)))
         TODO()
     }
 
-    private fun useNow(props: FoodProperties, ctx: ItemServiceContext): Probability {
+    private fun useNow(
+        props: FoodProperties,
+        ctx: ItemServiceContext,
+    ): Probability {
         val itemStack = ctx.itemStack()
         if (itemStack.isEmpty || !itemStack.has(DataComponents.FOOD)) {
             return Probability.ZERO
