@@ -7,30 +7,28 @@ import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.minecraft.util.chooseWeighted
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Weighted
-import net.nausicaea.excentric.util.andThen
-import net.nausicaea.excentric.util.forEach
-import net.nausicaea.excentric.util.map
 import net.nausicaea.excentric.util.ok
+import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.ready
-import java.util.stream.Stream
 
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
-    private var currentService: SvcFut? = null
+    private var currentService: Opt<SvcFut> = Opt(null)
 
     override fun setAction(action: Service) {
-        this.currentService = SvcFut(action.key(), action.apply())
+        this.currentService = SvcFut(action.key(), action.apply()).asOpt
     }
 
     // / For every service, call [NeedsCollection#score(Service, NeedsContext)]
     override fun score(
-        actions: Stream<Service>,
+        actions: Sequence<Service>,
         context: NeedsContext,
-    ): Stream<Weighted<Service>> {
+    ): Sequence<Weighted<Service>> {
         val needs = context.needs()
         val temp = needs.urgency()
         return actions
@@ -44,7 +42,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
 
     // / Randomly select from the available [Service]s by their score.
     override fun select(
-        scoredActions: Stream<Weighted<Service>>,
+        scoredActions: Sequence<Weighted<Service>>,
         rng: RandomSource,
     ): Service? = rng.chooseWeighted(scoredActions.toList())
 

@@ -10,10 +10,10 @@ import net.minecraft.world.level.levelgen.structure.StructureStart
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.structures.startPool
-import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.Opt
+import net.nausicaea.excentric.util.toOpt
 import net.nausicaea.excentric.util.unwrapOr
 import net.nausicaea.excentric.util.unwrapOrElse
-import kotlin.jvm.optionals.getOrNull
 
 interface VillageManager {
     fun findOrClaim(
@@ -33,10 +33,10 @@ interface VillageManager {
     fun findOrClaimByStructure(
         serverLevel: ServerLevel,
         pos: ChunkPos,
-    ): Village? {
+    ): Opt<Village> {
         val villageStructures = findStarts(serverLevel.structureManager(), pos)
         if (villageStructures.isEmpty()) {
-            return null
+            return Opt(null)
         }
 
         // Assume there is only one village structure in the loaded chunk.
@@ -44,7 +44,7 @@ interface VillageManager {
         val boundingBox = villageStructureStart.getBoundingBox()
         val villageStructurePieces = villageStructureStart.pieces
         if (villageStructurePieces.isEmpty()) {
-            return null
+            return Opt(null)
         }
 
         // The first element starts the village. Note that the start may not be in the
@@ -53,12 +53,12 @@ interface VillageManager {
         val startPiece: StructurePiece = villageStructurePieces.first()
         val village = findOrClaim(serverLevel, startPiece.locatorPosition, boundingBox)
         if (village.boundingBox.containedChunks().noneMatch { p -> pos == p }) {
-            return null
+            return Opt(null)
         }
-        return village
+        return Opt(village)
     }
 
-    fun find(anchor: BlockPos): Village?
+    fun find(anchor: BlockPos): Opt<Village>
 
     fun claim(
         level: ServerLevel,
@@ -86,7 +86,7 @@ private fun findStarts(
         structure is JigsawStructure &&
             structure.startPool
                 .unwrapKey()
-                .getOrNull()
+                .toOpt()
                 .map {
                     it.location().path.endsWith("town_centers")
                 }.unwrapOr(false)

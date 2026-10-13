@@ -2,7 +2,6 @@ package net.nausicaea.excentric.ai.reasoner
 
 import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.util.Weighted
-import java.util.stream.Stream
 
 /**
  * Describes a utility-based AI reasoning system.
@@ -17,15 +16,15 @@ interface Reasoner<A : Action, C : ReasonerContext<A>> {
      * Score actions relative to a context.
      */
     fun score(
-        actions: Stream<A>,
+        actions: Sequence<A>,
         context: C,
-    ): Stream<Weighted<A>>
+    ): Sequence<Weighted<A>>
 
     /**
      * Based on the action weights, select at most one next action.
      */
     fun select(
-        scoredActions: Stream<Weighted<A>>,
+        scoredActions: Sequence<Weighted<A>>,
         rng: RandomSource,
     ): A?
 

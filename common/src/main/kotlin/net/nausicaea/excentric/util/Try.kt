@@ -1,6 +1,6 @@
 package net.nausicaea.excentric.util
 
-sealed interface Try<out T> {
+sealed interface Try<out T : Any> {
     fun isOk(): Boolean
     fun isErr(): Boolean
 
@@ -12,16 +12,16 @@ sealed interface Try<out T> {
     }
 
     @JvmInline
-    value class Ok<U>(val value: U): Try<U> {
+    value class Ok<U : Any>(val value: U): Try<U> {
         override fun isOk(): Boolean = true
 
         override fun isErr(): Boolean = false
     }
 }
 
-fun <T> Try<T>.ok(): T? {
+fun <T : Any> Try<T>.ok(): Opt<T> {
     return when (this) {
-        is Try.Ok -> this.value
-        is Try.Err -> null
+        is Try.Ok -> this.value.asOpt
+        is Try.Err -> Opt(null)
     }
 }

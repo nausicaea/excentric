@@ -12,7 +12,8 @@ import net.nausicaea.excentric.ai.service.SatiationItemService
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.id
-import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.Opt
+import net.nausicaea.excentric.util.asOpt
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -34,9 +35,7 @@ object ServiceApi {
         LOG.info(LOG_MARKER, "Creating custom Service-API-Lookup APIs")
         // Right now, only item services that offer satiation are supported.
         ITEM_SERVICE.registerFallback { itemStack, ctx ->
-            itemStack
-                .get(DataComponents.FOOD)
-                .map { SatiationItemService(it, ctx) }
+            itemStack.get(DataComponents.FOOD)?.let { SatiationItemService(it, ctx) }
         }
         BLOCK_SERVICE.registerFallback { level, blockPos, blockState, blockEntity, ctx ->
             TODO()
@@ -51,8 +50,8 @@ object ServiceApi {
         stack: ItemStack,
         consumer: LivingEntity,
         source: StackSource,
-    ): Service? {
+    ): Opt<Service> {
         val ctx = ItemServiceContext(consumer, source)
-        return ITEM_SERVICE.find(stack, ctx)
+        return ITEM_SERVICE.find(stack, ctx).asOpt
     }
 }

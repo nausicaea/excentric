@@ -12,38 +12,35 @@ import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
-import net.nausicaea.excentric.minecraft.world.stream
-import net.nausicaea.excentric.util.andThen
-import net.nausicaea.excentric.util.forEach
+import net.nausicaea.excentric.minecraft.world.asSequence
 import net.nausicaea.excentric.util.toOptional
-import java.util.stream.Stream
+import net.nausicaea.excentric.util.toSequence
 
 data class FabricNeedsContext(
     val needs: NeedsCollection,
     val entity: LivingEntity,
 ) : NeedsContext {
-    override fun collect(): Stream<Service> {
+    override fun collect(): Sequence<Service> {
         val level = entity.level()
         // The service collection is not designed to run on clients.
         if (level !is ServerLevel) {
-            return Stream.empty()
+            return emptySequence()
         }
 
-        val svcBuffer = ArrayList<Service>()
+        val svcBuffer = mutableListOf<Service>()
 
         // If the entity has an inventory.
         if (entity is InventoryCarrier) {
             val inventory = entity.inventory
             inventory
-                .stream()
+                .asSequence()
                 .flatMap { stack ->
                     ServiceApi
                         .findItemService(
                             stack.value,
                             entity,
                             StackSource.Inventory(inventory, stack.index),
-                        ).toOptional()
-                        .stream()
+                        ).toSequence()
                 }.forEach(svcBuffer::add)
         }
 
@@ -89,7 +86,7 @@ data class FabricNeedsContext(
         // TODO: Collect services from blocks in the world.
 
         // TODO: Collect services from other entities in the World.
-        return svcBuffer.stream()
+        return svcBuffer.asSequence()
     }
 
     override fun needs(): NeedsCollection = needs

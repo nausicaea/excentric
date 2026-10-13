@@ -25,6 +25,8 @@ import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containe
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.showEdges
 import net.nausicaea.excentric.minecraft.world.phys.mapMean
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
+import net.nausicaea.excentric.util.Opt
+import net.nausicaea.excentric.util.toOpt
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -98,12 +100,12 @@ class Villages :
     }
 
     // / This silently discards multiple matching villages
-    override fun find(anchor: BlockPos): Village? =
+    override fun find(anchor: BlockPos): Opt<Village> =
         villages.values
             .stream()
             .filter { v -> v.boundingBox.isInside(anchor) }
             .findFirst()
-            .getOrNull()
+            .toOpt()
 
     fun debug(level: ServerLevel) {
         val particleColor = 0x0088ff

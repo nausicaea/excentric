@@ -8,12 +8,10 @@ import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.utility.UtilityFn
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
-import net.nausicaea.excentric.util.filter
-import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.toOpt
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import kotlin.jvm.optionals.getOrNull
 import kotlin.math.max
 
 /**
@@ -52,7 +50,7 @@ class NeedsCollection {
     ): Boolean =
         NEED_REGISTRY
             .getResourceKey(need)
-            .getOrNull()
+            .toOpt()
             .filter { !this.index.containsKey(it) }
             .map {
                 index[it] = maxIndex

@@ -18,8 +18,7 @@ import net.nausicaea.excentric.fabric.api.attachment.VillageRef.claimDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.drainDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.get
 import net.nausicaea.excentric.util.EveryN
-import net.nausicaea.excentric.util.forEach
-import net.nausicaea.excentric.util.isSome
+import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.orElse
 import net.nausicaea.excentric.village.Village
 import net.nausicaea.excentric.village.Villages
