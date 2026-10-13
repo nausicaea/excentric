@@ -50,8 +50,5 @@ object ServiceApi {
         stack: ItemStack,
         consumer: LivingEntity,
         source: StackSource,
-    ): Opt<Service> {
-        val ctx = ItemServiceContext(consumer, source)
-        return ITEM_SERVICE.find(stack, ctx).asOpt
-    }
+    ): Service? = ITEM_SERVICE.find(stack, ItemServiceContext(consumer, source))
 }

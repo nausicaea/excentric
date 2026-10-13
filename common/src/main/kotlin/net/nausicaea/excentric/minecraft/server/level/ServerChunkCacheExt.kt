@@ -8,4 +8,4 @@ import java.util.Optional
 
 fun ServerChunkCache.hasChunk(chunkPos: ChunkPos): Boolean = this.hasChunk(chunkPos.x, chunkPos.z)
 
-fun ServerChunkCache.getChunkNow(chunkPos: ChunkPos): Opt<LevelChunk> = Opt(this.getChunkNow(chunkPos.x, chunkPos.z))
+fun ServerChunkCache.getChunkNow(chunkPos: ChunkPos): LevelChunk? = this.getChunkNow(chunkPos.x, chunkPos.z)

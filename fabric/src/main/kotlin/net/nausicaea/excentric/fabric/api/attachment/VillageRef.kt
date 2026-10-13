@@ -23,7 +23,7 @@ object VillageRef {
     private val LOG: Logger = LoggerFactory.getLogger(VillageRef::class.java)
     private val PENDING: Queue<PendingClaim> = ArrayDeque()
 
-    fun get(target: AttachmentTarget): Opt<UUID> = target.getAttached(VILLAGE_REF).asOpt
+    fun get(target: AttachmentTarget): UUID? = target.getAttached(VILLAGE_REF)
 
     fun claim(
         target: AttachmentTarget,

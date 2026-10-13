@@ -47,7 +47,7 @@ object EventCallbacks {
         level: ServerLevel,
         chunk: ChunkAccess,
     ) {
-        if (get(chunk).isSome) {
+        if (get(chunk).asOpt.isSome) {
             return
         }
 
@@ -55,7 +55,8 @@ object EventCallbacks {
         val chunkPos = chunk.pos
         vman
             .find(chunkPos.getMiddleBlockPosition(80))
-            .orElse { vman.findOrClaimByStructure(level, chunkPos) }
+            .asOpt
+            .orElse { vman.findOrClaimByStructure(level, chunkPos).asOpt }
             // Claim the chunk. Don't reconcile the chunk (i.e. claim anything that resides
             // on the chunk itself) here because it will trigger a complete chunk load.
             .forEach { claim(chunk, it.id) }
@@ -70,7 +71,7 @@ object EventCallbacks {
         if (be !is BellBlockEntity) {
             return
         }
-        if (get(be).isSome) {
+        if (get(be) != null) {
             return
         }
         val village = Villages.get(serverLevel).findOrClaim(serverLevel, pos)
@@ -84,13 +85,13 @@ object EventCallbacks {
         if (blockEntity !is BellBlockEntity) {
             return
         }
-        if (get(blockEntity).isSome) {
+        if (get(blockEntity).asOpt.isSome) {
             return
         }
         Villages
             .get(serverLevel)
             .find(blockEntity.blockPos)
-            .forEach { v -> claimDeferred(blockEntity, v.id) }
+            ?.let{ claimDeferred(blockEntity, it.id) }
     }
 
     private fun onEntityLoad(
@@ -100,13 +101,13 @@ object EventCallbacks {
         if (entity !is Villager) {
             return
         }
-        if (get(entity).isSome) {
+        if (get(entity).asOpt.isSome) {
             return
         }
 
         Villages
             .get(serverLevel)
             .find(entity.blockPosition())
-            .forEach { village -> claim(entity, village.id) }
+            ?.let { claim(entity, it.id) }
     }
 }

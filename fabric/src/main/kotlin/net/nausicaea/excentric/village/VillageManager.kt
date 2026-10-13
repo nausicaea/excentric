@@ -19,24 +19,22 @@ interface VillageManager {
     fun findOrClaim(
         level: ServerLevel,
         anchor: BlockPos,
-    ): Village = find(anchor).unwrapOrElse { claim(level, anchor) }
+    ): Village = find(anchor) ?: claim(level, anchor)
 
     fun findOrClaim(
         level: ServerLevel,
         anchor: BlockPos,
         extents: BoundingBox,
     ): Village =
-        find(anchor).unwrapOrElse {
-            claim(level, anchor, extents)
-        }
+        find(anchor) ?: claim(level, anchor, extents)
 
     fun findOrClaimByStructure(
         serverLevel: ServerLevel,
         pos: ChunkPos,
-    ): Opt<Village> {
+    ): Village? {
         val villageStructures = findStarts(serverLevel.structureManager(), pos)
         if (villageStructures.isEmpty()) {
-            return Opt(null)
+            return null
         }
 
         // Assume there is only one village structure in the loaded chunk.
@@ -44,7 +42,7 @@ interface VillageManager {
         val boundingBox = villageStructureStart.getBoundingBox()
         val villageStructurePieces = villageStructureStart.pieces
         if (villageStructurePieces.isEmpty()) {
-            return Opt(null)
+            return null
         }
 
         // The first element starts the village. Note that the start may not be in the
@@ -53,12 +51,12 @@ interface VillageManager {
         val startPiece: StructurePiece = villageStructurePieces.first()
         val village = findOrClaim(serverLevel, startPiece.locatorPosition, boundingBox)
         if (!village.boundingBox.containedChunks().any { p -> pos == p }) {
-            return Opt(null)
+            return null
         }
-        return Opt(village)
+        return village
     }
 
-    fun find(anchor: BlockPos): Opt<Village>
+    fun find(anchor: BlockPos): Village?
 
     fun claim(
         level: ServerLevel,

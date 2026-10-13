@@ -13,6 +13,7 @@ import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.asSequence
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
+import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.toOptional
 import net.nausicaea.excentric.util.toSequence
 
@@ -40,7 +41,7 @@ data class FabricNeedsContext(
                             stack.value,
                             entity,
                             StackSource.Inventory(inventory, stack.index),
-                        ).toSequence()
+                        ).asOpt.toSequence()
                 }.forEach(svcBuffer::add)
         }
 
@@ -53,7 +54,7 @@ data class FabricNeedsContext(
                         it,
                         entity,
                         StackSource.Held(EquipmentSlot.MAINHAND),
-                    )
+                    ).asOpt
                 }.forEach(svcBuffer::add)
             entity
                 .getNonemptyItemBySlot(EquipmentSlot.OFFHAND)
@@ -63,6 +64,7 @@ data class FabricNeedsContext(
                         entity,
                         StackSource.Held(EquipmentSlot.OFFHAND),
                     )
+                        .asOpt
                 }.forEach(svcBuffer::add)
         }
 
@@ -77,7 +79,7 @@ data class FabricNeedsContext(
                         itemEntity.item,
                         entity,
                         StackSource.World(itemEntity),
-                    ).toSequence()
+                    ).asOpt.toSequence()
             }.forEach(svcBuffer::add)
 
         // TODO: Find services of items lying in containers somewhere.

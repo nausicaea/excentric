@@ -8,6 +8,7 @@ import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.utility.UtilityFn
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
+import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.toOpt
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
@@ -21,10 +22,10 @@ import kotlin.math.max
  * score [Service]s.
  */
 class NeedsCollection {
-    val index: HashMap<ResourceKey<Need>, Int> = HashMap()
-    val decayFns: HashMap<Int, DecayFn> = HashMap()
-    val utilityFns: HashMap<Int, UtilityFn> = HashMap()
-    val satisfactions: HashMap<Int, Probability> = HashMap()
+    val index: MutableMap<ResourceKey<Need>, Int> = mutableMapOf()
+    val decayFns: MutableMap<Int, DecayFn> = mutableMapOf()
+    val utilityFns: MutableMap<Int, UtilityFn> = mutableMapOf()
+    val satisfactions: MutableMap<Int, Probability> = mutableMapOf()
     private var maxIndex = 0
     private var lastUpdateTime = 0L
 
@@ -51,7 +52,7 @@ class NeedsCollection {
         NEED_REGISTRY
             .getResourceKey(need)
             .toOpt()
-            .filter { !this.index.containsKey(it) }
+            .filter { !index.containsKey(it) }
             .map {
                 index[it] = maxIndex
                 decayFns[maxIndex] = need.decayFn()
@@ -66,14 +67,11 @@ class NeedsCollection {
      * removed, `false` otherwise.
      */
     fun remove(needKey: ResourceKey<Need>): Boolean {
-        if (!this.index.containsKey(needKey)) {
-            return false
-        }
-        val idx = this.index[needKey]
-        this.decayFns.remove(idx)
-        this.utilityFns.remove(idx)
-        this.satisfactions.remove(idx)
-        this.index.remove(needKey)
+        val idx = index[needKey] ?: return false
+        decayFns.remove(idx)
+        utilityFns.remove(idx)
+        satisfactions.remove(idx)
+        index.remove(needKey)
         return true
     }
 
@@ -81,10 +79,10 @@ class NeedsCollection {
      * Delete all [Need]s.
      */
     fun clear() {
-        this.index.clear()
-        this.decayFns.clear()
-        this.utilityFns.clear()
-        this.satisfactions.clear()
+        index.clear()
+        decayFns.clear()
+        utilityFns.clear()
+        satisfactions.clear()
     }
 
     /**
@@ -126,10 +124,10 @@ class NeedsCollection {
     fun score(
         svc: Service,
         context: NeedsContext,
-    ): Probability {
-        val i = index[svc.key()] ?: return Probability.ZERO
-        return utilityFns[i]!!.score(svc, satisfactions[i]!!, context)
-    }
+    ): Probability = index[svc.key()]
+        .asOpt
+        .map { utilityFns[it]!!.score(svc, satisfactions[it]!!, context) }
+        .unwrapOr(Probability.ZERO)
 
     fun realise(
         key: ResourceKey<Need>,

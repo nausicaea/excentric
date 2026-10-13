@@ -7,7 +7,6 @@ import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.minecraft.util.chooseWeighted
 import net.nausicaea.excentric.util.Future
-import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Try
@@ -17,10 +16,10 @@ import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
-    private var currentService: Opt<SvcFut> = Opt(null)
+    private var currentService: SvcFut? = null
 
     override fun setAction(action: Service) {
-        this.currentService = SvcFut(action.key(), action.apply()).asOpt
+        this.currentService = SvcFut(action.key(), action.apply())
     }
 
     // / For every service, call [NeedsCollection#score(Service, NeedsContext)]
@@ -52,6 +51,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
      */
     fun tryRealiseService(context: NeedsContext) {
         currentService
+            .asOpt
             .map { Pair(it.key, it.fut.poll()) }
             .andThen { it.second.ready().map { iit -> Pair(it.first, iit) } }
             .andThen { it.second.ok().map { iit -> Pair(it.first, iit) } }

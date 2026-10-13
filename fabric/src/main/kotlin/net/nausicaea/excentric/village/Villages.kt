@@ -93,6 +93,7 @@ class Villages :
         val centroid =
             homes
                 .mapMean { p -> Vec3(p.pos) }
+                .asOpt
                 .unwrapOr(Vec3(anchor))
                 .toBlockPosFloor()
         val village = Village(UUID.randomUUID(), anchor, centroid, extents)
@@ -102,10 +103,9 @@ class Villages :
     }
 
     // / This silently discards multiple matching villages
-    override fun find(anchor: BlockPos): Opt<Village> =
+    override fun find(anchor: BlockPos): Village? =
         villages.values
             .firstOrNull { v -> v.boundingBox.isInside(anchor) }
-            .asOpt
 
     fun debug(level: ServerLevel) {
         val particleColor = 0x0088ff
@@ -168,7 +168,7 @@ class Villages :
             village.boundingBox
                 .containedChunks()
                 .filter { chunkPos -> chunkSource.hasChunk(chunkPos) }
-                .flatMap { chunkPos -> chunkSource.getChunkNow(chunkPos).toSequence() }
+                .flatMap { chunkPos -> chunkSource.getChunkNow(chunkPos).asOpt.toSequence() }
                 .forEach { chunk -> VillageRef.claim(chunk, villageId) }
         }
 
