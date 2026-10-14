@@ -12,8 +12,6 @@ import net.nausicaea.excentric.ai.service.SatiationItemService
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.id
-import net.nausicaea.excentric.util.Opt
-import net.nausicaea.excentric.util.asOpt
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -37,12 +35,14 @@ object ServiceApi {
         ITEM_SERVICE.registerFallback { itemStack, ctx ->
             itemStack.get(DataComponents.FOOD)?.let { SatiationItemService(it, ctx) }
         }
+        /* TODO: Implement BLOCK_SERVICE and ENTITY_SERVICE fallbacks
         BLOCK_SERVICE.registerFallback { level, blockPos, blockState, blockEntity, ctx ->
-            TODO()
+            return null
         }
         ENTITY_SERVICE.registerFallback { entity, ctx ->
-            TODO()
+            return null
         }
+         */
     }
 
     @JvmStatic
