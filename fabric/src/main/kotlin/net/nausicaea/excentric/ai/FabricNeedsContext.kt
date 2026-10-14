@@ -14,6 +14,7 @@ import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.asSequence
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
 import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.filterMap
 import net.nausicaea.excentric.util.toOptional
 import net.nausicaea.excentric.util.toSequence
 
@@ -35,13 +36,13 @@ data class FabricNeedsContext(
             val inventory = entity.inventory
             inventory
                 .asSequence()
-                .flatMap { stack ->
+                .filterMap {
                     ServiceApi
                         .findItemService(
-                            stack.value,
+                            it.value,
                             entity,
-                            StackSource.Inventory(inventory, stack.index),
-                        ).asOpt.toSequence()
+                            StackSource.Inventory(inventory, it.index),
+                        )
                 }.forEach(svcBuffer::add)
         }
 
@@ -73,13 +74,14 @@ data class FabricNeedsContext(
         val aabb = AABB(pos.add(SEARCH_MIN), pos.add(SEARCH_MAX))
         level
             .getEntitiesOfClass(ItemEntity::class.java, aabb)
-            .flatMap { itemEntity ->
+            .asSequence()
+            .filterMap {
                 ServiceApi
                     .findItemService(
-                        itemEntity.item,
+                        it.item,
                         entity,
-                        StackSource.World(itemEntity),
-                    ).asOpt.toSequence()
+                        StackSource.World(it),
+                    )
             }.forEach(svcBuffer::add)
 
         // TODO: Find services of items lying in containers somewhere.

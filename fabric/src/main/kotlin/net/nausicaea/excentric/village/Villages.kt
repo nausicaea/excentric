@@ -27,6 +27,7 @@ import net.nausicaea.excentric.minecraft.world.phys.mapMean
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
 import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.filterMap
 import net.nausicaea.excentric.util.toOpt
 import net.nausicaea.excentric.util.toSequence
 import net.nausicaea.excentric.util.unwrapOr
@@ -110,8 +111,8 @@ class Villages :
     fun debug(level: ServerLevel) {
         val particleColor = 0x0088ff
         villages.values
-            .forEach { v ->
-                v.boundingBox
+            .forEach {
+                it.boundingBox
                     .showEdges(
                         level,
                         DustParticleOptions(particleColor, 1f),
@@ -167,9 +168,9 @@ class Villages :
             val villageId = village.id
             village.boundingBox
                 .containedChunks()
-                .filter { chunkPos -> chunkSource.hasChunk(chunkPos) }
-                .flatMap { chunkPos -> chunkSource.getChunkNow(chunkPos).asOpt.toSequence() }
-                .forEach { chunk -> VillageRef.claim(chunk, villageId) }
+                .filter(chunkSource::hasChunk)
+                .filterMap(chunkSource::getChunkNow)
+                .forEach { VillageRef.claim(it, villageId) }
         }
 
         private val CODEC: Codec<Data> =

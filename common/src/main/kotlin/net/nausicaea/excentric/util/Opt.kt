@@ -44,4 +44,6 @@ val <T : Any> T?.asOpt: Opt<T> get() = Opt(this)
  */
 fun <T : Any> Optional<T>.toOpt(): Opt<T> = this.getOrNull().asOpt
 
-fun <T : Any> Opt<T>.toSequence(): Sequence<T> = orNull?.let { sequenceOf(it) } ?: emptySequence()
+fun <T : Any> Opt<T>.toSequence(): Sequence<T> = toSeq(orNull)
+
+fun <T : Any> toSeq(value: T?): Sequence<T> = value?.let { sequenceOf(it) } ?: emptySequence()
