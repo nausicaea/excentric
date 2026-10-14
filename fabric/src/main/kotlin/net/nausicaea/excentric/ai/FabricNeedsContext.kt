@@ -51,21 +51,22 @@ data class FabricNeedsContext(
             entity
                 .getNonemptyItemBySlot(EquipmentSlot.MAINHAND)
                 .andThen {
-                    ServiceApi.findItemService(
-                        it,
-                        entity,
-                        StackSource.Held(EquipmentSlot.MAINHAND),
-                    ).asOpt
+                    ServiceApi
+                        .findItemService(
+                            it,
+                            entity,
+                            StackSource.Held(EquipmentSlot.MAINHAND),
+                        ).asOpt
                 }.forEach(svcBuffer::add)
             entity
                 .getNonemptyItemBySlot(EquipmentSlot.OFFHAND)
                 .andThen {
-                    ServiceApi.findItemService(
-                        it,
-                        entity,
-                        StackSource.Held(EquipmentSlot.OFFHAND),
-                    )
-                        .asOpt
+                    ServiceApi
+                        .findItemService(
+                            it,
+                            entity,
+                            StackSource.Held(EquipmentSlot.OFFHAND),
+                        ).asOpt
                 }.forEach(svcBuffer::add)
         }
 

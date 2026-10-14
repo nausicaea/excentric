@@ -25,8 +25,7 @@ interface VillageManager {
         level: ServerLevel,
         anchor: BlockPos,
         extents: BoundingBox,
-    ): Village =
-        find(anchor) ?: claim(level, anchor, extents)
+    ): Village = find(anchor) ?: claim(level, anchor, extents)
 
     fun findOrClaimByStructure(
         serverLevel: ServerLevel,

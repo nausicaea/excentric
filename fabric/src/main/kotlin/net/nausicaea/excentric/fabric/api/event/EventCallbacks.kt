@@ -91,7 +91,7 @@ object EventCallbacks {
         Villages
             .get(serverLevel)
             .find(blockEntity.blockPos)
-            ?.let{ claimDeferred(blockEntity, it.id) }
+            ?.let { claimDeferred(blockEntity, it.id) }
     }
 
     private fun onEntityLoad(

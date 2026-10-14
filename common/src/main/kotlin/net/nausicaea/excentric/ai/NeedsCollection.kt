@@ -124,10 +124,11 @@ class NeedsCollection {
     fun score(
         svc: Service,
         context: NeedsContext,
-    ): Probability = index[svc.key()]
-        .asOpt
-        .map { utilityFns[it]!!.score(svc, satisfactions[it]!!, context) }
-        .unwrapOr(Probability.ZERO)
+    ): Probability =
+        index[svc.key()]
+            .asOpt
+            .map { utilityFns[it]!!.score(svc, satisfactions[it]!!, context) }
+            .unwrapOr(Probability.ZERO)
 
     fun realise(
         key: ResourceKey<Need>,
