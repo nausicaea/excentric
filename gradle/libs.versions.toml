@@ -20,7 +20,4 @@ fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabr
 gradle-spotless = { id = "com.diffplug.spotless", version.ref = "gradle-spotless" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 
-[plugins]
-fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
-
 [bundles]
