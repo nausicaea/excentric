@@ -17,6 +17,8 @@ import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of
 import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Try.Ok
+import net.nausicaea.excentric.util.inspect
+import net.nausicaea.excentric.util.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
@@ -24,10 +26,18 @@ import kotlin.math.roundToInt
 
 private const val MAX_NUTRITION: Double = 20.0
 
+/**
+ * Defines the a [Service] for [net.nausicaea.excentric.ai.need.Satiation] through [net.minecraft.world.item.ItemStack].
+ *
+ * [net.minecraft.world.item.ItemStack]s may come from different sources in the game (see [StackSource]) and each source type has a different kind of prerequisite.
+ */
 data class SatiationItemService(
     val props: FoodProperties,
     val ctx: ItemServiceContext,
 ) : Service {
+    /**
+     * [SatiationItemService] is matched with [net.nausicaea.excentric.ai.need.Satiation].
+     */
     override fun key(): ResourceKey<Need> =
         NEED_REGISTRY
             .getResourceKey(SATIATION)
@@ -39,6 +49,9 @@ data class SatiationItemService(
                 },
             )
 
+    /**
+     * Prerequisites depend on the [StackSource].
+     */
     override fun prerequisite(): Prerequisite? =
         when (ctx.source) {
             // FIXME: Position isn't the only prerequisite for ForeignInventory
@@ -51,17 +64,33 @@ data class SatiationItemService(
             is StackSource.World -> Position(ctx.source.entity.position())
         }
 
+    /**
+     * The base utility is equal to the normalised nutritional value of the food item, as defined in the [FoodProperties] data component of the [net.minecraft.world.item.ItemStack].
+     */
     override fun baseUtility(): Probability = of(props.nutrition().toDouble() / MAX_NUTRITION)
 
+    /**
+     * Create a [SatiationItemFuture] that promises to fulfil the [SatiationItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].
+     */
     override fun apply(): Future<Try<Probability>> = SatiationItemFuture(props, ctx, prerequisite())
 }
 
+/**
+ * If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.
+ */
 class SatiationItemFuture(
     val props: FoodProperties,
     val ctx: ItemServiceContext,
     val prq: Prerequisite?,
     var ready: Boolean = false,
 ) : Future<Try<Probability>> {
+    /**
+     * Attempt to bring the [Future] closer to completion.
+     *
+     * See [SatiationItemFuture] for details
+     *
+     * @throws IllegalStateException if polled again once [Poll.Ready] has been returned.
+     */
     override fun poll(): Poll<Try<Probability>> {
         if (ready) {
             throw IllegalStateException("Cannot poll a complete Future")
@@ -73,30 +102,10 @@ class SatiationItemFuture(
             }
         return when (prq) {
             is Position -> {
-                val pos = prq.pos
-                // Is the consumer at the prerequisite position?
-                if (ctx.consumer.position().closerThan(pos, prq.error.toDouble())) {
-                    ready = true
-                    return Ready(Ok(useNow(props, ctx)))
-                }
-
-                // Move the consumer closer to the prerequisite position
-                if (ctx.consumer is Mob) {
-                    val nav = ctx.consumer.navigation
-                    // Start the pathfinding
-                    if (!(nav.isInProgress || nav.isStuck)) {
-                        nav
-                            .createPath(pos.x, pos.y, pos.z, prq.error)
-                            ?.let { nav.moveTo(it, 1.0) }
-                    }
-                    Poll.Pending
-                } else {
-                    Ready(
-                        Try.Err(
-                            UnsupportedOperationException("Cannot path-find for entities that don't inherit from Mob"),
-                        ),
-                    )
-                }
+                prq
+                    .poll(ctx.consumer)
+                    .inspect { ready = true }
+                    .map { Ok(useNow(props, ctx)) }
             }
 
             else -> {
