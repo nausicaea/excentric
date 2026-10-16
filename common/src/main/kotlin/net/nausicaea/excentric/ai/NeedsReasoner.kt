@@ -52,7 +52,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
      */
     fun tryRealiseService(context: NeedsContext) {
         currentService
-            .asOpt
+            .asOpt()
             .map { SvcFutPolled(it.key, it.fut.poll()) }
             .andThen { it.state.ready().map { iit -> SvcFutReady(it.key, iit) } }
             .andThen { it.state.ok().map { iit -> SvcUsed(it.key, iit) } }

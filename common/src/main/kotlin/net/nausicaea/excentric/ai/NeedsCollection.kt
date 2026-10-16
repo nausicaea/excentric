@@ -125,7 +125,7 @@ class NeedsCollection {
         context: NeedsContext,
     ): Probability =
         index[svc.key()]
-            .asOpt
+            .asOpt()
             .map { utilityFns[it]!!.score(svc, satisfactions[it]!!, context) }
             .unwrapOr(Probability.ZERO)
 

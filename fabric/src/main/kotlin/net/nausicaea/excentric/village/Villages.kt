@@ -25,16 +25,12 @@ import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containe
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.showEdges
 import net.nausicaea.excentric.minecraft.world.phys.mapMean
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
-import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.filterMap
-import net.nausicaea.excentric.util.toOpt
-import net.nausicaea.excentric.util.toSequence
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.UUID
-import kotlin.jvm.optionals.getOrNull
 
 class Villages :
     SavedData(),
@@ -94,7 +90,7 @@ class Villages :
         val centroid =
             homes
                 .mapMean { p -> Vec3(p.pos) }
-                .asOpt
+                .asOpt()
                 .unwrapOr(Vec3(anchor))
                 .toBlockPosFloor()
         val village = Village(UUID.randomUUID(), anchor, centroid, extents)

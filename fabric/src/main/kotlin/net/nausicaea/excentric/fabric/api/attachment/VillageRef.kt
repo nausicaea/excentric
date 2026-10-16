@@ -9,7 +9,6 @@ import net.minecraft.core.UUIDUtil
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.id
-import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.asOpt
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -49,7 +48,7 @@ object VillageRef {
         while (!PENDING.isEmpty()) {
             PENDING
                 .poll()
-                .asOpt
+                .asOpt()
                 .filter {
                     !(
                         (it.target is BlockEntity && it.target.isRemoved) ||

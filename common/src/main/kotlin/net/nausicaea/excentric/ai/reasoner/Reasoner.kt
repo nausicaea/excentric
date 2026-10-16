@@ -1,7 +1,6 @@
 package net.nausicaea.excentric.ai.reasoner
 
 import net.minecraft.util.RandomSource
-import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.asOpt
 
@@ -40,6 +39,6 @@ interface Reasoner<A : Action, C : ReasonerContext<A>> {
         context: C,
         rng: RandomSource,
     ) {
-        select(score(context.collect(), context), rng).asOpt.forEach(this::setAction)
+        select(score(context.collect(), context), rng).asOpt().forEach(this::setAction)
     }
 }

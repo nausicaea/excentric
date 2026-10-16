@@ -24,6 +24,6 @@ sealed interface Try<out T : Any> {
 
 fun <T : Any> Try<T>.ok(): Opt<T> =
     when (this) {
-        is Try.Ok -> this.value.asOpt
+        is Try.Ok -> this.value.asOpt()
         is Try.Err -> Opt(null)
     }

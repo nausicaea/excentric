@@ -67,17 +67,20 @@ fun <T : Any> Opt<T>.unwrapOr(default: T): T = orNull ?: default
 
 inline fun <T : Any> Opt<T>.unwrapOrElse(default: () -> T): T = orNull ?: default()
 
+/**
+ * Convert an [Opt] value to an [Optional]. This involves a nullability check.
+ */
 fun <T : Any> Opt<T>.toOptional(): Optional<T> = Optional.ofNullable(orNull)
 
 /**
- * Convert a nullable type to an [Opt] wrapper type. This is a cheap operation and is expected to be inlined.
+ * Convert a nullable value to an [Opt]-wrapped value. The prefix `as-` indicates that this is a cheap conversion.
  */
-val <T : Any> T?.asOpt: Opt<T> get() = Opt(this)
+fun <T : Any> T?.asOpt(): Opt<T> = Opt(this)
 
 /**
- * Convert a [Optional] type to an [Opt]. This involves a nullability check and is slightly more expensive. That's why it's a function instead of a property: a function suggests work is being done.
+ * Convert an [Optional] value to an [Opt]. This involves a nullability check.
  */
-fun <T : Any> Optional<T>.toOpt(): Opt<T> = this.getOrNull().asOpt
+fun <T : Any> Optional<T>.toOpt(): Opt<T> = this.getOrNull().asOpt()
 
 fun <T : Any> Opt<T>.toSequence(): Sequence<T> = toSeq(orNull)
 

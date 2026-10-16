@@ -15,8 +15,6 @@ import net.nausicaea.excentric.minecraft.world.asSequence
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
 import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.filterMap
-import net.nausicaea.excentric.util.toOptional
-import net.nausicaea.excentric.util.toSequence
 
 data class FabricNeedsContext(
     val needs: NeedsCollection,
@@ -56,7 +54,7 @@ data class FabricNeedsContext(
                             it,
                             entity,
                             StackSource.Held(EquipmentSlot.MAINHAND),
-                        ).asOpt
+                        ).asOpt()
                 }.forEach(svcBuffer::add)
             entity
                 .getNonemptyItemBySlot(EquipmentSlot.OFFHAND)
@@ -66,7 +64,7 @@ data class FabricNeedsContext(
                             it,
                             entity,
                             StackSource.Held(EquipmentSlot.OFFHAND),
-                        ).asOpt
+                        ).asOpt()
                 }.forEach(svcBuffer::add)
         }
 

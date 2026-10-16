@@ -22,6 +22,6 @@ sealed interface Poll<out T : Any> {
 
 fun <T : Any> Poll<T>.ready(): Opt<T> =
     when (this) {
-        is Poll.Ready -> this.value.asOpt
+        is Poll.Ready -> this.value.asOpt()
         is Poll.Pending -> Opt(null)
     }

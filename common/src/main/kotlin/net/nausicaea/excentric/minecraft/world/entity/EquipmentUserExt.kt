@@ -6,4 +6,4 @@ import net.minecraft.world.item.ItemStack
 import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.asOpt
 
-fun EquipmentUser.getNonemptyItemBySlot(slot: EquipmentSlot): Opt<ItemStack> = this.getItemBySlot(slot).asOpt.filter { !it.isEmpty }
+fun EquipmentUser.getNonemptyItemBySlot(slot: EquipmentSlot): Opt<ItemStack> = this.getItemBySlot(slot).asOpt().filter { !it.isEmpty }
