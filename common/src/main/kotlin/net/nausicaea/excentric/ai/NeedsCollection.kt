@@ -105,7 +105,7 @@ class NeedsCollection {
         }
 
         if (this.isCritical) {
-            LOG.info(LOG_MARKER, "At least one need is in critical condition")
+            // TODO: what do we do when the need is critical?
         }
     }
 
@@ -132,14 +132,14 @@ class NeedsCollection {
 
     fun realise(
         key: ResourceKey<Need>,
-        addedIntensity: Probability,
+        benefit: Probability,
     ) {
         index[key]?.let { i ->
             // Assume unknown needs are filled up by
             // `addedIntensity`, starting at zero.
             satisfactions.compute(
                 i,
-            ) { _, v -> v?.plus(addedIntensity) ?: addedIntensity }
+            ) { _, v -> v?.plus(benefit) ?: benefit }
         }
     }
 
