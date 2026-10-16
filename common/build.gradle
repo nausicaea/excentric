@@ -19,13 +19,6 @@ repositories {
 	}
 }
 
-repositories {
-	maven {
-		name = "Ladysnake Mods"
-		url = "https://maven.ladysnake.org/releases"
-	}
-}
-
 dependencies {
 	minecraft(rootProject.libs.minecraft)
 	mappings loom.officialMojangMappings()
