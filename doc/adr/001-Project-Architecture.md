@@ -21,3 +21,4 @@ modification_date: 2026-10-15
   Minecraft's own package naming scheme.
 - Packages that rely on Fabric's APIs shall lie under `net.nausicaea.excentric.fabric` and clearly separate the used
   APIs.
+- Code documentation shall state the intent of the documented functionality.

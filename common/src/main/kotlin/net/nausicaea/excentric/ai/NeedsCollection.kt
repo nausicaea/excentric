@@ -1,7 +1,6 @@
 package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
-import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.decay.DecayFn
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.service.Service
@@ -110,7 +109,7 @@ class NeedsCollection {
     }
 
     val isCritical: Boolean
-        get() = satisfactions.values.any(Probability::isSubnormal)
+        get() = satisfactions.values.any(Probability::isApproxZero)
 
     fun urgency(): Probability = Probability.mean(satisfactions.values).inv()
 

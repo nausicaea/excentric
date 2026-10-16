@@ -3,17 +3,45 @@ package net.nausicaea.excentric.util
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/**
+ * Wrap nullable values in an Option type to enable functional operations (using method chaining).
+ */
 @JvmInline
 value class Opt<out T : Any>(
     val orNull: T?,
 ) {
+    /**
+     * Return `true` if the [Opt] value is not null (i.e. [Some])
+     */
     val isSome: Boolean get() = orNull != null
+
+    /**
+     * Return `true` if the [Opt] value is null (i.e. [None])
+     */
     val isNone: Boolean get() = orNull == null
 
+    /**
+     * Map an `Opt<T>` to an `Opt<U>` by applying a function only if the value is present (i.e. [Some]). Return [None] otherwise.
+     */
     inline fun <U : Any> map(f: (T) -> U): Opt<U> = Opt(orNull?.let(f))
 
+    /**
+     * Map an `Opt<T>` to an `Opt<U>` by applying a function only if the value is present (i.e. [Some]). Return [None] otherwise.
+     * The mapping function may also return [None]. Some languages call this function flatmap.
+     */
     inline fun <U : Any> andThen(f: (T) -> Opt<U>): Opt<U> = orNull?.let(f) ?: Opt(null)
 
+    /**
+     * Returns [None] if the option is [None], otherwise calls `predicate`
+     * with the wrapped value and returns:
+     *
+     * - [Some] containing the wrapped value if `predicate` returns `true`, and
+     * - [None] if `predicate` returns `false`.
+     *
+     * This function works similar to [Sequence.filter]. You can imagine
+     * the `Opt<T>` being a sequence over one or zero elements. `filter()`
+     * lets you decide which elements to keep.
+     */
     inline fun filter(predicate: (T) -> Boolean): Opt<T> {
         val v = orNull
         return if (v != null && predicate(v)) this else Opt(null)
@@ -21,6 +49,13 @@ value class Opt<out T : Any>(
 
     inline fun forEach(f: (T) -> Unit) {
         orNull?.let(f)
+    }
+
+    companion object {
+        val None: Opt<Nothing> = Opt(null)
+
+        @Suppress("FunctionName")
+        fun <T : Any> Some(v: T) = Opt(v)
     }
 }
 

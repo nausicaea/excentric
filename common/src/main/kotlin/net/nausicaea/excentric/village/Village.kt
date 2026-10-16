@@ -11,13 +11,31 @@ import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BOUNDING
 import java.util.UUID
 import java.util.function.Function
 
+/**
+ * Defines identity, location, and size of a village.
+ */
 data class Village(
+    /**
+     * The unique identifier of a village.
+     */
     val id: UUID,
+    /**
+     * The anchoring position of the village, i.e. where it was first claimed from.
+     */
     val anchor: BlockPos,
+    /**
+     * The "centre of mass" of the village. May be different from the anchor.
+     */
     val center: BlockPos,
+    /**
+     * The integer volume around the [Village.anchor] that defines the extends of the village.
+     */
     val boundingBox: BoundingBox,
 ) {
     companion object {
+        /**
+         * Serialisation codec for persistent storage.
+         */
         val CODEC: Codec<Village> =
             RecordCodecBuilder.create(
                 Function { i: RecordCodecBuilder.Instance<Village> ->
@@ -36,6 +54,10 @@ data class Village(
                         ).apply(i, ::Village)
                 },
             )
+
+        /**
+         * Serialisation codec for network synchronisation.
+         */
         val STREAM_CODEC: StreamCodec<ByteBuf, Village> =
             StreamCodec.composite(
                 UUIDUtil.STREAM_CODEC,
