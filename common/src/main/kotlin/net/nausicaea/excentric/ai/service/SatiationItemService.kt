@@ -87,7 +87,11 @@ class SatiationItemFuture(
                     }
                     Poll.Pending
                 } else {
-                    Ready(Try.Err(UnsupportedOperationException("Cannot path-find for entities that don't inherit from Mob")))
+                    Ready(
+                        Try.Err(
+                            UnsupportedOperationException("Cannot path-find for entities that don't inherit from Mob"),
+                        ),
+                    )
                 }
             }
 

@@ -55,7 +55,12 @@ data class Probability private constructor(
         /**
          * Calculate the arithmetic mean value of a collection of probabilities.
          */
-        fun mean(src: Collection<Probability>): Probability = if (src.isEmpty()) ZERO else of(src.sumOf { it.value } / src.size)
+        fun mean(src: Collection<Probability>): Probability =
+            if (src.isEmpty()) {
+                ZERO
+            } else {
+                of(src.sumOf { it.value } / src.size)
+            }
 
         /**
          * Calculate a simplified form of the Boltzmann equation given an input probability and temperature.
