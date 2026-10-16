@@ -1,5 +1,6 @@
 plugins {
 	alias(libs.plugins.fabric.loom.remap)
+	alias(libs.plugins.kotlin.jvm)
 	id 'maven-publish'
 }
 
@@ -14,6 +15,10 @@ loom {
 }
 
 repositories {
+	maven {
+		name = "Ladysnake Mods"
+		url = "https://maven.ladysnake.org/releases"
+	}
 }
 
 dependencies {
@@ -21,8 +26,7 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation(rootProject.libs.fabric.loader)
 	modImplementation(rootProject.libs.fabric.api)
-
-	compileOnly(rootProject.libs.spotbugs)
+	modImplementation(rootProject.libs.fabric.language.kotlin)
 	implementation project(path: ':common', configuration: 'namedElements')
 }
 
@@ -37,6 +41,12 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 21
+}
+
+kotlin {
+	compilerOptions {
+		jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+	}
 }
 
 java {

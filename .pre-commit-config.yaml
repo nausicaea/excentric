@@ -1,5 +1,7 @@
 ---
-fail_fast: true
+default_language_version:
+  python: 'python3.14'
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -17,7 +19,6 @@ repos:
       - id: check-case-conflict
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable
-        exclude: ".*.rs"
       - id: check-illegal-windows-names
       - id: check-merge-conflict
       - id: check-symlinks
@@ -25,22 +26,18 @@ repos:
       - id: check-vcs-permalinks
       - id: forbid-submodules
 
-  - repo: https://github.com/thoughtworks/talisman
-    rev: v1.37.0
-    hooks:
-      - id: talisman-push
-      - id: talisman-commit
-
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.19.0
-    hooks:
-      - id: commitizen
-
   - repo: local
     hooks:
       - id: spotless-apply
         name: Spotless (auto-format Java/Gradle files)
+        stages: [pre-commit]
         entry: ./gradlew spotlessApply
         language: system
         pass_filenames: false
-        files: \.(java|gradle)$
+        files: \.(java|kt|gradle)$
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.19.1
+    hooks:
+      - id: commitizen
+      - id: commitizen-branch
