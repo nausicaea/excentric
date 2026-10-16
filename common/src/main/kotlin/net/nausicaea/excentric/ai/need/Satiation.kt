@@ -5,11 +5,14 @@ import net.nausicaea.excentric.ai.decay.Linear
 import net.nausicaea.excentric.ai.utility.CompoundBarUrAe
 import net.nausicaea.excentric.ai.utility.UtilityFn
 
-data class Satiation(
-    val d: DecayFn,
-    val u: UtilityFn,
-) : Need {
-    constructor() : this(Linear(1.0), CompoundBarUrAe)
+/**
+ * Represents the need to eat.
+ *
+ * TODO: balance decay rate and utility function. Currently placeholders.
+ */
+object Satiation : Need {
+    private val d: DecayFn = Linear(1.0)
+    private val u: UtilityFn = CompoundBarUrAe
 
     override fun decayFn(): DecayFn = d
 
