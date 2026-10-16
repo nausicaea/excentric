@@ -11,8 +11,7 @@ sealed interface Poll<out T : Any> {
         override fun isReady(): Boolean = false
     }
 
-    @JvmInline
-    value class Ready<V : Any>(
+    data class Ready<V : Any>(
         val value: V,
     ) : Poll<V> {
         override fun isPending(): Boolean = false
