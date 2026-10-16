@@ -12,6 +12,5 @@ object CompoundBarUrAe : UtilityFn {
         svc: Service,
         sat: Probability,
         ctx: UtilityFnContext,
-    ): Probability =
-        BaseUtility.score(svc, sat, ctx) * Urgency.score(svc, sat, ctx) * AerialDistance.score(svc, sat, ctx)
+    ): Probability = BaseUtility.score(svc, sat, ctx) * Urgency.score(svc, sat, ctx) * AerialDistance.score(svc, sat, ctx)
 }
