@@ -5,8 +5,7 @@ sealed interface Try<out T : Any> {
 
     fun isErr(): Boolean
 
-    @JvmInline
-    value class Err(
+    data class Err(
         val value: Throwable,
     ) : Try<Nothing> {
         override fun isOk(): Boolean = false
@@ -14,8 +13,7 @@ sealed interface Try<out T : Any> {
         override fun isErr(): Boolean = true
     }
 
-    @JvmInline
-    value class Ok<U : Any>(
+    data class Ok<U : Any>(
         val value: U,
     ) : Try<U> {
         override fun isOk(): Boolean = true
