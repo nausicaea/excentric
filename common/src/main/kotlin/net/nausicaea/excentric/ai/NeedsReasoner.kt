@@ -7,6 +7,7 @@ import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.minecraft.util.chooseWeighted
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Try
@@ -52,17 +53,44 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
     fun tryRealiseService(context: NeedsContext) {
         currentService
             .asOpt
-            .map { Pair(it.key, it.fut.poll()) }
-            .andThen { it.second.ready().map { iit -> Pair(it.first, iit) } }
-            .andThen { it.second.ok().map { iit -> Pair(it.first, iit) } }
-            .forEach { context.needs().realise(it.first, it.second) }
+            .map { SvcFutPolled(it.key, it.fut.poll()) }
+            .andThen { it.state.ready().map { iit -> SvcFutReady(it.key, iit) } }
+            .andThen { it.state.ok().map { iit -> SvcUsed(it.key, iit) } }
+            .forEach {
+                context.needs().realise(it.key, it.benefit)
+                currentService = null
+            }
     }
 }
 
 /**
- * Denotes an unused service.
+ * Denotes a service that is currently being used and waiting on completion.
  */
 private data class SvcFut(
     val key: ResourceKey<Need>,
     val fut: Future<Try<Probability>>,
+)
+
+/**
+ * Denotes a service-related future that was just polled.
+ */
+private data class SvcFutPolled(
+    val key: ResourceKey<Need>,
+    val state: Poll<Try<Probability>>,
+)
+
+/**
+ * The future is ready, meaning service usage has completed, but we don't yet know if it was successful.
+ */
+private data class SvcFutReady(
+    val key: ResourceKey<Need>,
+    val state: Try<Probability>,
+)
+
+/**
+ * The service has been used successfully, and we have the actual benefit for the consumer.
+ */
+private data class SvcUsed(
+    val key: ResourceKey<Need>,
+    val benefit: Probability,
 )
