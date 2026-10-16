@@ -41,9 +41,13 @@ data class SatiationItemService(
 
     override fun prerequisite(): Prerequisite? =
         when (ctx.source) {
+            // FIXME: Position isn't the only prerequisite for ForeignInventory
             is StackSource.ForeignInventory -> Position(ctx.source.pos)
+
             is StackSource.Held -> null
+
             is StackSource.Inventory -> null
+
             is StackSource.World -> Position(ctx.source.entity.position())
         }
 
