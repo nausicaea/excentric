@@ -14,5 +14,5 @@ data class Position(
     /**
      * Error term for position comparisons. Determines the maximum deviation from the target position that is acceptable for pathfinding.
      */
-    val error: Int = 2,
+    val error: Int = 1,
 ) : Prerequisite
