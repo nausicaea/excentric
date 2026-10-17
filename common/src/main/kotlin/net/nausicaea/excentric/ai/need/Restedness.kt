@@ -11,7 +11,7 @@ import net.nausicaea.excentric.ai.utility.UtilityFn
  * TODO: balance decay rate and utility function. Currently placeholders.
  */
 object Restedness : Need {
-    private val d: DecayFn = Linear(1.0)
+    private val d: DecayFn = Linear(0.0001)
     private val u: UtilityFn = CompoundBarUrAe
 
     override fun decayFn(): DecayFn = d
