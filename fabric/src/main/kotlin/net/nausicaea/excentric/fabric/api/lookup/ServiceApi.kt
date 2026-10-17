@@ -7,6 +7,8 @@ import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.nausicaea.excentric.LOG_MARKER
+import net.nausicaea.excentric.ai.service.BlockServiceContext
+import net.nausicaea.excentric.ai.service.EntityServiceContext
 import net.nausicaea.excentric.ai.service.ItemServiceContext
 import net.nausicaea.excentric.ai.service.SatiationItemService
 import net.nausicaea.excentric.ai.service.Service
@@ -23,10 +25,10 @@ object ServiceApi {
             Service::class.java,
             ItemServiceContext::class.java,
         )
-    val BLOCK_SERVICE: BlockApiLookup<Service, Void> =
-        BlockApiLookup.get(id("block_service"), Service::class.java, Void::class.java)
-    val ENTITY_SERVICE: EntityApiLookup<Service, Void> =
-        EntityApiLookup.get(id("entity_service"), Service::class.java, Void::class.java)
+    val BLOCK_SERVICE: BlockApiLookup<Service, BlockServiceContext> =
+        BlockApiLookup.get(id("block_service"), Service::class.java, BlockServiceContext::class.java)
+    val ENTITY_SERVICE: EntityApiLookup<Service, EntityServiceContext> =
+        EntityApiLookup.get(id("entity_service"), Service::class.java, EntityServiceContext::class.java)
 
     @JvmStatic
     fun register() {
