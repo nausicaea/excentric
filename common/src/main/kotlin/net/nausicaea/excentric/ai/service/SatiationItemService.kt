@@ -2,7 +2,6 @@ package net.nausicaea.excentric.ai.service
 
 import net.minecraft.core.component.DataComponents
 import net.minecraft.resources.ResourceKey
-import net.minecraft.world.entity.Mob
 import net.minecraft.world.food.FoodProperties
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
@@ -22,14 +21,13 @@ import net.nausicaea.excentric.util.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.function.Supplier
-import kotlin.math.roundToInt
 
 private const val MAX_NUTRITION: Double = 20.0
 
 /**
  * Defines the a [Service] for [net.nausicaea.excentric.ai.need.Satiation] through [net.minecraft.world.item.ItemStack].
  *
- * [net.minecraft.world.item.ItemStack]s may come from different sources in the game (see [StackSource]) and each source type has a different kind of prerequisite.
+ * [net.minecraft.world.item.ItemStack]s may come from different sources in the game (see [ItemStackSource]) and each source type has a different kind of prerequisite.
  */
 data class SatiationItemService(
     val props: FoodProperties,
@@ -50,18 +48,18 @@ data class SatiationItemService(
             )
 
     /**
-     * Prerequisites depend on the [StackSource].
+     * Prerequisites depend on the [ItemStackSource].
      */
     override fun prerequisite(): Prerequisite? =
         when (ctx.source) {
             // FIXME: Position isn't the only prerequisite for ForeignInventory
-            is StackSource.ForeignInventory -> Position(ctx.source.pos)
+            is ItemStackSource.ForeignInventory -> Position(ctx.source.pos)
 
-            is StackSource.Held -> null
+            is ItemStackSource.Held -> null
 
-            is StackSource.Inventory -> null
+            is ItemStackSource.Inventory -> null
 
-            is StackSource.World -> Position(ctx.source.entity.position())
+            is ItemStackSource.World -> Position(ctx.source.entity.position())
         }
 
     /**
