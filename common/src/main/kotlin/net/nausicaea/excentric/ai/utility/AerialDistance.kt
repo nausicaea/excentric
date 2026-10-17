@@ -1,7 +1,6 @@
 package net.nausicaea.excentric.ai.utility
 
 import net.nausicaea.excentric.ai.prerequisite.Position
-import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of

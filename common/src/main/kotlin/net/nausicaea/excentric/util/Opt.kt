@@ -2,7 +2,6 @@ package net.nausicaea.excentric.util
 
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
-import kotlin.reflect.KClass
 
 /**
  * Type [Opt] represents an optional value: every [Opt] is either [Some] and contains a value, or [None], and does not.

@@ -1,6 +1,5 @@
 package net.nausicaea.excentric.ai.utility
 
-import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.util.Probability
 
