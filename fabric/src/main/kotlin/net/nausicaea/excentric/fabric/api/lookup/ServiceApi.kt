@@ -8,15 +8,15 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BedBlockEntity
 import net.nausicaea.excentric.LOG_MARKER
+import net.nausicaea.excentric.ai.service.BedBlockService
 import net.nausicaea.excentric.ai.service.BlockServiceContext
 import net.nausicaea.excentric.ai.service.EntityServiceContext
+import net.nausicaea.excentric.ai.service.FoodItemService
 import net.nausicaea.excentric.ai.service.ItemServiceContext
 import net.nausicaea.excentric.ai.service.ItemStackSource
-import net.nausicaea.excentric.ai.service.SatiationItemService
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.id
 import net.nausicaea.excentric.util.asOpt
-import net.nausicaea.excentric.util.tryCast
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -41,14 +41,22 @@ object ServiceApi {
         LOG.info(LOG_MARKER, "Creating custom Service-API-Lookup APIs")
         // Right now, only item services that offer satiation are supported.
         ITEM_SERVICE.registerFallback { itemStack, ctx ->
-            itemStack.get(DataComponents.FOOD)?.let { SatiationItemService(it, ctx) }
+            itemStack
+                .get(DataComponents.FOOD)
+                .asOpt()
+                .map { FoodItemService(it, ctx) }
+                .unwrapOrNull
         }
-        /* TODO: Implement BLOCK_SERVICE and ENTITY_SERVICE fallbacks
         BLOCK_SERVICE.registerFallback { level, blockPos, blockState, blockEntity, ctx ->
-            return null
+            blockEntity
+                .asOpt()
+                .filter { it is BedBlockEntity }
+                .map { BedBlockService(blockPos, ctx) }
+                .unwrapOrNull
         }
+        /* TODO: Implement ENTITY_SERVICE fallbacks
         ENTITY_SERVICE.registerFallback { entity, ctx ->
-            return null
+            null
         }
          */
     }

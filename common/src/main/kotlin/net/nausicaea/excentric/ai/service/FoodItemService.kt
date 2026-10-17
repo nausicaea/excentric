@@ -2,6 +2,7 @@ package net.nausicaea.excentric.ai.service
 
 import net.minecraft.core.component.DataComponents
 import net.minecraft.resources.ResourceKey
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.food.FoodProperties
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
@@ -20,7 +21,6 @@ import net.nausicaea.excentric.util.inspect
 import net.nausicaea.excentric.util.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.util.function.Supplier
 
 private const val MAX_NUTRITION: Double = 20.0
 
@@ -29,23 +29,21 @@ private const val MAX_NUTRITION: Double = 20.0
  *
  * [net.minecraft.world.item.ItemStack]s may come from different sources in the game (see [ItemStackSource]) and each source type has a different kind of prerequisite.
  */
-data class SatiationItemService(
+data class FoodItemService(
     val props: FoodProperties,
     val ctx: ItemServiceContext,
 ) : Service {
     /**
-     * [SatiationItemService] is matched with [net.nausicaea.excentric.ai.need.Satiation].
+     * [FoodItemService] is matched with [net.nausicaea.excentric.ai.need.Satiation].
      */
     override fun key(): ResourceKey<Need> =
         NEED_REGISTRY
             .getResourceKey(SATIATION)
-            .orElseThrow<RuntimeException?>(
-                Supplier {
-                    RuntimeException(
-                        "Cannot find resource key for builtin need 'satiation'",
-                    )
-                },
-            )
+            .orElseThrow {
+                IllegalStateException(
+                    "Cannot find resource key for builtin need 'satiation'",
+                )
+            }
 
     /**
      * Prerequisites depend on the [ItemStackSource].
@@ -68,54 +66,31 @@ data class SatiationItemService(
     override fun baseUtility(): Probability = of(props.nutrition().toDouble() / MAX_NUTRITION)
 
     /**
-     * Create a [SatiationItemFuture] that promises to fulfil the [SatiationItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].
+     * Create a [FoodItemFuture] that promises to fulfil the [FoodItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].
      */
-    override fun apply(): Future<Try<Probability>> = SatiationItemFuture(props, ctx, prerequisite())
+    override fun apply(): Future<Try<Probability>> = FoodItemFuture(props, ctx, prerequisite())
 }
 
 /**
  * If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.
  */
-class SatiationItemFuture(
+class FoodItemFuture(
     val props: FoodProperties,
     val ctx: ItemServiceContext,
     val prq: Prerequisite?,
     var ready: Boolean = false,
-) : Future<Try<Probability>> {
-    /**
-     * Attempt to bring the [Future] closer to completion.
-     *
-     * See [SatiationItemFuture] for details
-     *
-     * @throws IllegalStateException if polled again once [Poll.Ready] has been returned.
-     */
-    override fun poll(): Poll<Try<Probability>> {
-        if (ready) {
-            throw IllegalStateException("Cannot poll a complete Future")
-        }
-        val prq =
-            prq ?: run {
-                ready = true
-                return Ready(Ok(useNow(props, ctx)))
-            }
-        return when (prq) {
-            is Position -> {
-                prq
-                    .poll(ctx.consumer)
-                    .inspect { ready = true }
-                    .map { Ok(useNow(props, ctx)) }
-            }
+) : ServiceFuture {
+    override fun prerequisite(): Prerequisite? = prq
 
-            else -> {
-                Ready(Try.Err(UnsupportedOperationException("Unsupported prerequisite: $prq")))
-            }
-        }
+    override fun consumer(): LivingEntity = ctx.consumer
+
+    override fun ready(): Boolean = ready
+
+    override fun setReady() {
+        ready = true
     }
 
-    private fun useNow(
-        props: FoodProperties,
-        ctx: ItemServiceContext,
-    ): Probability {
+    override fun useNow(): Probability {
         val itemStack = ctx.itemStack()
         if (itemStack.isEmpty || !itemStack.has(DataComponents.FOOD)) {
             LOG.info(LOG_MARKER, "Non-food item or item vanished, no benefit")
@@ -130,6 +105,6 @@ class SatiationItemFuture(
     }
 
     companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(SatiationItemFuture::class.java)
+        private val LOG: Logger = LoggerFactory.getLogger(FoodItemFuture::class.java)
     }
 }
