@@ -21,7 +21,10 @@ repositories {
 
 dependencies {
 	minecraft(rootProject.libs.minecraft)
-	mappings loom.officialMojangMappings()
+	mappings loom.layered() {
+		officialMojangMappings()
+		parchment(variantOf(rootProject.libs.parchment) { artifactType("zip") })
+	}
 }
 
 tasks.withType(JavaCompile).configureEach {

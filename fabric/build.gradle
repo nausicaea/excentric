@@ -18,7 +18,10 @@ repositories {}
 
 dependencies {
 	minecraft(rootProject.libs.minecraft)
-	mappings loom.officialMojangMappings()
+	mappings loom.layered() {
+		officialMojangMappings()
+		parchment(variantOf(rootProject.libs.parchment) { artifactType("zip") })
+	}
 	modImplementation(rootProject.libs.fabric.loader)
 	modImplementation(rootProject.libs.fabric.api)
 	modImplementation(rootProject.libs.fabric.language.kotlin)
