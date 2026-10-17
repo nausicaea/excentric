@@ -8,9 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(Mob.class)
 abstract class MobMixin {
-    /// [Villager]s shall ignore the mob griefing game rule
-    /// (`GameRules#RULE_MOBGRIEFING`): if it's set to false (i.e. disallows mobs
-    /// from modifying the world), Villagers have an exemption.
+    /// [Villager]s shall ignore the mob griefing game rule (`GameRules#RULE_MOBGRIEFING`): if it's
+    /// set to false (i.e. disallows mobs from modifying the world), Villagers have an exemption.
     @ModifyExpressionValue(
             method = "aiStep()V",
             at =

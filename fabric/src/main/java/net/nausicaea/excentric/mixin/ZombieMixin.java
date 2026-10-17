@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Zombie.class)
 abstract class ZombieMixin {
-    /// Don't let [Zombie] target and attack
-    /// [net.minecraft.world.entity.npc.Villager] and
+    /// Don't let [Zombie] target and attack [net.minecraft.world.entity.npc.Villager] and
     /// [net.minecraft.world.entity.animal.IronGolem].
     @Inject(method = "addBehaviourGoals()V", at = @At("TAIL"))
     public void villageMod$zombieTargetSelectorException(CallbackInfo ci) {
