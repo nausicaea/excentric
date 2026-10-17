@@ -28,6 +28,7 @@ import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
 import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.filterMap
 import net.nausicaea.excentric.util.unwrapOr
+import net.nausicaea.excentric.village.Villages.Companion.CHUNK_RADIUS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.UUID

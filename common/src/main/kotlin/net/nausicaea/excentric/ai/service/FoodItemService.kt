@@ -11,14 +11,9 @@ import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Future
-import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.Poll.Ready
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of
 import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.Try.Ok
-import net.nausicaea.excentric.util.inspect
-import net.nausicaea.excentric.util.map
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

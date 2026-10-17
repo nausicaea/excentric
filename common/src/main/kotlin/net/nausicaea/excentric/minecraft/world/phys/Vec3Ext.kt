@@ -2,7 +2,6 @@ package net.nausicaea.excentric.minecraft.world.phys
 
 import net.minecraft.core.BlockPos
 import net.minecraft.world.phys.Vec3
-import net.nausicaea.excentric.util.Opt
 
 fun Vec3.toBlockPosFloor(): BlockPos = BlockPos(this.x().toInt(), this.y().toInt(), this.z().toInt())
 
