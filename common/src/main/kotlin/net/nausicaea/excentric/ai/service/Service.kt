@@ -4,7 +4,6 @@ import net.minecraft.resources.ResourceKey
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.ai.reasoner.Action
-import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.Probability
 
 interface Service : Action {

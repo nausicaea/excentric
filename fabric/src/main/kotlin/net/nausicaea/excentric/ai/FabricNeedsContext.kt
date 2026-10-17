@@ -8,8 +8,8 @@ import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.npc.InventoryCarrier
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.ai.service.ItemStackSource
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.asSequence
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
@@ -39,7 +39,7 @@ data class FabricNeedsContext(
                         .findItemService(
                             it.value,
                             entity,
-                            StackSource.Inventory(inventory, it.index),
+                            ItemStackSource.Inventory(inventory, it.index),
                         )
                 }.forEach(svcBuffer::add)
         }
@@ -53,7 +53,7 @@ data class FabricNeedsContext(
                         .findItemService(
                             it,
                             entity,
-                            StackSource.Held(EquipmentSlot.MAINHAND),
+                            ItemStackSource.Held(EquipmentSlot.MAINHAND),
                         ).asOpt()
                 }.forEach(svcBuffer::add)
             entity
@@ -63,7 +63,7 @@ data class FabricNeedsContext(
                         .findItemService(
                             it,
                             entity,
-                            StackSource.Held(EquipmentSlot.OFFHAND),
+                            ItemStackSource.Held(EquipmentSlot.OFFHAND),
                         ).asOpt()
                 }.forEach(svcBuffer::add)
         }
@@ -79,7 +79,7 @@ data class FabricNeedsContext(
                     .findItemService(
                         it.item,
                         entity,
-                        StackSource.World(it),
+                        ItemStackSource.World(it),
                     )
             }.forEach(svcBuffer::add)
 

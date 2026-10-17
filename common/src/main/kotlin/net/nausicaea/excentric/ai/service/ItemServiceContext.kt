@@ -5,14 +5,14 @@ import net.minecraft.world.item.ItemStack
 
 data class ItemServiceContext(
     val consumer: LivingEntity,
-    val source: StackSource,
+    val source: ItemStackSource,
 ) {
     fun itemStack(): ItemStack =
         when (source) {
-            is StackSource.ForeignInventory -> source.container.getItem(source.slot)
-            is StackSource.Held -> consumer.getItemBySlot(source.slot)
-            is StackSource.Inventory -> source.container.getItem(source.slot)
-            is StackSource.World -> source.entity.item
+            is ItemStackSource.ForeignInventory -> source.container.getItem(source.slot)
+            is ItemStackSource.Held -> consumer.getItemBySlot(source.slot)
+            is ItemStackSource.Inventory -> source.container.getItem(source.slot)
+            is ItemStackSource.World -> source.entity.item
         }
 
     /**
@@ -20,10 +20,10 @@ data class ItemServiceContext(
      */
     fun putBack(stack: ItemStack) {
         when (this.source) {
-            is StackSource.ForeignInventory -> source.container.setItem(source.slot, stack)
-            is StackSource.Held -> consumer.setItemSlot(source.slot, stack)
-            is StackSource.Inventory -> source.container.setItem(source.slot, stack)
-            is StackSource.World -> source.entity.item = stack
+            is ItemStackSource.ForeignInventory -> source.container.setItem(source.slot, stack)
+            is ItemStackSource.Held -> consumer.setItemSlot(source.slot, stack)
+            is ItemStackSource.Inventory -> source.container.setItem(source.slot, stack)
+            is ItemStackSource.World -> source.entity.item = stack
         }
     }
 }

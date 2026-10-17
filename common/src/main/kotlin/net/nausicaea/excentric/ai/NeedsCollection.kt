@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
+import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.decay.DecayFn
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.service.Service
@@ -105,6 +106,7 @@ class NeedsCollection {
 
         if (this.isCritical) {
             // TODO: what do we do when the need is critical?
+            LOG.info(LOG_MARKER, "Critical needs")
         }
     }
 

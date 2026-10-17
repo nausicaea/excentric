@@ -2,7 +2,6 @@ package net.nausicaea.excentric.minecraft.util
 
 import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.util.Weighted
-import kotlin.require
 
 /**
  * Perform a weighted random selection from a list.

@@ -2,6 +2,7 @@ package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.RandomSource
+import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.service.Service
@@ -15,6 +16,8 @@ import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
     private var currentService: SvcFut? = null
@@ -31,12 +34,15 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
         val needs = context.needs()
         val temp = needs.urgency()
         return actions
-            .map { svc ->
-                Weighted(
-                    svc,
-                    boltzmann(needs.score(svc, context), temp),
-                )
-            }.filter { svc -> svc.weight.isNonZero }
+            .map {
+                val w =
+                    Weighted(
+                        it,
+                        boltzmann(needs.score(it, context), temp),
+                    )
+                LOG.debug(LOG_MARKER, "Weight {}", w.weight)
+                w
+            }.filter { it.weight.isNonZero }
     }
 
     // / Randomly select from the available [Service]s by their score.
@@ -60,6 +66,10 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
                 context.needs().realise(it.key, it.benefit)
                 currentService = null
             }
+    }
+
+    companion object {
+        val LOG: Logger = LoggerFactory.getLogger(NeedsReasoner::class.java)
     }
 }
 

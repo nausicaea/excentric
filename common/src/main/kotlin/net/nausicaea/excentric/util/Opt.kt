@@ -129,3 +129,8 @@ fun <T : Any> Opt<T>.toSequence(): Sequence<T> = toSeq(unwrapOrNull)
  * Helper method to convert a nullable value to a [Sequence].
  */
 fun <T : Any> toSeq(value: T?): Sequence<T> = value?.let { sequenceOf(it) } ?: emptySequence()
+
+/**
+ * Attempt a wrapped cast to a different type.
+ */
+inline fun <reified U : Any> Opt<*>.tryCast(): Opt<U> = Opt(unwrapOrNull as? U)

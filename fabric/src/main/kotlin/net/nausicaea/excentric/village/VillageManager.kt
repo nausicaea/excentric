@@ -10,10 +10,8 @@ import net.minecraft.world.level.levelgen.structure.StructureStart
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.structures.startPool
-import net.nausicaea.excentric.util.Opt
 import net.nausicaea.excentric.util.toOpt
 import net.nausicaea.excentric.util.unwrapOr
-import net.nausicaea.excentric.util.unwrapOrElse
 
 interface VillageManager {
     fun findOrClaim(
@@ -38,7 +36,7 @@ interface VillageManager {
 
         // Assume there is only one village structure in the loaded chunk.
         val villageStructureStart: StructureStart = villageStructures.first()
-        val boundingBox = villageStructureStart.getBoundingBox()
+        val boundingBox = villageStructureStart.boundingBox
         val villageStructurePieces = villageStructureStart.pieces
         if (villageStructurePieces.isEmpty()) {
             return null
