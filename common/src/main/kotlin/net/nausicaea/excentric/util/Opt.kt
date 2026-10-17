@@ -2,6 +2,7 @@ package net.nausicaea.excentric.util
 
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
+import kotlin.reflect.KClass
 
 /**
  * Type [Opt] represents an optional value: every [Opt] is either [Some] and contains a value, or [None], and does not.
@@ -129,3 +130,8 @@ fun <T : Any> Opt<T>.toSequence(): Sequence<T> = toSeq(unwrapOrNull)
  * Helper method to convert a nullable value to a [Sequence].
  */
 fun <T : Any> toSeq(value: T?): Sequence<T> = value?.let { sequenceOf(it) } ?: emptySequence()
+
+/**
+ * Attempt a wrapped cast to a different type.
+ */
+inline fun <reified U : Any> Opt<*>.tryCast(): Opt<U> = Opt(unwrapOrNull as? U)
