@@ -14,12 +14,7 @@ loom {
 	}
 }
 
-repositories {
-	maven {
-		name = "Ladysnake Mods"
-		url = "https://maven.ladysnake.org/releases"
-	}
-}
+repositories {}
 
 dependencies {
 	minecraft(rootProject.libs.minecraft)
