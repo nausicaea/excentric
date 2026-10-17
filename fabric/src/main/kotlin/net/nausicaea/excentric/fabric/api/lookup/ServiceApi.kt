@@ -6,14 +6,17 @@ import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup
 import net.minecraft.core.component.DataComponents
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.entity.BedBlockEntity
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.service.BlockServiceContext
 import net.nausicaea.excentric.ai.service.EntityServiceContext
 import net.nausicaea.excentric.ai.service.ItemServiceContext
+import net.nausicaea.excentric.ai.service.ItemStackSource
 import net.nausicaea.excentric.ai.service.SatiationItemService
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.ai.service.StackSource
 import net.nausicaea.excentric.id
+import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.tryCast
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -30,6 +33,9 @@ object ServiceApi {
     val ENTITY_SERVICE: EntityApiLookup<Service, EntityServiceContext> =
         EntityApiLookup.get(id("entity_service"), Service::class.java, EntityServiceContext::class.java)
 
+    /**
+     * Register Fabric's API-Lookup-API fallbacks for [ITEM_SERVICE], [BLOCK_SERVICE], and [ENTITY_SERVICE].
+     */
     @JvmStatic
     fun register() {
         LOG.info(LOG_MARKER, "Creating custom Service-API-Lookup APIs")
@@ -47,10 +53,17 @@ object ServiceApi {
          */
     }
 
+    /**
+     * Helper method to find a [Service] from an [ItemStack].
+     *
+     * @param stack the stack of [net.minecraft.world.item.Item]s that maybe has an attached [Service].
+     * @param consumer the entity that consumes the [ItemStack].
+     * @param source where the [ItemStack] comes from (see [ItemStackSource] for details).
+     */
     @JvmStatic
     fun findItemService(
         stack: ItemStack,
         consumer: LivingEntity,
-        source: StackSource,
+        source: ItemStackSource,
     ): Service? = ITEM_SERVICE.find(stack, ItemServiceContext(consumer, source))
 }
