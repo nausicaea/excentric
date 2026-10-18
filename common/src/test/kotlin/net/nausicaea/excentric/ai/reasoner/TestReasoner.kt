@@ -7,6 +7,7 @@ import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Weighted
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 const val SEED: Long = 1234L
 
@@ -19,7 +20,7 @@ class TestReasoner {
         val r =
             ExampleReasoner(
                 scores = mapOf(a to Probability.of(0.5), b to Probability.of(0.6)),
-                action = Weighted(a, Probability.of(0.5)),
+                action = null,
             )
         r.plan({ sequenceOf(a) }, RandomSource.create(SEED))
         assertEquals(a, r.action?.item)
