@@ -13,6 +13,7 @@ parchment-release = "2025.03.23"
 fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric-loader" }
 fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
 fabric-language-kotlin = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
 mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
 parchment = { module = "org.parchmentmc.data:parchment-1.21.4", version.ref = "parchment-release" }
