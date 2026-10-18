@@ -1,13 +1,12 @@
 package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
-import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.debug.ServiceDebug
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.reasoner.Reasoner
+import net.nausicaea.excentric.ai.reasoner.ReasonerRng
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.minecraft.util.chooseWeighted
 import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
@@ -60,7 +59,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
      */
     override fun select(
         scoredActions: Sequence<Weighted<Service>>,
-        rng: RandomSource,
+        rng: ReasonerRng,
     ): Weighted<Service>? = rng.chooseWeighted(scoredActions.toList())
 
     /**

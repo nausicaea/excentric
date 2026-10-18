@@ -38,7 +38,7 @@ interface Reasoner<A : Action, C : ReasonerContext<A>> {
      */
     fun select(
         scoredActions: Sequence<Weighted<A>>,
-        rng: RandomSource,
+        rng: ReasonerRng,
     ): Weighted<A>?
 
     /**
@@ -49,7 +49,7 @@ interface Reasoner<A : Action, C : ReasonerContext<A>> {
      */
     fun plan(
         context: C,
-        rng: RandomSource,
+        rng: ReasonerRng,
     ) {
         val actions = context.collect()
         val scored = score(actions, context)

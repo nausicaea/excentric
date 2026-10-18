@@ -16,6 +16,7 @@ import net.nausicaea.excentric.ai.debug.NeedsDebug;
 import net.nausicaea.excentric.ai.debug.NeedsDebugSource;
 import net.nausicaea.excentric.ai.debug.VillagerDebug;
 import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
+import net.nausicaea.excentric.minecraft.util.RandomSourceExtKt;
 import net.nausicaea.excentric.util.EveryN;
 import net.nausicaea.excentric.util.Probability;
 import org.jetbrains.annotations.NotNull;
@@ -88,6 +89,9 @@ abstract class VillagerMixin implements NeedsDebugSource {
         var ctx = new FabricNeedsContext(villageMod$needs, villager);
         villageMod$reasoner.tryRealiseService(ctx);
         villageMod$every8Ticks.run(() -> villageMod$needs.decay(gameTime));
-        villageMod$every32Ticks.run(() -> villageMod$reasoner.plan(ctx, villageMod$rng));
+        villageMod$every32Ticks.run(
+                () ->
+                        villageMod$reasoner.plan(
+                                ctx, RandomSourceExtKt.asReasonerRng(villageMod$rng)));
     }
 }

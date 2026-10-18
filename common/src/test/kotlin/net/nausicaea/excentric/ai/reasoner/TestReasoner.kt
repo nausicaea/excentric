@@ -1,6 +1,5 @@
 package net.nausicaea.excentric.ai.reasoner
 
-import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Try
@@ -20,7 +19,7 @@ class TestReasoner {
                 scores = mapOf(a to Probability.of(0.5), b to Probability.of(0.6)),
                 action = null,
             )
-        r.plan(ReasonerContext { sequenceOf(a) }, ReasonerRng { 0.0 })
+        r.plan({ sequenceOf(a) }, { 0.0 })
         assertEquals(a, r.action?.item)
     }
 
@@ -31,7 +30,7 @@ class TestReasoner {
                 scores = mapOf(a to Probability.of(0.0), b to Probability.of(0.6)),
                 action = null,
             )
-        r.plan(ReasonerContext { sequenceOf(a) }, ReasonerRng { 0.0 })
+        r.plan({ sequenceOf(a) }, { 0.0 })
         assertNull(r.action)
     }
 }
@@ -61,7 +60,7 @@ private class ExampleReasoner(
 
     override fun select(
         scoredActions: Sequence<Weighted<ExampleAction>>,
-        rng: RandomSource,
+        rng: ReasonerRng,
     ): Weighted<ExampleAction>? = scoredActions.maxByOrNull { it.weight.value }
 }
 
