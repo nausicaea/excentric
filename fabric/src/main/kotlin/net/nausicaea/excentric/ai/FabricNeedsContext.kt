@@ -4,17 +4,23 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.EquipmentSlot
 import net.minecraft.world.entity.EquipmentUser
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.village.poi.PoiManager
+import net.minecraft.world.entity.ai.village.poi.PoiTypes
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.npc.InventoryCarrier
 import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.ai.service.BlockServiceContext
 import net.nausicaea.excentric.ai.service.ItemStackSource
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.asSequence
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
+import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
 import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.filterMap
+import net.nausicaea.excentric.util.toSeq
+import kotlin.streams.asSequence
 
 data class FabricNeedsContext(
     val needs: NeedsCollection,
@@ -85,7 +91,17 @@ data class FabricNeedsContext(
 
         // TODO: Find services of items lying in containers somewhere.
 
-        // TODO: Collect services from blocks in the world.
+        // TODO: Collect services from blocks other than beds in the world.
+        level.poiManager
+            .findAll(
+                { it.`is`(PoiTypes.HOME) },
+                { aabb.contains(it.center) },
+                pos.toBlockPosFloor(),
+                HALF_WIDTH,
+                PoiManager.Occupancy.HAS_SPACE,
+            ).asSequence()
+            .flatMap { toSeq(ServiceApi.BLOCK_SERVICE.find(level, it, BlockServiceContext(entity))) }
+            .forEach(svcBuffer::add)
 
         // TODO: Collect services from other entities in the World.
         return svcBuffer.asSequence()
