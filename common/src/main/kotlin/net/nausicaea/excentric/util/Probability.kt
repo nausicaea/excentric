@@ -20,6 +20,11 @@ data class Probability private constructor(
     operator fun times(rhs: Probability) = of(value * rhs.value)
 
     /**
+     * Multiply [Probability] with a [Double].
+     */
+    operator fun times(rhs: Double) = of(value * rhs)
+
+    /**
      * Calculate the inverse probability (i.e. `1 - p`).
      */
     fun inv() = of(1.0 - value)
