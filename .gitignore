@@ -132,3 +132,4 @@ gradle-app.setting
 /.idea/
 /*/run/
 /.kotlin/
+/doc/minecraft-server-*/

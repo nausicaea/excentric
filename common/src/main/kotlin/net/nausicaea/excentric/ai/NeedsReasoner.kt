@@ -2,6 +2,7 @@ package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.RandomSource
+import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.service.Service
@@ -13,17 +14,32 @@ import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.inspectErr
 import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready
+import net.nausicaea.excentric.util.toDouble
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+private const val CURRENT_SERVICE_BONUS: Double = 0.5
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
     private var currentService: SvcFut? = null
 
-    override fun setAction(action: Service) {
-        this.currentService = SvcFut(action.key(), action.apply())
+    override fun currentAction(): Service? = currentService?.svc
+
+    override fun isCurrentAction(action: Service): Boolean = currentService?.svc == action
+
+    override fun setCurrentAction(action: Service) {
+        if (isCurrentAction(action)) {
+            return
+        }
+        this.currentService = SvcFut(action, action.key(), action.apply())
     }
 
-    // / For every service, call [NeedsCollection#score(Service, NeedsContext)]
+    /**
+     * For every service, call [NeedsCollection.score].
+     */
     override fun score(
         actions: Sequence<Service>,
         context: NeedsContext,
@@ -31,15 +47,25 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
         val needs = context.needs()
         val temp = needs.urgency()
         return actions
-            .map { svc ->
-                Weighted(
-                    svc,
-                    boltzmann(needs.score(svc, context), temp),
-                )
-            }.filter { svc -> svc.weight.isNonZero }
+            .map {
+                val weight = needs.score(it, context) * (1.0 + CURRENT_SERVICE_BONUS * isCurrentAction(it).toDouble())
+                val w =
+                    Weighted(
+                        it,
+                        boltzmann(weight, temp),
+                    )
+                LOG.debug(LOG_MARKER, "Weight {}", w.weight)
+                w
+            }.filter { it.weight.isNonZero }
     }
 
-    // / Randomly select from the available [Service]s by their score.
+    /**
+     * Randomly select from the available [Service]s by their score.
+     *
+     * It is intended behaviour that the currently active service [currentService] can be replaced by a new, more urgent need.
+     *
+     * TODO: attach a higher weight to the [currentService] so it is generally preferred over others.
+     */
     override fun select(
         scoredActions: Sequence<Weighted<Service>>,
         rng: RandomSource,
@@ -55,11 +81,15 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .asOpt()
             .map { SvcFutPolled(it.key, it.fut.poll()) }
             .andThen { it.state.ready().map { iit -> SvcFutReady(it.key, iit) } }
-            .andThen { it.state.ok().map { iit -> SvcUsed(it.key, iit) } }
-            .forEach {
-                context.needs().realise(it.key, it.benefit)
+            .inspect {
                 currentService = null
-            }
+                it.state.inspectErr { iit -> LOG.error(LOG_MARKER, "Error using service for need ${it.key}: $iit") }
+            }.andThen { it.state.ok().map { iit -> SvcUsed(it.key, iit) } }
+            .forEach { context.needs().realise(it.key, it.benefit) }
+    }
+
+    companion object {
+        val LOG: Logger = LoggerFactory.getLogger(NeedsReasoner::class.java)
     }
 }
 
@@ -67,6 +97,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
  * Denotes a service that is currently being used and waiting on completion.
  */
 private data class SvcFut(
+    val svc: Service,
     val key: ResourceKey<Need>,
     val fut: Future<Try<Probability>>,
 )

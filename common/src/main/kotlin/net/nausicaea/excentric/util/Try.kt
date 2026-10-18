@@ -22,8 +22,56 @@ sealed interface Try<out T : Any> {
     }
 }
 
+/**
+ * Converts `Try<T>` to `Opt<T>`, discarding the error: thus, [Try.Ok] will become [Opt.Some] and [Try.Err] will become [Opt.None].
+ */
 fun <T : Any> Try<T>.ok(): Opt<T> =
     when (this) {
         is Try.Ok -> this.value.asOpt()
         is Try.Err -> Opt(null)
+    }
+
+/**
+ * Calls a function with a reference to the contained value if [Try.Ok].
+ *
+ * Returns the original result.
+ */
+inline fun <T : Any> Try<T>.inspect(f: (T) -> Unit): Try<T> =
+    when (this) {
+        is Try.Ok -> {
+            f(value)
+            this
+        }
+
+        is Try.Err -> {
+            this
+        }
+    }
+
+/**
+ * Calls a function with a reference to the contained error if [Try.Err].
+ *
+ * Returns the original result.
+ */
+inline fun <T : Any> Try<T>.inspectErr(f: (Throwable) -> Unit): Try<T> =
+    when (this) {
+        is Try.Ok -> {
+            this
+        }
+
+        is Try.Err -> {
+            f(value)
+            this
+        }
+    }
+
+/**
+ * Maps a `Try<T>` to `Try<U>` by applying a function to a contained [Try.Ok] value, leaving a [Try.Err] value untouched.
+ *
+ * This function can be used to compose the results of two functions.
+ */
+inline fun <T : Any, U : Any> Try<T>.map(f: (T) -> U): Try<U> =
+    when (this) {
+        is Try.Ok -> Try.Ok(f(value))
+        is Try.Err -> this
     }
