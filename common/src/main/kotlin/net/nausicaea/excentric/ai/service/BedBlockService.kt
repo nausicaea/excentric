@@ -15,6 +15,9 @@ import net.nausicaea.excentric.util.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+/**
+ * TODO: currently supports going to sleep only. Implement waking up.
+ */
 data class BedBlockService(
     val pos: BlockPos,
     val ctx: BlockServiceContext,
