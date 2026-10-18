@@ -9,8 +9,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-const val SEED: Long = 1234L
-
 class TestReasoner {
     private val a = ExampleAction("a")
     private val b = ExampleAction("b")
@@ -22,7 +20,7 @@ class TestReasoner {
                 scores = mapOf(a to Probability.of(0.5), b to Probability.of(0.6)),
                 action = null,
             )
-        r.plan({ sequenceOf(a) }, RandomSource.create(SEED))
+        r.plan(ReasonerContext { sequenceOf(a) }, ReasonerRng { 0.0 })
         assertEquals(a, r.action?.item)
     }
 
@@ -33,7 +31,7 @@ class TestReasoner {
                 scores = mapOf(a to Probability.of(0.0), b to Probability.of(0.6)),
                 action = null,
             )
-        r.plan({ sequenceOf(a) }, RandomSource.create(SEED))
+        r.plan(ReasonerContext { sequenceOf(a) }, ReasonerRng { 0.0 })
         assertNull(r.action)
     }
 }
