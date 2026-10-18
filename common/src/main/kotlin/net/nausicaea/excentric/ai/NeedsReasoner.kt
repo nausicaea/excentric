@@ -42,13 +42,10 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
         val temp = needs.urgency()
         return actions
             .map {
-                val w =
-                    Weighted(
-                        it,
-                        boltzmann(needs.score(it, context), temp),
-                    )
-                LOG.debug(LOG_MARKER, "Weight {}", w.weight)
-                w
+                Weighted(
+                    it,
+                    boltzmann(needs.score(it, context), temp),
+                )
             }.filter { it.weight.isNonZero }
     }
 
