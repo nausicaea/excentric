@@ -25,6 +25,17 @@ class TestReasoner {
         r.plan({ sequenceOf(a) }, RandomSource.create(SEED))
         assertEquals(a, r.action?.item)
     }
+
+    @Test
+    fun planSelectsNothingIfTheOnlyCandidateHasZeroWeight() {
+        val r =
+            ExampleReasoner(
+                scores = mapOf(a to Probability.of(0.0), b to Probability.of(0.6)),
+                action = null,
+            )
+        r.plan({ sequenceOf(a) }, RandomSource.create(SEED))
+        assertNull(r.action)
+    }
 }
 
 private class ExampleReasoner(
