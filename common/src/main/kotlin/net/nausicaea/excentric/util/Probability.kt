@@ -15,6 +15,11 @@ data class Probability private constructor(
     operator fun plus(rhs: Probability): Probability = of(value + rhs.value)
 
     /**
+     * Add [Probability] to a [Double].
+     */
+    operator fun plus(rhs: Double): Probability = of(value + rhs)
+
+    /**
      * Multiplication operator for [Probability].
      */
     operator fun times(rhs: Probability) = of(value * rhs.value)
@@ -23,6 +28,11 @@ data class Probability private constructor(
      * Multiply [Probability] with a [Double].
      */
     operator fun times(rhs: Double) = of(value * rhs)
+
+    /**
+     * Compare two probabilities to each other
+     */
+    operator fun compareTo(probability: Probability): Int = value.compareTo(probability.value)
 
     /**
      * Calculate the inverse probability (i.e. `1 - p`).
