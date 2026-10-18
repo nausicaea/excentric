@@ -49,6 +49,23 @@ inline fun <T : Any> Try<T>.inspect(f: (T) -> Unit): Try<T> =
     }
 
 /**
+ * Calls a function with a reference to the contained error if [Try.Err].
+ *
+ * Returns the original result.
+ */
+inline fun <T : Any> Try<T>.inspectErr(f: (Throwable) -> Unit): Try<T> =
+    when (this) {
+        is Try.Ok -> {
+            this
+        }
+
+        is Try.Err -> {
+            f(value)
+            this
+        }
+    }
+
+/**
  * Maps a `Try<T>` to `Try<U>` by applying a function to a contained [Try.Ok] value, leaving a [Try.Err] value untouched.
  *
  * This function can be used to compose the results of two functions.
