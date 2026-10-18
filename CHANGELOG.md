@@ -1,3 +1,19 @@
+## 0.2.0 (2026-10-18)
+
+### BREAKING CHANGE
+
+- This change fixes a bad search inefficiency for the item search volume.
+
+### Feat
+
+- **FabricNeedsContext**: add BedBlock collection via PoiManager (#41)
+- **needs**: add a restedness need (#26)
+
+### Fix
+
+- **Reasoner**: implement service hysteresis (#38)
+- **deps**: update dependency net.fabricmc:fabric-language-kotlin to v1.14.2+kotlin.2.4.21 (#25)
+
 ## 0.1.0 (2026-10-16)
 
 ### Feat
