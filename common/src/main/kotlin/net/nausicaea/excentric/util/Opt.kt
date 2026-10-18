@@ -48,6 +48,16 @@ value class Opt<out T : Any>(
     inline fun <U : Any> andThen(f: (T) -> Opt<U>): Opt<U> = unwrapOrNull?.let(f) ?: Opt(null)
 
     /**
+     * Calls a function with a reference to the contained value if [Some].
+     *
+     * Returns the original option.
+     */
+    inline fun inspect(f: (T) -> Unit): Opt<T> {
+        unwrapOrNull?.let(f)
+        return this
+    }
+
+    /**
      * Returns [None] if the option is [None], otherwise calls `predicate`
      * with the wrapped value and returns:
      *
