@@ -6,7 +6,7 @@ import net.nausicaea.excentric.util.Weighted
 /**
  * Perform a weighted random selection from a list.
  */
-fun <T> RandomSource.chooseWeighted(items: List<Weighted<T>>): T? {
+fun <T> RandomSource.chooseWeighted(items: List<Weighted<T>>): Weighted<T>? {
     var total = 0.0
     for ((_, weight1) in items) {
         val weight = weight1.value
@@ -18,15 +18,15 @@ fun <T> RandomSource.chooseWeighted(items: List<Weighted<T>>): T? {
     }
 
     var r: Double = this.nextDouble() * total
-    var lastPositive: T? = null
-    for ((item, weight1) in items) {
-        val weight = weight1.value
+    var lastPositive: Weighted<T>? = null
+    for (weightedItem in items) {
+        val weight = weightedItem.weight.value
         if (weight <= 0.0) continue
         r -= weight
         if (r < 0.0) {
-            return item
+            return weightedItem
         }
-        lastPositive = item
+        lastPositive = weightedItem
     }
     return lastPositive
 }

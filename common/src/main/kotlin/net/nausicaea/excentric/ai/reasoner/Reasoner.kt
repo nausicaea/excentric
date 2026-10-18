@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.ai.reasoner
 
 import net.minecraft.util.RandomSource
+import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.toSeq
@@ -10,19 +11,19 @@ import net.nausicaea.excentric.util.toSeq
  */
 interface Reasoner<A : Action, C : ReasonerContext<A>> {
     /**
-     * Get the currently active action.
+     * Specify the size of the hysteresis necessary for a selected service to override the currently active service.
      */
-    fun currentAction(): A?
+    fun hysteresis(): Double
 
     /**
-     * Return `true` if the specified action matches the current one.
+     * Get the currently active action's weight.
      */
-    fun isCurrentAction(action: A): Boolean
+    fun currentActionWeight(): Probability?
 
     /**
      * Set the currently active action.
      */
-    fun setCurrentAction(action: A)
+    fun setCurrentAction(action: Weighted<A>)
 
     /**
      * Score actions relative to a context.
@@ -38,21 +39,25 @@ interface Reasoner<A : Action, C : ReasonerContext<A>> {
     fun select(
         scoredActions: Sequence<Weighted<A>>,
         rng: RandomSource,
-    ): A?
+    ): Weighted<A>?
 
     /**
      * Plan the next action for the [Reasoner]:
      * 1. Collect potential actions
-     * 2. Prepend the current action to the set of actions
-     * 3. Score each action
-     * 4. Select the next action
+     * 2. Score each action
+     * 3. Select the next action
      */
     fun plan(
         context: C,
         rng: RandomSource,
     ) {
-        val actions = toSeq(currentAction()) + context.collect()
+        val actions = context.collect()
         val scored = score(actions, context)
-        select(scored, rng).asOpt().forEach(this::setCurrentAction)
+        val selected = select(scored, rng)
+
+        selected
+            .asOpt()
+            .filter { it.weight > (currentActionWeight() ?: Probability.ZERO) + hysteresis() }
+            .forEach(this::setCurrentAction)
     }
 }

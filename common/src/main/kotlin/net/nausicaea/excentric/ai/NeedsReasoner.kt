@@ -17,24 +17,18 @@ import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.inspectErr
 import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready
-import net.nausicaea.excentric.util.toDouble
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-private const val CURRENT_SERVICE_BONUS: Double = 0.5
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
     private var currentService: SvcFut? = null
 
-    override fun currentAction(): Service? = currentService?.svc
+    override fun hysteresis(): Double = 0.2
 
-    override fun isCurrentAction(action: Service): Boolean = currentService?.svc == action
+    override fun currentActionWeight(): Probability? = currentService?.weight
 
-    override fun setCurrentAction(action: Service) {
-        if (isCurrentAction(action)) {
-            return
-        }
-        this.currentService = SvcFut(action, action.key(), action.apply())
+    override fun setCurrentAction(action: Weighted<Service>) {
+        currentService = SvcFut(action.weight, action.item.key(), action.item.apply())
     }
 
     /**
@@ -48,11 +42,10 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
         val temp = needs.urgency()
         return actions
             .map {
-                val weight = needs.score(it, context) * (1.0 + CURRENT_SERVICE_BONUS * isCurrentAction(it).toDouble())
                 val w =
                     Weighted(
                         it,
-                        boltzmann(weight, temp),
+                        boltzmann(needs.score(it, context), temp),
                     )
                 LOG.debug(LOG_MARKER, "Weight {}", w.weight)
                 w
@@ -63,13 +56,11 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
      * Randomly select from the available [Service]s by their score.
      *
      * It is intended behaviour that the currently active service [currentService] can be replaced by a new, more urgent need.
-     *
-     * TODO: attach a higher weight to the [currentService] so it is generally preferred over others.
      */
     override fun select(
         scoredActions: Sequence<Weighted<Service>>,
         rng: RandomSource,
-    ): Service? = rng.chooseWeighted(scoredActions.toList())
+    ): Weighted<Service>? = rng.chooseWeighted(scoredActions.toList())
 
     /**
      * If a [Service] is currently selected as a target, try to
@@ -97,7 +88,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
  * Denotes a service that is currently being used and waiting on completion.
  */
 private data class SvcFut(
-    val svc: Service,
+    val weight: Probability,
     val key: ResourceKey<Need>,
     val fut: Future<Try<Probability>>,
 )
