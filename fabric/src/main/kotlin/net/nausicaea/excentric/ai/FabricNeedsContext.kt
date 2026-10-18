@@ -96,8 +96,8 @@ data class FabricNeedsContext(
     override fun entity(): LivingEntity = entity
 
     companion object {
-        private const val HALF_WIDTH = 5 shl 16
-        private const val HALF_HEIGHT = 2 shl 16
+        private const val HALF_WIDTH = 5 shl 4
+        private const val HALF_HEIGHT = 2 shl 4
         private val SEARCH_MIN = Vec3(-HALF_WIDTH.toDouble(), -HALF_HEIGHT.toDouble(), -HALF_WIDTH.toDouble())
         private val SEARCH_MAX = Vec3(HALF_WIDTH.toDouble(), HALF_HEIGHT.toDouble(), HALF_WIDTH.toDouble())
     }
