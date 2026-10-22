@@ -34,28 +34,6 @@ data class Village(
 ) {
     companion object {
         /**
-         * Serialisation codec for persistent storage.
-         */
-        val CODEC: Codec<Village> =
-            RecordCodecBuilder.create(
-                Function { i: RecordCodecBuilder.Instance<Village> ->
-                    i
-                        .group(
-                            UUIDUtil.CODEC.fieldOf("id").forGetter(Village::id),
-                            BlockPos.CODEC
-                                .fieldOf("anchor")
-                                .forGetter(Village::anchor),
-                            BlockPos.CODEC
-                                .fieldOf("center")
-                                .forGetter(Village::center),
-                            BoundingBox.CODEC
-                                .fieldOf("boundingBox")
-                                .forGetter(Village::boundingBox),
-                        ).apply(i, ::Village)
-                },
-            )
-
-        /**
          * Serialisation codec for network synchronisation.
          */
         val STREAM_CODEC: StreamCodec<ByteBuf, Village> =

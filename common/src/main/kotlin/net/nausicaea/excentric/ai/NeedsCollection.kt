@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
+import net.minecraft.resources.ResourceLocation
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.decay.DecayFn
 import net.nausicaea.excentric.ai.need.Need
@@ -13,6 +14,7 @@ import net.nausicaea.excentric.util.toOpt
 import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.jvm.optionals.getOrNull
 import kotlin.math.max
 
 /**
@@ -23,11 +25,30 @@ import kotlin.math.max
  */
 class NeedsCollection {
     val index: MutableMap<ResourceKey<Need>, Int> = mutableMapOf()
+    val satisfactions: MutableMap<Int, Probability> = mutableMapOf()
     val decayFns: MutableMap<Int, DecayFn> = mutableMapOf()
     val utilityFns: MutableMap<Int, UtilityFn> = mutableMapOf()
-    val satisfactions: MutableMap<Int, Probability> = mutableMapOf()
     private var maxIndex = 0
     private var lastUpdateTime = 0L
+
+    fun addReplaceMap(sat: Map<ResourceLocation, Probability>) {
+        for ((rLoc, prob) in sat) {
+            val key = ResourceKey.create(NEED_REGISTRY.key(), rLoc)
+            if (index.containsKey(key)) {
+                val i = index[key]!!
+                satisfactions[i] = prob
+            } else {
+                val need = NEED_REGISTRY.getOptional(key).getOrNull() ?: continue
+                index[key] = maxIndex
+                satisfactions[maxIndex] = prob
+                decayFns[maxIndex] = need.decayFn()
+                utilityFns[maxIndex] = need.utilityFn()
+                maxIndex += 1
+            }
+        }
+    }
+
+    fun toMap(): Map<ResourceLocation, Probability> = index.entries.associate { (key, i) -> key.location() to satisfactions[i]!! }
 
     /**
      * Return `true` if the collection contains at least one Need.

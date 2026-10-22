@@ -1,6 +1,8 @@
 package net.nausicaea.excentric.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -17,6 +19,7 @@ import net.nausicaea.excentric.ai.debug.NeedsDebugSource;
 import net.nausicaea.excentric.ai.debug.VillagerDebug;
 import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
 import net.nausicaea.excentric.minecraft.util.RandomSourceExtKt;
+import net.nausicaea.excentric.mojang.serialization.Codecs;
 import net.nausicaea.excentric.util.EveryN;
 import net.nausicaea.excentric.util.Probability;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Villager.class)
 abstract class VillagerMixin implements NeedsDebugSource {
+	@Unique private static final String EXCENTRIC_NEEDS = "ExcentricNeeds";
     @Unique private final NeedsCollection villageMod$needs = new NeedsCollection();
     @Unique private final NeedsReasoner villageMod$reasoner = new NeedsReasoner();
     @Unique private EveryN villageMod$every32Ticks;
@@ -93,5 +97,23 @@ abstract class VillagerMixin implements NeedsDebugSource {
                 () ->
                         villageMod$reasoner.plan(
                                 ctx, RandomSourceExtKt.asReasonerRng(villageMod$rng)));
+    }
+
+    @Inject(method = "addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
+    public void villageMod$serialiseNeeds(CompoundTag tag, CallbackInfo ci) {
+        Codecs.NEEDS_COLLECTION
+                .encodeStart(NbtOps.INSTANCE, villageMod$needs.toMap())
+                .resultOrPartial()
+                .ifPresent(t -> tag.put(EXCENTRIC_NEEDS, t));
+    }
+
+    @Inject(method = "readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
+    public void villageMod$deserialiseNeeds(CompoundTag tag, CallbackInfo ci) {
+        if (tag.contains(EXCENTRIC_NEEDS)) {
+            Codecs.NEEDS_COLLECTION
+                    .decode(NbtOps.INSTANCE, tag.getCompound(EXCENTRIC_NEEDS))
+                    .resultOrPartial()
+                    .ifPresent(result -> villageMod$needs.addReplaceMap(result.getFirst()));
+        }
     }
 }
