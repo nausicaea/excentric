@@ -1,7 +1,5 @@
 package net.nausicaea.excentric.village
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.codecs.RecordCodecBuilder
 import io.netty.buffer.ByteBuf
 import net.minecraft.core.BlockPos
 import net.minecraft.core.UUIDUtil
@@ -9,7 +7,6 @@ import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.BOUNDING_BOX_STREAM_CODEC
 import java.util.UUID
-import java.util.function.Function
 
 /**
  * Defines identity, location, and size of a village.
