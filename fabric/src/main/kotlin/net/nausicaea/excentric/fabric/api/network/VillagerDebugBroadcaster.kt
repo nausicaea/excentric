@@ -78,7 +78,7 @@ object VillagerDebugBroadcaster {
             val entries =
                 level
                     .getEntitiesOfClass(Villager::class.java, player.boundingBox.inflate(RADIUS))
-                    .mapNotNull { (it as? NeedsDebugSource)?.excentricDebugSnapshot() }
+                    .mapNotNull { (it as? NeedsDebugSource)?.villagerModDebugSnapshot() }
             ServerPlayNetworking.send(player, VillagerDebugPayload(entries))
         }
     }

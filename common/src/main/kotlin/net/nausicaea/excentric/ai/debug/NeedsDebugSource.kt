@@ -8,5 +8,5 @@ interface NeedsDebugSource {
     /**
      * Capture the current needs and active service of this entity.
      */
-    fun excentricDebugSnapshot(): VillagerDebug
+    fun villagerModDebugSnapshot(): VillagerDebug
 }

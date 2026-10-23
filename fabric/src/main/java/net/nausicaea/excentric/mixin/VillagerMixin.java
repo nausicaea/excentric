@@ -18,6 +18,7 @@ import net.nausicaea.excentric.ai.debug.VillagerDebug;
 import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
 import net.nausicaea.excentric.util.EveryN;
 import net.nausicaea.excentric.util.Probability;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -67,8 +68,9 @@ abstract class VillagerMixin implements NeedsDebugSource {
     }
 
     /// Capture the needs and the active service of this villager for debug displays.
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public VillagerDebug excentricDebugSnapshot() {
+    public @NotNull VillagerDebug villagerModDebugSnapshot() {
         var villager = ((Villager) (Object) this);
         var ctx = new FabricNeedsContext(villageMod$needs, villager);
         return NeedsDebug.snapshot(villager.getId(), ctx, villageMod$reasoner);
