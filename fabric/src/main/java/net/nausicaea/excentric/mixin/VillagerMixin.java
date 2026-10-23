@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Villager.class)
 abstract class VillagerMixin implements NeedsDebugSource {
-	@Unique private static final String EXCENTRIC_NEEDS = "ExcentricNeeds";
+    @Unique private static final String EXCENTRIC_NEEDS = "ExcentricNeeds";
     @Unique private final NeedsCollection villageMod$needs = new NeedsCollection();
     @Unique private final NeedsReasoner villageMod$reasoner = new NeedsReasoner();
     @Unique private EveryN villageMod$every32Ticks;

@@ -29,7 +29,7 @@ class NeedsCollection {
     val decayFns: MutableMap<Int, DecayFn> = mutableMapOf()
     val utilityFns: MutableMap<Int, UtilityFn> = mutableMapOf()
     private var maxIndex = 0
-    private var lastUpdateTime = 0L
+    private var lastUpdateTime: Long? = null
 
     fun addReplaceMap(sat: Map<ResourceLocation, Probability>) {
         for ((rLoc, prob) in sat) {
@@ -110,7 +110,11 @@ class NeedsCollection {
      * Slowly reduce the [Need]'s satisfaction level through [Need.decayFn].
      */
     fun decay(monotonicTime: Long) {
-        val deltaTime = max(0L, monotonicTime - lastUpdateTime).toDouble()
+        val deltaTime: Double =
+            lastUpdateTime
+                .asOpt()
+                .map { max(0L, monotonicTime - it).toDouble() }
+                .unwrapOr(0.0)
         lastUpdateTime = monotonicTime
         for (i in index.values) {
             satisfactions.compute(
