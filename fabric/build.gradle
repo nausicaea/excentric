@@ -5,7 +5,15 @@ plugins {
 }
 
 loom {
-	serverOnlyMinecraftJar()
+	// Client code lives in its own source set (src/client) and is meant for debugging only (see ADR 003).
+	splitEnvironmentSourceSets()
+
+	mods {
+		"excentric" {
+			sourceSet sourceSets.main
+			sourceSet sourceSets.client
+		}
+	}
 
 	runs {
 		server {
@@ -26,6 +34,7 @@ dependencies {
 	modImplementation(rootProject.libs.fabric.api)
 	modImplementation(rootProject.libs.fabric.language.kotlin)
 	implementation project(path: ':common', configuration: 'namedElements')
+	clientImplementation project(path: ':common', configuration: 'namedElements')
 }
 
 processResources {
