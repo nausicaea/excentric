@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.ai.service
 
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.food.FoodProperties
@@ -59,6 +60,15 @@ data class FoodItemService(
      * The base utility is equal to the normalised nutritional value of the food item, as defined in the [FoodProperties] data component of the [net.minecraft.world.item.ItemStack].
      */
     override fun baseUtility(): Probability = of(props.nutrition().toDouble() / MAX_NUTRITION)
+
+    override fun describe(): String {
+        val stack = ctx.itemStack()
+        val source = ctx.source::class.simpleName
+        if (stack.isEmpty) {
+            return "food item (gone) from $source"
+        }
+        return "${BuiltInRegistries.ITEM.getKey(stack.item)} x${stack.count} from $source"
+    }
 
     /**
      * Create a [FoodItemFuture] that promises to fulfil the [FoodItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].

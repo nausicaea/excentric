@@ -3,6 +3,7 @@ package net.nausicaea.excentric.ai
 import net.minecraft.resources.ResourceKey
 import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.LOG_MARKER
+import net.nausicaea.excentric.ai.debug.ServiceDebug
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.service.Service
@@ -28,7 +29,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
     override fun currentActionWeight(): Probability? = currentService?.weight
 
     override fun setCurrentAction(action: Weighted<Service>) {
-        currentService = SvcFut(action.weight, action.item.key(), action.item.apply())
+        currentService = SvcFut(action.weight, action.item, action.item.key(), action.item.apply())
     }
 
     /**
@@ -79,6 +80,21 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .forEach { context.needs().realise(it.key, it.benefit) }
     }
 
+    /**
+     * Describe the currently active [Service] for debug displays, or return `null` if there is none.
+     */
+    fun debugCurrentService(context: NeedsContext): ServiceDebug? =
+        currentService?.let {
+            ServiceDebug(
+                need = it.key.location(),
+                type = it.svc::class.simpleName ?: "unknown",
+                description = it.svc.describe(),
+                baseUtility = it.svc.baseUtility().value,
+                score = context.needs().score(it.svc, context).value,
+                weight = it.weight.value,
+            )
+        }
+
     companion object {
         val LOG: Logger = LoggerFactory.getLogger(NeedsReasoner::class.java)
     }
@@ -89,6 +105,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
  */
 private data class SvcFut(
     val weight: Probability,
+    val svc: Service,
     val key: ResourceKey<Need>,
     val fut: Future<Try<Probability>>,
 )

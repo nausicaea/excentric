@@ -36,6 +36,8 @@ data class BedBlockService(
 
     override fun prerequisite(): Prerequisite = Position(pos.center)
 
+    override fun describe(): String = "bed at ${pos.toShortString()}"
+
     override fun apply(): Future<Try<Probability>> = BedBlockFuture(ctx, pos, prerequisite())
 
     class BedBlockFuture(

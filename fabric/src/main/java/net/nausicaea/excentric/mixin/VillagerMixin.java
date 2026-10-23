@@ -12,6 +12,9 @@ import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.ai.FabricNeedsContext;
 import net.nausicaea.excentric.ai.NeedsCollection;
 import net.nausicaea.excentric.ai.NeedsReasoner;
+import net.nausicaea.excentric.ai.debug.NeedsDebug;
+import net.nausicaea.excentric.ai.debug.NeedsDebugSource;
+import net.nausicaea.excentric.ai.debug.VillagerDebug;
 import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
 import net.nausicaea.excentric.util.EveryN;
 import net.nausicaea.excentric.util.Probability;
@@ -22,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Villager.class)
-abstract class VillagerMixin {
+abstract class VillagerMixin implements NeedsDebugSource {
     @Unique private final NeedsCollection villageMod$needs = new NeedsCollection();
     @Unique private final NeedsReasoner villageMod$reasoner = new NeedsReasoner();
     @Unique private EveryN villageMod$every32Ticks;
@@ -61,6 +64,14 @@ abstract class VillagerMixin {
     public boolean villageMod$abortVanillaVillagerAi(
             Brain<Villager> instance, ServerLevel serverLevel, LivingEntity livingEntity) {
         return false;
+    }
+
+    /// Capture the needs and the active service of this villager for debug displays.
+    @Override
+    public VillagerDebug excentricDebugSnapshot() {
+        var villager = ((Villager) (Object) this);
+        var ctx = new FabricNeedsContext(villageMod$needs, villager);
+        return NeedsDebug.snapshot(villager.getId(), ctx, villageMod$reasoner);
     }
 
     @Inject(method = "tick()V", at = @At("TAIL"))
