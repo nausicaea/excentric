@@ -40,6 +40,9 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
     ): Sequence<Weighted<Service>> {
         val needs = context.needs()
         val temp = needs.urgency()
+        if (temp.isApproxZero) {
+            return emptySequence()
+        }
         return actions
             .map {
                 Weighted(
