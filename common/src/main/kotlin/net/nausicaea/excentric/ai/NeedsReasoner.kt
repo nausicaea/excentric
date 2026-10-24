@@ -17,15 +17,19 @@ import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.inspectErr
 import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready
+import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
     private var currentService: SvcFut? = null
+    private val hysteresis: Double = 0.2
 
-    override fun hysteresis(): Double = 0.2
-
-    override fun currentActionWeight(): Probability? = currentService?.weight
+    override fun threshold(): Probability =
+        currentService
+            .asOpt()
+            .map { it.weight + hysteresis }
+            .unwrapOr(Probability.ZERO)
 
     override fun setCurrentAction(action: Weighted<Service>) {
         currentService = SvcFut(action.weight, action.item, action.item.key(), action.item.apply())

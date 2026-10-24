@@ -4,6 +4,8 @@ import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Weighted
+import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.unwrapOr
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -42,9 +44,11 @@ private class ExampleReasoner(
 ) : Reasoner<ExampleAction, ReasonerContext<ExampleAction>> {
     val scoredActions = mutableListOf<ExampleAction>()
 
-    override fun hysteresis(): Double = hysteresis
-
-    override fun currentActionWeight(): Probability? = this.action?.weight
+    override fun threshold(): Probability =
+        action
+            .asOpt()
+            .map { it.weight + hysteresis }
+            .unwrapOr(Probability.ZERO)
 
     override fun setCurrentAction(action: Weighted<ExampleAction>) {
         this.action = action
