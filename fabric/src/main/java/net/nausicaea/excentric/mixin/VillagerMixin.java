@@ -1,6 +1,8 @@
 package net.nausicaea.excentric.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.ai.FabricNeedsContext;
 import net.nausicaea.excentric.ai.NeedsCollection;
@@ -54,7 +57,7 @@ abstract class VillagerMixin implements NeedsDebugSource {
         // Add initial needs
         // TODO: make need assignment data-driven
         villageMod$needs.add(NeedSingletonsKt.SATIATION, Probability.ONE);
-        villageMod$needs.add(NeedSingletonsKt.RESTEDNESS, Probability.ONE);
+        // villageMod$needs.add(NeedSingletonsKt.RESTEDNESS, Probability.ONE);
     }
 
     /// [Villager]s shall not use their [Brain]: concretely, `Brain#tick()` may not be called on
@@ -82,7 +85,7 @@ abstract class VillagerMixin implements NeedsDebugSource {
     }
 
     @Inject(method = "tick()V", at = @At("TAIL"))
-    public void villageMod$tickTail(CallbackInfo ci) {
+    public void villageMod$tickReasoner(CallbackInfo ci) {
         var villager = ((Villager) (Object) this);
         if (!(villager.level() instanceof ServerLevel level)) {
             // We don't run this on the client.
@@ -115,5 +118,15 @@ abstract class VillagerMixin implements NeedsDebugSource {
                     .resultOrPartial()
                     .ifPresent(result -> villageMod$needs.addReplaceMap(result.getFirst()));
         }
+    }
+
+    @ModifyReturnValue(
+            method =
+                    "wantsToPickUp(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;)Z",
+            at = @At("RETURN"))
+    public boolean villageMod$villagerPicksUpFood(
+            boolean original, ServerLevel level, ItemStack stack) {
+        var villager = (Villager) (Object) this;
+        return villager.getInventory().canAddItem(stack) && stack.has(DataComponents.FOOD);
     }
 }
