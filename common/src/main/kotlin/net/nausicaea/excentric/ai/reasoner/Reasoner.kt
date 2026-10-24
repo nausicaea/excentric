@@ -11,14 +11,9 @@ import net.nausicaea.excentric.util.toSeq
  */
 interface Reasoner<A : Action, C : ReasonerContext<A>> {
     /**
-     * Specify the size of the hysteresis necessary for a selected service to override the currently active service.
+     * Calculate the bar a new service must clear before being activated.
      */
-    fun hysteresis(): Double
-
-    /**
-     * Get the currently active action's weight.
-     */
-    fun currentActionWeight(): Probability?
+    fun threshold(): Probability
 
     /**
      * Set the currently active action.
@@ -38,7 +33,7 @@ interface Reasoner<A : Action, C : ReasonerContext<A>> {
      */
     fun select(
         scoredActions: Sequence<Weighted<A>>,
-        rng: RandomSource,
+        rng: ReasonerRng,
     ): Weighted<A>?
 
     /**
@@ -49,15 +44,16 @@ interface Reasoner<A : Action, C : ReasonerContext<A>> {
      */
     fun plan(
         context: C,
-        rng: RandomSource,
+        rng: ReasonerRng,
     ) {
         val actions = context.collect()
         val scored = score(actions, context)
         val selected = select(scored, rng)
+        val threshold = threshold()
 
         selected
             .asOpt()
-            .filter { it.weight > (currentActionWeight() ?: Probability.ZERO) + hysteresis() }
+            .filter { it.weight > threshold }
             .forEach(this::setCurrentAction)
     }
 }

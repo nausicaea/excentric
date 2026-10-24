@@ -1,6 +1,10 @@
 package net.nausicaea.excentric.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
@@ -8,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.ai.FabricNeedsContext;
 import net.nausicaea.excentric.ai.NeedsCollection;
@@ -16,6 +21,8 @@ import net.nausicaea.excentric.ai.debug.NeedsDebug;
 import net.nausicaea.excentric.ai.debug.NeedsDebugSource;
 import net.nausicaea.excentric.ai.debug.VillagerDebug;
 import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
+import net.nausicaea.excentric.minecraft.util.RandomSourceExtKt;
+import net.nausicaea.excentric.mojang.serialization.Codecs;
 import net.nausicaea.excentric.util.EveryN;
 import net.nausicaea.excentric.util.Probability;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Villager.class)
 abstract class VillagerMixin implements NeedsDebugSource {
+    @Unique private static final String EXCENTRIC_NEEDS = "ExcentricNeeds";
     @Unique private final NeedsCollection villageMod$needs = new NeedsCollection();
     @Unique private final NeedsReasoner villageMod$reasoner = new NeedsReasoner();
     @Unique private EveryN villageMod$every32Ticks;
@@ -49,7 +57,7 @@ abstract class VillagerMixin implements NeedsDebugSource {
         // Add initial needs
         // TODO: make need assignment data-driven
         villageMod$needs.add(NeedSingletonsKt.SATIATION, Probability.ONE);
-        villageMod$needs.add(NeedSingletonsKt.RESTEDNESS, Probability.ONE);
+        // villageMod$needs.add(NeedSingletonsKt.RESTEDNESS, Probability.ONE);
     }
 
     /// [Villager]s shall not use their [Brain]: concretely, `Brain#tick()` may not be called on
@@ -77,7 +85,7 @@ abstract class VillagerMixin implements NeedsDebugSource {
     }
 
     @Inject(method = "tick()V", at = @At("TAIL"))
-    public void villageMod$tickTail(CallbackInfo ci) {
+    public void villageMod$tickReasoner(CallbackInfo ci) {
         var villager = ((Villager) (Object) this);
         if (!(villager.level() instanceof ServerLevel level)) {
             // We don't run this on the client.
@@ -88,6 +96,37 @@ abstract class VillagerMixin implements NeedsDebugSource {
         var ctx = new FabricNeedsContext(villageMod$needs, villager);
         villageMod$reasoner.tryRealiseService(ctx);
         villageMod$every8Ticks.run(() -> villageMod$needs.decay(gameTime));
-        villageMod$every32Ticks.run(() -> villageMod$reasoner.plan(ctx, villageMod$rng));
+        villageMod$every32Ticks.run(
+                () ->
+                        villageMod$reasoner.plan(
+                                ctx, RandomSourceExtKt.asReasonerRng(villageMod$rng)));
+    }
+
+    @Inject(method = "addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
+    public void villageMod$serialiseNeeds(CompoundTag tag, CallbackInfo ci) {
+        Codecs.NEEDS_COLLECTION
+                .encodeStart(NbtOps.INSTANCE, villageMod$needs.toMap())
+                .resultOrPartial()
+                .ifPresent(t -> tag.put(EXCENTRIC_NEEDS, t));
+    }
+
+    @Inject(method = "readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
+    public void villageMod$deserialiseNeeds(CompoundTag tag, CallbackInfo ci) {
+        if (tag.contains(EXCENTRIC_NEEDS)) {
+            Codecs.NEEDS_COLLECTION
+                    .decode(NbtOps.INSTANCE, tag.getCompound(EXCENTRIC_NEEDS))
+                    .resultOrPartial()
+                    .ifPresent(result -> villageMod$needs.addReplaceMap(result.getFirst()));
+        }
+    }
+
+    @ModifyReturnValue(
+            method =
+                    "wantsToPickUp(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;)Z",
+            at = @At("RETURN"))
+    public boolean villageMod$villagerPicksUpFood(
+            boolean original, ServerLevel level, ItemStack stack) {
+        var villager = (Villager) (Object) this;
+        return villager.getInventory().canAddItem(stack) && stack.has(DataComponents.FOOD);
     }
 }

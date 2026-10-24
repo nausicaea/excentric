@@ -25,6 +25,7 @@ dependencies {
 		officialMojangMappings()
 		parchment(variantOf(rootProject.libs.parchment) { artifactType("zip") })
 	}
+	testImplementation(rootProject.libs.kotlin.test)
 }
 
 tasks.withType(JavaCompile).configureEach {

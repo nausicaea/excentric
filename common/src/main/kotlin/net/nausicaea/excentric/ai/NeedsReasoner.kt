@@ -1,13 +1,12 @@
 package net.nausicaea.excentric.ai
 
 import net.minecraft.resources.ResourceKey
-import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.debug.ServiceDebug
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.reasoner.Reasoner
+import net.nausicaea.excentric.ai.reasoner.ReasonerRng
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.minecraft.util.chooseWeighted
 import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
@@ -18,15 +17,19 @@ import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.inspectErr
 import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready
+import net.nausicaea.excentric.util.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 class NeedsReasoner : Reasoner<Service, NeedsContext> {
     private var currentService: SvcFut? = null
+    private val hysteresis: Double = 0.2
 
-    override fun hysteresis(): Double = 0.2
-
-    override fun currentActionWeight(): Probability? = currentService?.weight
+    override fun threshold(): Probability =
+        currentService
+            .asOpt()
+            .map { it.weight + hysteresis }
+            .unwrapOr(Probability.ZERO)
 
     override fun setCurrentAction(action: Weighted<Service>) {
         currentService = SvcFut(action.weight, action.item, action.item.key(), action.item.apply())
@@ -60,7 +63,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
      */
     override fun select(
         scoredActions: Sequence<Weighted<Service>>,
-        rng: RandomSource,
+        rng: ReasonerRng,
     ): Weighted<Service>? = rng.chooseWeighted(scoredActions.toList())
 
     /**

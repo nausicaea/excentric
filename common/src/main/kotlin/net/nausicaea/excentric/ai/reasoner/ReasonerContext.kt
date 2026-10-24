@@ -1,6 +1,6 @@
 package net.nausicaea.excentric.ai.reasoner
 
-interface ReasonerContext<A> {
+fun interface ReasonerContext<A> {
     /**
      * Collect services from various sources.
      */

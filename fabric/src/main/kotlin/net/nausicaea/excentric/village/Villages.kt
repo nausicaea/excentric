@@ -25,6 +25,7 @@ import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containe
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.showEdges
 import net.nausicaea.excentric.minecraft.world.phys.mapMean
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
+import net.nausicaea.excentric.mojang.serialization.Codecs
 import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.filterMap
 import net.nausicaea.excentric.util.unwrapOr
@@ -175,7 +176,7 @@ class Villages :
                 i
                     .group(
                         Codec
-                            .list(Village.CODEC)
+                            .list(Codecs.VILLAGE)
                             .fieldOf("villages")
                             .forGetter(Data::villages),
                     ).apply(i, ::Data)
