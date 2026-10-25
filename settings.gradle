@@ -13,6 +13,13 @@ pluginManagement {
 	}
 }
 
+// Allows Gradle to download the JDK requested by the java toolchain. Required for
+// environments that do not provide the JDK themselves (e.g. GitHub's default setup
+// for automatic dependency submission and CodeQL, which run with the runner's JDK 21).
+plugins {
+	id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
 // Should match your modid
 rootProject.name = 'excentric'
 
