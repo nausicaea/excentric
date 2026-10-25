@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.food.FoodProperties
+import net.minecraft.world.item.ItemStack
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.need.SATIATION
@@ -74,42 +75,47 @@ data class FoodItemService(
      * Create a [FoodItemFuture] that promises to fulfil the [FoodItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].
      */
     override fun apply(): Future<Try<Probability>> = FoodItemFuture(props, ctx, prerequisite())
-}
 
-/**
- * If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.
- */
-class FoodItemFuture(
-    val props: FoodProperties,
-    val ctx: ItemServiceContext,
-    val prq: Prerequisite?,
-    var ready: Boolean = false,
-) : ServiceFuture {
-    override fun prerequisite(): Prerequisite? = prq
+    /**
+     * If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.
+     */
+    class FoodItemFuture(
+        val props: FoodProperties,
+        val ctx: ItemServiceContext,
+        val prq: Prerequisite?,
+        var ready: Boolean = false,
+    ) : ServiceFuture {
+        override fun prerequisite(): Prerequisite? = prq
 
-    override fun consumer(): LivingEntity = ctx.consumer
+        override fun consumer(): LivingEntity = ctx.consumer
 
-    override fun ready(): Boolean = ready
+        override fun ready(): Boolean = ready
 
-    override fun setReady() {
-        ready = true
-    }
-
-    override fun useNow(): Probability {
-        val itemStack = ctx.itemStack()
-        if (itemStack.isEmpty || !itemStack.has(DataComponents.FOOD)) {
-            LOG.info(LOG_MARKER, "Non-food item or item vanished, no benefit")
-            return Probability.ZERO
+        override fun setReady() {
+            ready = true
         }
-        val consumer = ctx.consumer
-        val remainder = itemStack.finishUsingItem(consumer.level(), consumer)
-        ctx.putBack(remainder)
-        val benefit = props.nutrition().toDouble() / MAX_NUTRITION
-        LOG.info(LOG_MARKER, "Food-item provides $benefit benefit")
-        return of(benefit)
-    }
 
-    companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(FoodItemFuture::class.java)
+        private fun hasExpired(stack: ItemStack): Boolean =
+            (ctx.source is ItemStackSource.World && ctx.source.entity.isRemoved) || stack.isEmpty || !stack.has(DataComponents.FOOD)
+
+        override fun hasExpired(): Boolean = hasExpired(ctx.itemStack())
+
+        override fun useNow(): Probability {
+            val itemStack = ctx.itemStack()
+            if (hasExpired(itemStack)) {
+                LOG.info(LOG_MARKER, "Non-food item or item vanished, no benefit")
+                return Probability.ZERO
+            }
+            val consumer = ctx.consumer
+            val remainder = itemStack.finishUsingItem(consumer.level(), consumer)
+            ctx.putBack(remainder)
+            val benefit = props.nutrition().toDouble() / MAX_NUTRITION
+            LOG.info(LOG_MARKER, "Food-item provides $benefit benefit")
+            return of(benefit)
+        }
+
+        companion object {
+            private val LOG: Logger = LoggerFactory.getLogger(FoodItemFuture::class.java)
+        }
     }
 }

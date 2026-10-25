@@ -78,7 +78,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .andThen { it.state.ready().map { iit -> SvcFutReady(it.key, iit) } }
             .inspect {
                 currentService = null
-                it.state.inspectErr { iit -> LOG.error(LOG_MARKER, "Error using service for need ${it.key}", iit) }
+                it.state.inspectErr { iit -> LOG.info(LOG_MARKER, "Error using service for need ${it.key}", iit) }
             }.andThen { it.state.ok().map { iit -> SvcUsed(it.key, iit) } }
             .forEach { context.needs().realise(it.key, it.benefit) }
     }

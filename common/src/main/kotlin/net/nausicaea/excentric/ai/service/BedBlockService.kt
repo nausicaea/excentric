@@ -3,6 +3,7 @@ package net.nausicaea.excentric.ai.service
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.level.block.BedBlock
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.need.RESTEDNESS
@@ -55,6 +56,12 @@ data class BedBlockService(
         override fun setReady() {
             ready = true
         }
+
+        override fun hasExpired(): Boolean =
+            ctx.consumer
+                .level()
+                .getBlockState(pos)
+                .block !is BedBlock
 
         override fun useNow(): Probability {
             LOG.info(LOG_MARKER, "Start sleeping")

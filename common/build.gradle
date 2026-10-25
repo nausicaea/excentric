@@ -28,17 +28,12 @@ dependencies {
 	testImplementation(rootProject.libs.kotlin.test)
 }
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
-}
-
 kotlin {
-	compilerOptions {
-		jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
-	}
+	jvmToolchain(25)
 }
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
 }
