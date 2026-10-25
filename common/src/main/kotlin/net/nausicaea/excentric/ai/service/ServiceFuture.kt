@@ -1,59 +1,35 @@
 package net.nausicaea.excentric.ai.service
 
-import net.minecraft.world.entity.LivingEntity
-import net.nausicaea.excentric.ai.prerequisite.Position
-import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Poll
+import net.nausicaea.excentric.util.PollAfterReady
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.inspect
 import net.nausicaea.excentric.util.map
 
-interface ServiceFuture : Future<Try<Probability>> {
-    /**
-     * Attempt to bring the [Future] closer to completion.
-     *
-     * @throws IllegalStateException if polled again once [Poll.Ready] has been returned.
-     */
+abstract class ServiceFuture(
+    val prq: Future<Try<Unit>>,
+) : Future<Try<Probability>> {
+    private var isReady: Boolean = false
+
+    protected abstract fun hasExpired(): Boolean
+
+    protected abstract fun useNow(): Probability
+
     override fun poll(): Poll<Try<Probability>> {
-        if (ready()) {
-            throw IllegalStateException("Cannot poll a complete Future")
+        if (isReady) {
+            throw PollAfterReady()
         }
         if (hasExpired()) {
-            setReady()
+            isReady = true
             // TODO: this case should also abort pathfinding.
             return Poll.Ready(Try.Err(ServiceExpired()))
         }
-        return when (val prq = prerequisite()) {
-            null -> {
-                setReady()
-                Poll.Ready(Try.Ok(useNow()))
+        return prq
+            .poll()
+            .map {
+                isReady = true
+                Try.Ok(useNow())
             }
-
-            is Position -> {
-                prq
-                    .poll(consumer())
-                    .inspect { setReady() }
-                    .map { Try.Ok(useNow()) }
-            }
-
-            else -> {
-                setReady()
-                Poll.Ready(Try.Err(UnsupportedOperationException("Unsupported prerequisite: $prq")))
-            }
-        }
     }
-
-    fun hasExpired(): Boolean
-
-    fun prerequisite(): Prerequisite?
-
-    fun consumer(): LivingEntity
-
-    fun ready(): Boolean
-
-    fun setReady()
-
-    fun useNow(): Probability
 }

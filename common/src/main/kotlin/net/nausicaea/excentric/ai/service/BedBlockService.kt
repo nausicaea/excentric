@@ -2,7 +2,6 @@ package net.nausicaea.excentric.ai.service
 
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.level.block.BedBlock
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
@@ -11,8 +10,15 @@ import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Poll
+import net.nausicaea.excentric.util.Poll.Ready
+import net.nausicaea.excentric.util.PollAfterReady
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.Try.Err
+import net.nausicaea.excentric.util.Try.Ok
+import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.ready
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -39,24 +45,21 @@ data class BedBlockService(
 
     override fun describe(): String = "bed at ${pos.toShortString()}"
 
-    override fun apply(): Future<Try<Probability>> = BedBlockFuture(ctx, pos, prerequisite())
+    override fun apply(): Future<Try<Probability>> {
+        val prqFut =
+            when (val prq = prerequisite()) {
+                is Position -> prq.fulfil(ctx.consumer)
+                else -> ready(Err(UnsupportedOperationException("Unsupported prerequisite: $prq")))
+            }
+
+        return BedBlockFuture(ctx, pos, prqFut)
+    }
 
     class BedBlockFuture(
         val ctx: BlockServiceContext,
         val pos: BlockPos,
-        val prq: Prerequisite?,
-        var ready: Boolean = false,
-    ) : ServiceFuture {
-        override fun prerequisite(): Prerequisite? = prq
-
-        override fun consumer(): LivingEntity = ctx.consumer
-
-        override fun ready(): Boolean = ready
-
-        override fun setReady() {
-            ready = true
-        }
-
+        prq: Future<Try<Unit>>,
+    ) : ServiceFuture(prq) {
         override fun hasExpired(): Boolean =
             ctx.consumer
                 .level()

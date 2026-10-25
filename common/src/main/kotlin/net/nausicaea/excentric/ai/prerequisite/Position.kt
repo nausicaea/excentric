@@ -2,9 +2,16 @@ package net.nausicaea.excentric.ai.prerequisite
 
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.Mob
+import net.minecraft.world.entity.ai.navigation.PathNavigation
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Poll
+import net.nausicaea.excentric.util.Poll.Pending
+import net.nausicaea.excentric.util.Poll.Ready
 import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.Try.Err
+import net.nausicaea.excentric.util.Try.Ok
+import net.nausicaea.excentric.util.ready
 
 /**
  * Denotes a [Prerequisite] position: the entity that wants to satisfy this
@@ -23,32 +30,44 @@ data class Position(
      * Error term for position comparisons. Determines the maximum deviation from the target position that is acceptable for pathfinding.
      */
     val arrivalTolerance: Double = 1.5,
+    val speedModifier: Double = 0.5,
 ) : Prerequisite {
-    /**
-     * Bring the [LivingEntity] closer to the target position by using [net.minecraft.world.entity.ai.navigation.PathNavigation]. Return [Poll.Pending] while the entity is still finding its way and [Poll.Ready] when pathfinding has completed or aborted with an error.
-     */
-    fun poll(entity: LivingEntity): Poll<Try<Unit>> {
-        // Is the entity at the prerequisite position?
-        if (entity.position().closerThan(pos, arrivalTolerance, 2 * arrivalTolerance)) {
-            return Poll.Ready(Try.Ok(Unit))
+    fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
+        if (entity is Mob) {
+            PositionFuture(entity.navigation, entity, pos, pathfindingTolerance, speedModifier)
+        } else {
+            ready(Err(UnsupportedOperationException("pathfinding is only supported for subclasses of Mob")))
+        }
+}
+
+class PathfindingImpossible : Throwable("cannot establish a pathfinding route")
+
+class PathfindingStuck : Throwable("pathfinding has timed out and is stuck")
+
+class PositionFuture(
+    val nav: PathNavigation,
+    val entity: Mob,
+    val pos: Vec3,
+    val pathfindingTolerance: Int,
+    val speedModifier: Double,
+) : Future<Try<Unit>> {
+    var initialised: Boolean = false
+
+    override fun poll(): Poll<Try<Unit>> {
+        if (!initialised) {
+            initialised = true
+            val path =
+                nav.createPath(pos.x, pos.y, pos.z, pathfindingTolerance)
+                    ?: return Ready(Err(PathfindingImpossible()))
+            nav.moveTo(path, speedModifier)
         }
 
-        // Does the entity support pathfinding?
-        if (entity !is Mob) {
-            return Poll.Ready(
-                Try.Err(
-                    UnsupportedOperationException("Cannot path-find for entities that don't inherit from Mob"),
-                ),
-            )
+        if (nav.isStuck) {
+            return Ready(Err(PathfindingStuck()))
         }
-
-        val nav = entity.navigation
-        // Start the pathfinding
-        if (!(nav.isInProgress || nav.isStuck)) {
-            nav
-                .createPath(pos.x, pos.y, pos.z, pathfindingTolerance)
-                ?.let { nav.moveTo(it, 1.0) }
+        if (nav.isDone) {
+            return Ready(Ok(Unit))
         }
-        return Poll.Pending
+        return Pending
     }
 }
