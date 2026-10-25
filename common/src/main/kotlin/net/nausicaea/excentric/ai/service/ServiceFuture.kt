@@ -22,6 +22,7 @@ interface ServiceFuture : Future<Try<Probability>> {
         }
         if (hasExpired()) {
             setReady()
+            // TODO: this case should also abort pathfinding.
             return Poll.Ready(Try.Err(ServiceExpired()))
         }
         return when (val prq = prerequisite()) {
