@@ -32,7 +32,7 @@ data class Position(
     val arrivalTolerance: Double = 1.5,
     val speedModifier: Double = 0.5,
 ) : Prerequisite {
-    fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
+    override fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
         if (entity is Mob) {
             PositionFuture(entity.navigation, entity, pos, pathfindingTolerance, speedModifier)
         } else {
