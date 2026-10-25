@@ -20,6 +20,10 @@ interface ServiceFuture : Future<Try<Probability>> {
         if (ready()) {
             throw IllegalStateException("Cannot poll a complete Future")
         }
+        if (hasExpired()) {
+            setReady()
+            return Poll.Ready(Try.Err(ServiceExpired()))
+        }
         return when (val prq = prerequisite()) {
             null -> {
                 setReady()
@@ -39,6 +43,8 @@ interface ServiceFuture : Future<Try<Probability>> {
             }
         }
     }
+
+    fun hasExpired(): Boolean
 
     fun prerequisite(): Prerequisite?
 
