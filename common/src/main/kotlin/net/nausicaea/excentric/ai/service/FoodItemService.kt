@@ -13,9 +13,13 @@ import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Poll
+import net.nausicaea.excentric.util.PollAfterReady
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of
 import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.ready
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -74,7 +78,15 @@ data class FoodItemService(
     /**
      * Create a [FoodItemFuture] that promises to fulfil the [FoodItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].
      */
-    override fun apply(): Future<Try<Probability>> = FoodItemFuture(props, ctx, prerequisite())
+    override fun apply(): Future<Try<Probability>> {
+        val prqFut =
+            when (val prq = prerequisite()) {
+                is Position -> prq.fulfil(ctx.consumer)
+                else -> ready(Try.Err(UnsupportedOperationException("Unsupported prerequisite: $prq")))
+            }
+
+        return FoodItemFuture(props, ctx, prqFut)
+    }
 
     /**
      * If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.
@@ -82,19 +94,8 @@ data class FoodItemService(
     class FoodItemFuture(
         val props: FoodProperties,
         val ctx: ItemServiceContext,
-        val prq: Prerequisite?,
-        var ready: Boolean = false,
-    ) : ServiceFuture {
-        override fun prerequisite(): Prerequisite? = prq
-
-        override fun consumer(): LivingEntity = ctx.consumer
-
-        override fun ready(): Boolean = ready
-
-        override fun setReady() {
-            ready = true
-        }
-
+        prq: Future<Try<Unit>>,
+    ) : ServiceFuture(prq) {
         private fun hasExpired(stack: ItemStack): Boolean =
             (ctx.source is ItemStackSource.World && ctx.source.entity.isRemoved) || stack.isEmpty || !stack.has(DataComponents.FOOD)
 

@@ -52,3 +52,61 @@ fun interface Future<out T : Any> {
      */
     fun poll(): Poll<T>
 }
+
+/**
+ * Creates a future that is immediately ready with a value.
+ */
+fun <T : Any> ready(t: T): Future<T> = { Poll.Ready(t) }
+
+/**
+ * Creates a future which never resolves, representing a computation that never finishes.
+ */
+fun pending(): Future<Nothing> = { Poll.Pending }
+
+/**
+ * Chain on a computation for when a future finished, passing the result of the future to the provided closure f.
+ *
+ * The returned value of the closure must implement the Future trait and can represent some more work to be done before the composed future is finished.
+ *
+ * The closure f is only run after successful completion of the self future.
+ */
+fun <T : Any, U : Any> Future<T>.andThen(f: (T) -> Future<U>): AndThen<T, U> = AndThen(this, f)
+
+class AndThen<T : Any, U : Any>(
+    val a: Future<T>,
+    val f: (T) -> Future<U>,
+) : Future<U> {
+    var aReady: Boolean = false
+    var bFut: Future<U>? = null
+
+    override fun poll(): Poll<U> {
+        if (!aReady) {
+            when (val aPoll = a.poll()) {
+                is Poll.Pending -> {
+                    return Poll.Pending
+                }
+
+                is Poll.Ready -> {
+                    bFut = f(aPoll.value)
+                    aReady = true
+                }
+            }
+        }
+        return when (val bPoll = bFut?.poll()) {
+            null -> {
+                throw PollAfterReady()
+            }
+
+            is Poll.Pending -> {
+                Poll.Pending
+            }
+
+            is Poll.Ready -> {
+                bFut = null
+                Poll.Ready(bPoll.value)
+            }
+        }
+    }
+}
+
+class PollAfterReady : IllegalStateException("cannot poll a future after is has entered ready state")
