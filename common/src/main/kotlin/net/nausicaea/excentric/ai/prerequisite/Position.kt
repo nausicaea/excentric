@@ -16,16 +16,20 @@ data class Position(
      */
     val pos: Vec3,
     /**
+     * Error term for the pathfinding algorithm. Determines the accuracy necessary for pathfinding.
+     */
+    val pathfindingTolerance: Int = 1,
+    /**
      * Error term for position comparisons. Determines the maximum deviation from the target position that is acceptable for pathfinding.
      */
-    val error: Int = 1,
+    val arrivalTolerance: Double = 1.5,
 ) : Prerequisite {
     /**
      * Bring the [LivingEntity] closer to the target position by using [net.minecraft.world.entity.ai.navigation.PathNavigation]. Return [Poll.Pending] while the entity is still finding its way and [Poll.Ready] when pathfinding has completed or aborted with an error.
      */
     fun poll(entity: LivingEntity): Poll<Try<Unit>> {
         // Is the entity at the prerequisite position?
-        if (entity.position().closerThan(pos, error.toDouble())) {
+        if (entity.position().closerThan(pos, arrivalTolerance, 2 * arrivalTolerance)) {
             return Poll.Ready(Try.Ok(Unit))
         }
 
@@ -42,7 +46,7 @@ data class Position(
         // Start the pathfinding
         if (!(nav.isInProgress || nav.isStuck)) {
             nav
-                .createPath(pos.x, pos.y, pos.z, error)
+                .createPath(pos.x, pos.y, pos.z, pathfindingTolerance)
                 ?.let { nav.moveTo(it, 1.0) }
         }
         return Poll.Pending
