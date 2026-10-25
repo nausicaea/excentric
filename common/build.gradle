@@ -29,15 +29,11 @@ dependencies {
 }
 
 kotlin {
-	jvmToolchain(21)
+	jvmToolchain(25)
 }
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
-
-// tasks.withType(JavaCompile).configureEach {
-//	it.options.release = 21
-// }
