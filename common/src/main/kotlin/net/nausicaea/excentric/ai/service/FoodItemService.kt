@@ -95,7 +95,8 @@ data class FoodItemService(
             ready = true
         }
 
-        private fun hasExpired(stack: ItemStack): Boolean = stack.isEmpty || !stack.has(DataComponents.FOOD)
+        private fun hasExpired(stack: ItemStack): Boolean =
+            (ctx.source is ItemStackSource.World && ctx.source.entity.isRemoved) || stack.isEmpty || !stack.has(DataComponents.FOOD)
 
         override fun hasExpired(): Boolean = hasExpired(ctx.itemStack())
 
