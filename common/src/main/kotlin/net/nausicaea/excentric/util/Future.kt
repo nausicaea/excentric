@@ -24,8 +24,8 @@ fun interface Future<out T : Any> {
      *
      * This function returns:
      *
-     * - [Poll.Pending] if the future is not ready yet
-     * - [Poll.Ready] with the result of this future if it
+     * - [Pending] if the future is not ready yet
+     * - [Ready] with the result of this future if it
      *   finished successfully.
      *
      * Once a future has finished, clients should not call [poll] again.
@@ -56,12 +56,12 @@ fun interface Future<out T : Any> {
 /**
  * Creates a future that is immediately ready with a value.
  */
-fun <T : Any> ready(t: T): Future<T> = { Poll.Ready(t) }
+fun <T : Any> ready(t: T): Future<T> = { Ready(t) }
 
 /**
  * Creates a future which never resolves, representing a computation that never finishes.
  */
-fun pending(): Future<Nothing> = { Poll.Pending }
+fun pending(): Future<Nothing> = { Pending }
 
 /**
  * Chain on a computation for when a future finished, passing the result of the future to the provided closure f.
@@ -82,11 +82,11 @@ class AndThen<T : Any, U : Any>(
     override fun poll(): Poll<U> {
         if (!aReady) {
             when (val aPoll = a.poll()) {
-                is Poll.Pending -> {
-                    return Poll.Pending
+                is Pending -> {
+                    return Pending
                 }
 
-                is Poll.Ready -> {
+                is Ready -> {
                     bFut = f(aPoll.value)
                     aReady = true
                 }
@@ -97,13 +97,13 @@ class AndThen<T : Any, U : Any>(
                 throw PollAfterReady()
             }
 
-            is Poll.Pending -> {
-                Poll.Pending
+            is Pending -> {
+                Pending
             }
 
-            is Poll.Ready -> {
+            is Ready -> {
                 bFut = null
-                Poll.Ready(bPoll.value)
+                Ready(bPoll.value)
             }
         }
     }
