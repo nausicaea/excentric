@@ -1,6 +1,8 @@
 package net.nausicaea.excentric.ai.service
 
+import net.nausicaea.excentric.util.Err
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Ok
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.PollAfterReady
 import net.nausicaea.excentric.util.Probability
@@ -23,13 +25,13 @@ abstract class ServiceFuture(
         if (hasExpired()) {
             isReady = true
             // TODO: this case should also abort pathfinding.
-            return Poll.Ready(Try.Err(ServiceExpired()))
+            return Poll.Ready(Err(ServiceExpired()))
         }
         return prq
             .poll()
             .map {
                 isReady = true
-                Try.Ok(useNow())
+                Ok(useNow())
             }
     }
 }

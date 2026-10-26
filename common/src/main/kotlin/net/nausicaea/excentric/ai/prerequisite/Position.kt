@@ -4,13 +4,13 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.ai.navigation.PathNavigation
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.util.Err
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Ok
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Poll.Pending
 import net.nausicaea.excentric.util.Poll.Ready
 import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.Try.Err
-import net.nausicaea.excentric.util.Try.Ok
 import net.nausicaea.excentric.util.ready
 
 /**
