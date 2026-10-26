@@ -3,24 +3,22 @@ package net.nausicaea.excentric.ai.service
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.block.BedBlock
-import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.need.RESTEDNESS
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
+import net.nausicaea.excentric.util.Err
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Ok
+import net.nausicaea.excentric.util.Pending
 import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.Poll.Ready
-import net.nausicaea.excentric.util.PollAfterReady
 import net.nausicaea.excentric.util.Probability
+import net.nausicaea.excentric.util.Ready
 import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.Try.Err
-import net.nausicaea.excentric.util.Try.Ok
-import net.nausicaea.excentric.util.map
-import net.nausicaea.excentric.util.ready
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import net.nausicaea.excentric.util.andThenOk
+import net.nausicaea.excentric.util.cancellable
+import net.nausicaea.excentric.util.fuse
 
 /**
  * TODO: currently supports going to sleep only. Implement waking up.
@@ -46,35 +44,42 @@ data class BedBlockService(
     override fun describe(): String = "bed at ${pos.toShortString()}"
 
     override fun apply(): Future<Try<Probability>> {
-        val prqFut =
-            when (val prq = prerequisite()) {
-                is Position -> prq.fulfil(ctx.consumer)
-                else -> ready(Err(UnsupportedOperationException("Unsupported prerequisite: $prq")))
-            }
-
-        return BedBlockFuture(ctx, pos, prqFut)
-    }
-
-    class BedBlockFuture(
-        val ctx: BlockServiceContext,
-        val pos: BlockPos,
-        prq: Future<Try<Unit>>,
-    ) : ServiceFuture(prq) {
-        override fun hasExpired(): Boolean =
-            ctx.consumer
-                .level()
-                .getBlockState(pos)
-                .block !is BedBlock
-
-        override fun useNow(): Probability {
-            LOG.info(LOG_MARKER, "Start sleeping")
-            ctx.consumer.startSleeping(pos)
-            // When the entity starts sleeping, there is no benefit just yet.
-            return Probability.ZERO
-        }
-    }
-
-    companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(BedBlockFuture::class.java)
+        val level = ctx.consumer.level()
+        val need = key()
+        val increment = Probability.of(0.001)
+        return prerequisite()
+            .fulfil(ctx.consumer)
+            .cancellable { level.getBlockState(pos).block !is BedBlock }
+            .andThenOk { SleepFuture(ctx, need, increment, pos) }
+            .fuse()
     }
 }
+
+class SleepFuture(
+    val ctx: BlockServiceContext,
+    val need: ResourceKey<Need>,
+    val increment: Probability,
+    val pos: BlockPos,
+    private var initialised: Boolean = false,
+) : Future<Try<Probability>> {
+    override fun poll(): Poll<Try<Probability>> {
+        if (!initialised) {
+            if (ctx.consumer.isSleeping) {
+                return Ready(Err(AlreadyAsleep()))
+            }
+            ctx.consumer.startSleeping(pos)
+            initialised = true
+        }
+        if (ctx.consumer.isSleeping) {
+            ctx.needs.realise(need, increment)
+
+            if (ctx.needs[need]?.isApproxOne ?: false) {
+                ctx.consumer.stopSleeping()
+                return Ready(Ok(Probability.ZERO))
+            }
+        }
+        return Pending
+    }
+}
+
+class AlreadyAsleep : Throwable("cannot go to sleep again: this isn't inception")

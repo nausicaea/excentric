@@ -4,13 +4,13 @@ import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.ai.navigation.PathNavigation
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.util.Err
 import net.nausicaea.excentric.util.Future
+import net.nausicaea.excentric.util.Ok
+import net.nausicaea.excentric.util.Pending
 import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.Poll.Pending
-import net.nausicaea.excentric.util.Poll.Ready
+import net.nausicaea.excentric.util.Ready
 import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.Try.Err
-import net.nausicaea.excentric.util.Try.Ok
 import net.nausicaea.excentric.util.ready
 
 /**
@@ -32,7 +32,7 @@ data class Position(
     val arrivalTolerance: Double = 1.5,
     val speedModifier: Double = 0.5,
 ) : Prerequisite {
-    fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
+    override fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
         if (entity is Mob) {
             PositionFuture(entity.navigation, entity, pos, pathfindingTolerance, speedModifier)
         } else {
@@ -44,6 +44,9 @@ class PathfindingImpossible : Throwable("cannot establish a pathfinding route")
 
 class PathfindingStuck : Throwable("pathfinding has timed out and is stuck")
 
+/**
+ * TODO: cancelling this future should also abort pathfinding.
+ */
 class PositionFuture(
     val nav: PathNavigation,
     val entity: Mob,

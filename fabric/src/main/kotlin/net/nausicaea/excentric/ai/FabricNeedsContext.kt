@@ -100,7 +100,7 @@ data class FabricNeedsContext(
                 HALF_WIDTH,
                 PoiManager.Occupancy.HAS_SPACE,
             ).asSequence()
-            .flatMap { toSeq(ServiceApi.BLOCK_SERVICE.find(level, it, BlockServiceContext(entity))) }
+            .flatMap { toSeq(ServiceApi.BLOCK_SERVICE.find(level, it, BlockServiceContext(entity, needs))) }
             .forEach(svcBuffer::add)
 
         // TODO: Collect services from other entities in the World.

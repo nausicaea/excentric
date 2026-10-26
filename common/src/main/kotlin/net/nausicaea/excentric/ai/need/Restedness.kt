@@ -2,7 +2,10 @@ package net.nausicaea.excentric.ai.need
 
 import net.nausicaea.excentric.ai.decay.DecayFn
 import net.nausicaea.excentric.ai.decay.Linear
-import net.nausicaea.excentric.ai.utility.CompoundBarUrAe
+import net.nausicaea.excentric.ai.utility.AerialDistance
+import net.nausicaea.excentric.ai.utility.BaseUtility
+import net.nausicaea.excentric.ai.utility.NotSleeping
+import net.nausicaea.excentric.ai.utility.Urgency
 import net.nausicaea.excentric.ai.utility.UtilityFn
 
 /**
@@ -12,7 +15,7 @@ import net.nausicaea.excentric.ai.utility.UtilityFn
  */
 object Restedness : Need {
     private val d: DecayFn = Linear(0.0001)
-    private val u: UtilityFn = CompoundBarUrAe
+    private val u: UtilityFn = NotSleeping * BaseUtility * Urgency * AerialDistance
 
     override fun decayFn(): DecayFn = d
 

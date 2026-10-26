@@ -19,4 +19,17 @@ interface UtilityFn {
         sat: Probability,
         ctx: UtilityFnContext,
     ): Probability
+
+    operator fun times(rhs: UtilityFn): UtilityFn = Mul(this, rhs)
+}
+
+class Mul(
+    val a: UtilityFn,
+    val b: UtilityFn,
+) : UtilityFn {
+    override fun score(
+        svc: Service,
+        sat: Probability,
+        ctx: UtilityFnContext,
+    ): Probability = a.score(svc, sat, ctx) * b.score(svc, sat, ctx)
 }

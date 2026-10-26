@@ -20,7 +20,7 @@ interface Service : Action {
     /**
      * Does the service have some precondition that needs to be met?
      */
-    fun prerequisite(): Prerequisite?
+    fun prerequisite(): Prerequisite
 
     /**
      * A short, human-readable description of this service instance, intended for debug displays.
