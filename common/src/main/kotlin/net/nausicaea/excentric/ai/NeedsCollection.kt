@@ -24,10 +24,10 @@ import kotlin.math.max
  * score [Service]s.
  */
 class NeedsCollection {
-    val index: MutableMap<ResourceKey<Need>, Int> = mutableMapOf()
-    val satisfactions: MutableMap<Int, Probability> = mutableMapOf()
-    val decayFns: MutableMap<Int, DecayFn> = mutableMapOf()
-    val utilityFns: MutableMap<Int, UtilityFn> = mutableMapOf()
+    private val index: MutableMap<ResourceKey<Need>, Int> = mutableMapOf()
+    private val satisfactions: MutableMap<Int, Probability> = mutableMapOf()
+    private val decayFns: MutableMap<Int, DecayFn> = mutableMapOf()
+    private val utilityFns: MutableMap<Int, UtilityFn> = mutableMapOf()
     private var maxIndex = 0
     private var lastUpdateTime: Long? = null
 
@@ -105,6 +105,8 @@ class NeedsCollection {
         utilityFns.clear()
         satisfactions.clear()
     }
+
+    operator fun get(needKey: ResourceKey<Need>): Probability? = index[needKey]?.let { satisfactions[it] }
 
     /**
      * Slowly reduce the [Need]'s satisfaction level through [Need.decayFn].

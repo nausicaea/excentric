@@ -15,9 +15,11 @@ object NeedsDebug {
     ): VillagerDebug {
         val needs = ctx.needs()
         val entries =
-            needs.index.entries
-                .sortedBy { it.key.location().toString() }
-                .map { (key, i) -> NeedDebug(key.location(), needs.satisfactions[i]?.value ?: 0.0) }
+            needs
+                .toMap()
+                .entries
+                .sortedBy { it.key.toString() }
+                .map { (key, s) -> NeedDebug(key, s.value) }
         return VillagerDebug(entityId, entries, reasoner.debugCurrentService(ctx))
     }
 }

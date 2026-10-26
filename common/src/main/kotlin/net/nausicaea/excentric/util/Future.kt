@@ -72,32 +72,26 @@ fun pending(): Future<Nothing> = { Pending }
  */
 fun <T : Any, U : Any> Future<T>.andThen(f: (T) -> Future<U>): AndThen<T, U> = AndThen(this, f)
 
-class AndThen<T : Any, U : Any>(
-    val a: Future<T>,
-    val f: (T) -> Future<U>,
-) : Future<U> {
-    var aReady: Boolean = false
-    var bFut: Future<U>? = null
-
+class AndThen<out T : Any, out U : Any>(
+    private var a: Future<T>?,
+    private val f: (T) -> Future<U>,
+    private var bFut: Future<U>? = null,
+) : FusedFuture<U> {
     override fun poll(): Poll<U> {
-        if (!aReady) {
-            when (val aPoll = a.poll()) {
-                is Pending -> {
-                    return Pending
-                }
-
-                is Ready -> {
-                    bFut = f(aPoll.value)
-                    aReady = true
-                }
+        when (val aPoll = a?.poll()) {
+            is Pending -> {
+                return Pending
             }
+
+            is Ready -> {
+                bFut = f(aPoll.value)
+                a = null
+            }
+
+            null -> {}
         }
         return when (val bPoll = bFut?.poll()) {
-            null -> {
-                throw PollAfterReady()
-            }
-
-            is Pending -> {
+            is Pending, null -> {
                 Pending
             }
 
@@ -107,6 +101,107 @@ class AndThen<T : Any, U : Any>(
             }
         }
     }
+
+    override fun isTerminated(): Boolean = a == null && bFut == null
+}
+
+fun <T : Any, U : Any> Future<Try<T>>.andThenOk(f: (T) -> Future<Try<U>>): AndThenOk<T, U> = AndThenOk(this, f)
+
+class AndThenOk<out T : Any, out U : Any>(
+    private var a: Future<Try<T>>?,
+    private val f: (T) -> Future<Try<U>>,
+    private var bFut: Future<Try<U>>? = null,
+) : FusedFuture<Try<U>> {
+    override fun isTerminated(): Boolean = a == null && bFut == null
+
+    override fun poll(): Poll<Try<U>> {
+        when (val aPoll = a?.poll()) {
+            is Pending -> {
+                return Pending
+            }
+
+            is Ready -> {
+                when (val aTry = aPoll.value) {
+                    is Err -> {
+                        a = null
+                        return Ready(Err(aTry.value))
+                    }
+
+                    is Ok -> {
+                        bFut = f(aTry.value)
+                        a = null
+                    }
+                }
+            }
+
+            null -> {}
+        }
+        return when (val bPoll = bFut?.poll()) {
+            is Pending, null -> {
+                Pending
+            }
+
+            is Ready -> {
+                when (val bTry = bPoll.value) {
+                    is Err -> {
+                        bFut = null
+                        Ready(Err(bTry.value))
+                    }
+
+                    is Ok -> {
+                        bFut = null
+                        Ready(Ok(bTry.value))
+                    }
+                }
+            }
+        }
+    }
 }
 
 class PollAfterReady : IllegalStateException("cannot poll a future after is has entered ready state")
+
+class Cancelled : Throwable("future has been cancelled")
+
+fun <T : Any> Future<T>.cancellable(f: () -> Boolean): Cancellable<T> = Cancellable(this, f)
+
+class Cancellable<out T : Any>(
+    private var fut: Future<T>?,
+    private val cancelFn: () -> Boolean,
+) : FusedFuture<Try<T>> {
+    override fun poll(): Poll<Try<T>> {
+        if (cancelFn()) {
+            fut = null
+            return Ready(Err(Cancelled()))
+        }
+        return when (val poll = fut?.poll()) {
+            is Pending, null -> Pending
+            is Ready -> Ready(Ok(poll.value))
+        }
+    }
+
+    override fun isTerminated(): Boolean = fut == null
+}
+
+interface FusedFuture<out T : Any> : Future<T> {
+    fun isTerminated(): Boolean
+}
+
+fun <T : Any> Future<T>.fuse(): Fused<T> = Fused(this)
+
+class Fused<out T : Any>(
+    private var fut: Future<T>?,
+) : FusedFuture<T> {
+    override fun poll(): Poll<T> =
+        when (val poll = fut?.poll()) {
+            is Pending, null -> {
+                Pending
+            }
+
+            is Ready -> {
+                fut = null
+                poll
+            }
+        }
+
+    override fun isTerminated(): Boolean = fut == null
+}

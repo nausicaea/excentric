@@ -12,9 +12,8 @@ import net.nausicaea.excentric.util.map
 
 abstract class ServiceFuture(
     val prq: Future<Try<Unit>>,
+    private var isReady: Boolean = false,
 ) : Future<Try<Probability>> {
-    private var isReady: Boolean = false
-
     protected abstract fun hasExpired(): Boolean
 
     protected abstract fun useNow(): Probability
@@ -25,7 +24,6 @@ abstract class ServiceFuture(
         }
         if (hasExpired()) {
             isReady = true
-            // TODO: this case should also abort pathfinding.
             return Ready(Err(ServiceExpired()))
         }
         return prq

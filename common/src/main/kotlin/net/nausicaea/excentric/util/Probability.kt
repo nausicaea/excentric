@@ -49,6 +49,11 @@ data class Probability private constructor(
      */
     val isNonZero: Boolean get() = !isApproxZero
 
+    /**
+     * Return `true` if the [Probability] value is approximately one.
+     */
+    val isApproxOne: Boolean get() = inv().isApproxZero
+
     companion object {
         /**
          * Static zero probability.

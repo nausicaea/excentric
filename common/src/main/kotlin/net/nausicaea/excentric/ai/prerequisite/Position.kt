@@ -44,6 +44,9 @@ class PathfindingImpossible : Throwable("cannot establish a pathfinding route")
 
 class PathfindingStuck : Throwable("pathfinding has timed out and is stuck")
 
+/**
+ * TODO: cancelling this future should also abort pathfinding.
+ */
 class PositionFuture(
     val nav: PathNavigation,
     val entity: Mob,
