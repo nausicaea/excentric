@@ -76,20 +76,18 @@ value class Opt<out T : Any>(
     inline fun forEach(f: (T) -> Unit) {
         unwrapOrNull?.let(f)
     }
-
-    companion object {
-        /**
-         * No value.
-         */
-        val None: Opt<Nothing> = Opt(null)
-
-        /**
-         * Some value of type `T`.
-         */
-        @Suppress("FunctionName")
-        fun <T : Any> Some(v: T) = Opt(v)
-    }
 }
+
+/**
+ * No value.
+ */
+val None: Opt<Nothing> = Opt(null)
+
+/**
+ * Some value of type `T`.
+ */
+@Suppress("FunctionName")
+fun <T : Any> Some(v: T) = Opt(v)
 
 /**
  * Returns the option if it contains a value, otherwise returns `other`.
