@@ -75,3 +75,17 @@ inline fun <T : Any, U : Any> Try<T>.map(f: (T) -> U): Try<U> =
         is Ok -> Ok(f(value))
         is Err -> this
     }
+
+fun <T : Any> Try<Try<T>>.flatten(): Try<T> =
+    when (val outer = this) {
+        is Err -> {
+            Err(outer.value)
+        }
+
+        is Ok -> {
+            when (val inner = outer.value) {
+                is Err -> Err(inner.value)
+                is Ok -> Ok(inner.value)
+            }
+        }
+    }
