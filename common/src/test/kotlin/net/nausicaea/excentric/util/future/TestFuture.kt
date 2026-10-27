@@ -1,6 +1,5 @@
 package net.nausicaea.excentric.util.future
 
-import net.nausicaea.excentric.util.Ok
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

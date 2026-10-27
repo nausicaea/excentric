@@ -1,11 +1,11 @@
 package net.nausicaea.excentric.util.future
 
-import net.nausicaea.excentric.util.Err
-import net.nausicaea.excentric.util.Ok
 import net.nausicaea.excentric.util.Pending
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Ready
-import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.result.Err
+import net.nausicaea.excentric.util.result.Ok
+import net.nausicaea.excentric.util.result.Try
 
 class AndThenOk<out T : Any, out U : Any>(
     private var a: Future<Try<T>>?,

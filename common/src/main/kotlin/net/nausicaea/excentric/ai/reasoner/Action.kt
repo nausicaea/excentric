@@ -1,8 +1,8 @@
 package net.nausicaea.excentric.ai.reasoner
 
 import net.nausicaea.excentric.util.Probability
-import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.future.Future
+import net.nausicaea.excentric.util.result.Try
 
 fun interface Action {
     /**

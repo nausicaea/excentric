@@ -3,7 +3,7 @@ package net.nausicaea.excentric.util.future
 import net.nausicaea.excentric.util.Pending
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Ready
-import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.result.Try
 
 /**
  * A future represents an asynchronous computation.
