@@ -1,10 +1,8 @@
 package net.nausicaea.excentric.ai.reasoner
 
-import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Weighted
-import net.nausicaea.excentric.util.asOpt
-import net.nausicaea.excentric.util.toSeq
+import net.nausicaea.excentric.util.option.asOpt
 
 /**
  * Describes a utility-based AI reasoning system.

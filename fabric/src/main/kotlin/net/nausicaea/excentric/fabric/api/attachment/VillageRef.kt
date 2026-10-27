@@ -9,7 +9,7 @@ import net.minecraft.core.UUIDUtil
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.id
-import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.option.asOpt
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.ArrayDeque

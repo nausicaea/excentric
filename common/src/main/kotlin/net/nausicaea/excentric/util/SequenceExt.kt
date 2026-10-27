@@ -1,5 +1,7 @@
 package net.nausicaea.excentric.util
 
+import net.nausicaea.excentric.util.option.toSeq
+
 /**
  * Creates a sequence that both filters and maps to a new value.
  *

@@ -1,4 +1,8 @@
-package net.nausicaea.excentric.util
+package net.nausicaea.excentric.util.task
+
+import net.nausicaea.excentric.util.option.None
+import net.nausicaea.excentric.util.option.Opt
+import net.nausicaea.excentric.util.option.asOpt
 
 /**
  * Indicates whether a value is available or still awaiting completion.
@@ -38,7 +42,7 @@ data class Ready<V : Any>(
 }
 
 /**
- * Return an [Opt] containing the polled result. If a result is available with [Ready], return [Some], otherwise return [None].
+ * Return an [Opt] containing the polled result. If a result is available with [Ready], return [net.nausicaea.excentric.util.option.Some], otherwise return [None].
  */
 fun <T : Any> Poll<T>.ready(): Opt<T> =
     when (this) {

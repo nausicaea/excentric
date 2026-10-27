@@ -18,8 +18,8 @@ import net.nausicaea.excentric.fabric.api.attachment.VillageRef.claimDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.drainDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.get
 import net.nausicaea.excentric.util.EveryN
-import net.nausicaea.excentric.util.asOpt
-import net.nausicaea.excentric.util.orElse
+import net.nausicaea.excentric.util.option.asOpt
+import net.nausicaea.excentric.util.option.orElse
 import net.nausicaea.excentric.village.Villages
 
 object EventCallbacks {

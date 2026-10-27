@@ -1,9 +1,18 @@
 package net.nausicaea.excentric.util
 
+import net.nausicaea.excentric.util.option.None
+import net.nausicaea.excentric.util.option.Some
+import net.nausicaea.excentric.util.result.Err
+import net.nausicaea.excentric.util.result.Ok
+import net.nausicaea.excentric.util.result.Try
+import net.nausicaea.excentric.util.result.flatten
+import net.nausicaea.excentric.util.result.inspect
+import net.nausicaea.excentric.util.result.inspectErr
+import net.nausicaea.excentric.util.result.map
+import net.nausicaea.excentric.util.result.ok
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 class TestTry {

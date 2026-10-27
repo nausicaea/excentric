@@ -16,7 +16,7 @@ import net.nausicaea.excentric.ai.service.ItemServiceContext
 import net.nausicaea.excentric.ai.service.ItemStackSource
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.id
-import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.option.asOpt
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

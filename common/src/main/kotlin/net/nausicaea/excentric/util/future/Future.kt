@@ -1,9 +1,9 @@
 package net.nausicaea.excentric.util.future
 
-import net.nausicaea.excentric.util.Pending
-import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.Ready
-import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.result.Try
+import net.nausicaea.excentric.util.task.Pending
+import net.nausicaea.excentric.util.task.Poll
+import net.nausicaea.excentric.util.task.Ready
 
 /**
  * A future represents an asynchronous computation.

@@ -1,14 +1,14 @@
 package net.nausicaea.excentric.ai.service
 
-import net.nausicaea.excentric.util.Err
-import net.nausicaea.excentric.util.Ok
-import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
-import net.nausicaea.excentric.util.Ready
-import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.PollAfterReady
-import net.nausicaea.excentric.util.map
+import net.nausicaea.excentric.util.result.Err
+import net.nausicaea.excentric.util.result.Ok
+import net.nausicaea.excentric.util.result.Try
+import net.nausicaea.excentric.util.task.Poll
+import net.nausicaea.excentric.util.task.Ready
+import net.nausicaea.excentric.util.task.map
 
 abstract class ServiceFuture(
     val prq: Future<Try<Unit>>,

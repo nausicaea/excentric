@@ -1,4 +1,7 @@
-package net.nausicaea.excentric.util
+package net.nausicaea.excentric.util.result
+
+import net.nausicaea.excentric.util.option.Opt
+import net.nausicaea.excentric.util.option.asOpt
 
 sealed interface Try<out T : Any> {
     fun isOk(): Boolean

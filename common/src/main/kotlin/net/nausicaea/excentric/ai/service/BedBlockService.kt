@@ -8,19 +8,19 @@ import net.nausicaea.excentric.ai.need.RESTEDNESS
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
-import net.nausicaea.excentric.util.Err
-import net.nausicaea.excentric.util.Ok
-import net.nausicaea.excentric.util.Pending
-import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
-import net.nausicaea.excentric.util.Ready
-import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.flatten
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.andThenOk
 import net.nausicaea.excentric.util.future.cancellable
 import net.nausicaea.excentric.util.future.fuse
 import net.nausicaea.excentric.util.future.map
+import net.nausicaea.excentric.util.result.Err
+import net.nausicaea.excentric.util.result.Ok
+import net.nausicaea.excentric.util.result.Try
+import net.nausicaea.excentric.util.result.flatten
+import net.nausicaea.excentric.util.task.Pending
+import net.nausicaea.excentric.util.task.Poll
+import net.nausicaea.excentric.util.task.Ready
 
 /**
  * TODO: currently supports going to sleep only. Implement waking up.

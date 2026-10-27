@@ -9,9 +9,9 @@ import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.ai.utility.UtilityFn
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
-import net.nausicaea.excentric.util.asOpt
-import net.nausicaea.excentric.util.toOpt
-import net.nausicaea.excentric.util.unwrapOr
+import net.nausicaea.excentric.util.option.asOpt
+import net.nausicaea.excentric.util.option.toOpt
+import net.nausicaea.excentric.util.option.unwrapOr
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.jvm.optionals.getOrNull

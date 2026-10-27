@@ -14,8 +14,8 @@ import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of
-import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.future.Future
+import net.nausicaea.excentric.util.result.Try
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

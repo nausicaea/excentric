@@ -26,9 +26,9 @@ import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.showEdge
 import net.nausicaea.excentric.minecraft.world.phys.mapMean
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
 import net.nausicaea.excentric.mojang.serialization.Codecs
-import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.filterMap
-import net.nausicaea.excentric.util.unwrapOr
+import net.nausicaea.excentric.util.option.asOpt
+import net.nausicaea.excentric.util.option.unwrapOr
 import net.nausicaea.excentric.village.Villages.Companion.CHUNK_RADIUS
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
