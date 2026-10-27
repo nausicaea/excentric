@@ -1,8 +1,8 @@
 package net.nausicaea.excentric.util.future
 
-import net.nausicaea.excentric.util.Pending
-import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.Ready
+import net.nausicaea.excentric.util.task.Pending
+import net.nausicaea.excentric.util.task.Poll
+import net.nausicaea.excentric.util.task.Ready
 
 class Fused<out T : Any>(
     private var fut: Future<T>?,

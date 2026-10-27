@@ -7,17 +7,17 @@ import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.reasoner.ReasonerRng
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.option.asOpt
 import net.nausicaea.excentric.util.option.unwrapOr
-import net.nausicaea.excentric.util.ready
 import net.nausicaea.excentric.util.result.Try
 import net.nausicaea.excentric.util.result.inspectErr
 import net.nausicaea.excentric.util.result.ok
+import net.nausicaea.excentric.util.task.Poll
+import net.nausicaea.excentric.util.task.ready
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 

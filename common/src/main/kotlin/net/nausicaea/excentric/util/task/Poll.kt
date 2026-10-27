@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.util
+package net.nausicaea.excentric.util.task
 
 import net.nausicaea.excentric.util.option.None
 import net.nausicaea.excentric.util.option.Opt
@@ -42,7 +42,7 @@ data class Ready<V : Any>(
 }
 
 /**
- * Return an [net.nausicaea.excentric.util.option.Opt] containing the polled result. If a result is available with [Ready], return [net.nausicaea.excentric.util.option.Some], otherwise return [net.nausicaea.excentric.util.option.None].
+ * Return an [Opt] containing the polled result. If a result is available with [Ready], return [net.nausicaea.excentric.util.option.Some], otherwise return [None].
  */
 fun <T : Any> Poll<T>.ready(): Opt<T> =
     when (this) {

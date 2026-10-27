@@ -1,8 +1,8 @@
 package net.nausicaea.excentric.util.future
 
-import net.nausicaea.excentric.util.Pending
-import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.Ready
+import net.nausicaea.excentric.util.task.Pending
+import net.nausicaea.excentric.util.task.Poll
+import net.nausicaea.excentric.util.task.Ready
 
 class AndThen<out T : Any, out U : Any>(
     private var a: Future<T>?,
