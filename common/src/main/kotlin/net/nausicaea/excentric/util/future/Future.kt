@@ -68,6 +68,8 @@ fun <T : Any> ready(t: T): Future<T> = { Ready(t) }
  */
 fun pending(): Future<Nothing> = { Pending }
 
+fun <T : Any, U : Any> Future<T>.map(f: (T) -> U): Future<U> = Map(this, f)
+
 /**
  * Chain on a computation for when a future finished, passing the result of the future to the provided closure f.
  *

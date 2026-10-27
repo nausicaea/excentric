@@ -15,10 +15,12 @@ import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Ready
 import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.flatten
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.andThenOk
 import net.nausicaea.excentric.util.future.cancellable
 import net.nausicaea.excentric.util.future.fuse
+import net.nausicaea.excentric.util.future.map
 
 /**
  * TODO: currently supports going to sleep only. Implement waking up.
@@ -50,6 +52,7 @@ data class BedBlockService(
         return prerequisite()
             .fulfil(ctx.consumer)
             .cancellable { level.getBlockState(pos).block !is BedBlock }
+            .map { it.flatten() }
             .andThenOk { SleepFuture(ctx, need, increment, pos) }
             .fuse()
     }

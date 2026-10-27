@@ -1,0 +1,22 @@
+package net.nausicaea.excentric.util.future
+
+import net.nausicaea.excentric.util.Pending
+import net.nausicaea.excentric.util.Poll
+import net.nausicaea.excentric.util.Ready
+
+class Map<T : Any, out U : Any>(
+    private var fut: Future<T>?,
+    private val f: (T) -> U,
+) : Future<U> {
+    override fun poll(): Poll<U> =
+        when (val aPoll = fut?.poll()) {
+            is Pending, null -> {
+                Pending
+            }
+
+            is Ready -> {
+                fut = null
+                Ready(f(aPoll.value))
+            }
+        }
+}
