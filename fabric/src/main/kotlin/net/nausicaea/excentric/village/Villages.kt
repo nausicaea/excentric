@@ -97,6 +97,7 @@ class Villages :
                 .toBlockPosFloor()
         val village = Village(UUID.randomUUID(), anchor, centroid, extents)
         villages[village.id] = village
+        setDirty()
         claimLoadedChunks(level, village)
         return village
     }
