@@ -1,3 +1,21 @@
+## 0.3.0 (2026-10-27)
+
+### BREAKING CHANGE
+
+- JDK 21 is not supported anymore
+
+### Feat
+
+- **NeedsCollection**: decayfirst delta uses the whole game time needs are not persisted (#46)
+- **debug**: add a client overlay for villager needs and services (#48)
+
+### Fix
+
+- Position.poll arrival check disagrees with path accuracy stuck navigator never retried (#53)
+- **ServiceFuture**: check for service expiration (#49)
+- **deps**: update dependency net.fabricmc:fabric-loader to v0.20.0 (#45)
+- **NeedsReasoner**: when the total urgency is approximately zero, don't return any services from score() (#47)
+
 ## 0.2.0 (2026-10-18)
 
 ### BREAKING CHANGE
