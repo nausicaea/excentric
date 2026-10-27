@@ -61,14 +61,14 @@ fun interface Future<out T : Any> {
 /**
  * Creates a future that is immediately ready with a value.
  */
-fun <T : Any> ready(t: T): Future<T> = { Ready(t) }
+fun <T : Any> ready(t: T): ReadyFut<T> = ReadyFut(t)
 
 /**
  * Creates a future which never resolves, representing a computation that never finishes.
  */
 fun pending(): Future<Nothing> = { Pending }
 
-fun <T : Any, U : Any> Future<T>.map(f: (T) -> U): Future<U> = Map(this, f)
+fun <T : Any, U : Any> Future<T>.map(f: (T) -> U): Map<T, U> = Map(this, f)
 
 /**
  * Chain on a computation for when a future finished, passing the result of the future to the provided closure f.
