@@ -1,13 +1,13 @@
 package net.nausicaea.excentric.ai.service
 
 import net.nausicaea.excentric.util.Err
-import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Ok
 import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.PollAfterReady
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Ready
 import net.nausicaea.excentric.util.Try
+import net.nausicaea.excentric.util.future.Future
+import net.nausicaea.excentric.util.future.PollAfterReady
 import net.nausicaea.excentric.util.map
 
 abstract class ServiceFuture(

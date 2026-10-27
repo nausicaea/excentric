@@ -3,7 +3,7 @@ package net.nausicaea.excentric.util
 /**
  * Indicates whether a value is available or still awaiting completion.
  *
- * This is returned by [Future.poll].
+ * This is returned by [net.nausicaea.excentric.util.future.Future.poll].
  */
 sealed interface Poll<out T : Any> {
     /**

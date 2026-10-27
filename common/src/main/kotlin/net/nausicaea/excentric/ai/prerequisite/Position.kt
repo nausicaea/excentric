@@ -5,13 +5,13 @@ import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.ai.navigation.PathNavigation
 import net.minecraft.world.phys.Vec3
 import net.nausicaea.excentric.util.Err
-import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Ok
 import net.nausicaea.excentric.util.Pending
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Ready
 import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.ready
+import net.nausicaea.excentric.util.future.Future
+import net.nausicaea.excentric.util.future.ready
 
 /**
  * Denotes a [Prerequisite] position: the entity that wants to satisfy this

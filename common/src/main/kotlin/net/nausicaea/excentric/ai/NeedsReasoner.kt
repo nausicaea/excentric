@@ -7,13 +7,14 @@ import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.reasoner.Reasoner
 import net.nausicaea.excentric.ai.reasoner.ReasonerRng
 import net.nausicaea.excentric.ai.service.Service
-import net.nausicaea.excentric.util.Future
 import net.nausicaea.excentric.util.Poll
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.boltzmann
 import net.nausicaea.excentric.util.Try
 import net.nausicaea.excentric.util.Weighted
 import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.future.Future
+import net.nausicaea.excentric.util.future.ready
 import net.nausicaea.excentric.util.inspectErr
 import net.nausicaea.excentric.util.ok
 import net.nausicaea.excentric.util.ready

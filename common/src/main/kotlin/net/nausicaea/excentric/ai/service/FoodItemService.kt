@@ -3,7 +3,6 @@ package net.nausicaea.excentric.ai.service
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceKey
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ItemStack
 import net.nausicaea.excentric.LOG_MARKER
@@ -13,14 +12,10 @@ import net.nausicaea.excentric.ai.prerequisite.Fulfilled
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
-import net.nausicaea.excentric.util.Future
-import net.nausicaea.excentric.util.Poll
-import net.nausicaea.excentric.util.PollAfterReady
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of
 import net.nausicaea.excentric.util.Try
-import net.nausicaea.excentric.util.map
-import net.nausicaea.excentric.util.ready
+import net.nausicaea.excentric.util.future.Future
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
