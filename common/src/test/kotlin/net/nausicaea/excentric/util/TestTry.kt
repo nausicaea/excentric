@@ -1,5 +1,7 @@
 package net.nausicaea.excentric.util
 
+import net.nausicaea.excentric.util.option.None
+import net.nausicaea.excentric.util.option.Some
 import net.nausicaea.excentric.util.result.Err
 import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try

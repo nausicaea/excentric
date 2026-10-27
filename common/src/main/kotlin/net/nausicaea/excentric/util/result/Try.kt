@@ -1,7 +1,7 @@
 package net.nausicaea.excentric.util.result
 
-import net.nausicaea.excentric.util.Opt
-import net.nausicaea.excentric.util.asOpt
+import net.nausicaea.excentric.util.option.Opt
+import net.nausicaea.excentric.util.option.asOpt
 
 sealed interface Try<out T : Any> {
     fun isOk(): Boolean
@@ -26,7 +26,7 @@ data class Ok<U : Any>(
 }
 
 /**
- * Converts `Try<T>` to `Opt<T>`, discarding the error: thus, [Ok] will become [net.nausicaea.excentric.util.Opt.Some] and [Err] will become [net.nausicaea.excentric.util.Opt.None].
+ * Converts `Try<T>` to `Opt<T>`, discarding the error: thus, [Ok] will become [Opt.Some] and [Err] will become [Opt.None].
  */
 fun <T : Any> Try<T>.ok(): Opt<T> =
     when (this) {

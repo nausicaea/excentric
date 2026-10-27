@@ -17,9 +17,9 @@ import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.asSequence
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
-import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.filterMap
-import net.nausicaea.excentric.util.toSeq
+import net.nausicaea.excentric.util.option.asOpt
+import net.nausicaea.excentric.util.option.toSeq
 import kotlin.streams.asSequence
 
 data class FabricNeedsContext(

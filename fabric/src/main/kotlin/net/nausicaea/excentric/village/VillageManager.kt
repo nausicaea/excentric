@@ -10,8 +10,8 @@ import net.minecraft.world.level.levelgen.structure.StructureStart
 import net.minecraft.world.level.levelgen.structure.structures.JigsawStructure
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.containedChunks
 import net.nausicaea.excentric.minecraft.world.level.levelgen.structure.structures.startPool
-import net.nausicaea.excentric.util.toOpt
-import net.nausicaea.excentric.util.unwrapOr
+import net.nausicaea.excentric.util.option.toOpt
+import net.nausicaea.excentric.util.option.unwrapOr
 
 interface VillageManager {
     fun findOrClaim(

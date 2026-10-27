@@ -2,10 +2,10 @@ package net.nausicaea.excentric.ai.reasoner
 
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Weighted
-import net.nausicaea.excentric.util.asOpt
 import net.nausicaea.excentric.util.future.Future
+import net.nausicaea.excentric.util.option.asOpt
+import net.nausicaea.excentric.util.option.unwrapOr
 import net.nausicaea.excentric.util.result.Try
-import net.nausicaea.excentric.util.unwrapOr
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull

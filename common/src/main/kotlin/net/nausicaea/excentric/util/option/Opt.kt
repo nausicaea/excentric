@@ -1,4 +1,4 @@
-package net.nausicaea.excentric.util
+package net.nausicaea.excentric.util.option
 
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
