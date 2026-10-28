@@ -85,7 +85,7 @@ class SleepFuture(
     }
 
     override fun close() {
-        if (ctx.consumer.isSleeping) {
+        if (initialised && ctx.consumer.isSleeping) {
             ctx.consumer.stopSleeping()
         }
     }
