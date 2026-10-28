@@ -32,6 +32,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .unwrapOr(Probability.ZERO)
 
     override fun setCurrentAction(action: Weighted<Service>) {
+        currentService?.close()
         currentService = SvcFut(action.weight, action.item, action.item.key(), action.item.apply())
     }
 
@@ -111,7 +112,11 @@ private data class SvcFut(
     val svc: Service,
     val key: ResourceKey<Need>,
     val fut: Future<Try<Probability>>,
-)
+) : AutoCloseable {
+    override fun close() {
+        fut.close()
+    }
+}
 
 /**
  * Denotes a service-related future that was just polled.
