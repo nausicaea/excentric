@@ -1,3 +1,3 @@
 package net.nausicaea.excentric.util.future
 
-class Cancelled : Throwable("future has been cancelled")
+class Cancelled : Exception("future has been cancelled")
