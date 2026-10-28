@@ -3,6 +3,9 @@ package net.nausicaea.excentric.util.task
 import net.nausicaea.excentric.util.option.None
 import net.nausicaea.excentric.util.option.Opt
 import net.nausicaea.excentric.util.option.asOpt
+import net.nausicaea.excentric.util.result.Err
+import net.nausicaea.excentric.util.result.Ok
+import net.nausicaea.excentric.util.result.Try
 
 /**
  * Indicates whether a value is available or still awaiting completion.
@@ -71,5 +74,19 @@ inline fun <T : Any> Poll<T>.inspect(f: (T) -> Unit): Poll<T> =
 inline fun <T : Any, U : Any> Poll<T>.map(f: (T) -> U): Poll<U> =
     when (this) {
         is Ready -> Ready(f(value))
-        is Pending -> this
+        is Pending -> Pending
+    }
+
+inline fun <T : Any, U : Any> Poll<Try<T>>.mapOk(f: (T) -> U): Poll<Try<U>> =
+    when (this) {
+        Pending -> {
+            Pending
+        }
+
+        is Ready -> {
+            when (value) {
+                is Err -> Ready(Err(value.value))
+                is Ok -> Ready(Ok(f(value.value)))
+            }
+        }
     }
