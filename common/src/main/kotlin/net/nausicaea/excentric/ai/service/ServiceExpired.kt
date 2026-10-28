@@ -1,3 +1,3 @@
 package net.nausicaea.excentric.ai.service
 
-class ServiceExpired : Throwable("Service has expired")
+class ServiceExpired : Exception("Service has expired")

@@ -91,4 +91,4 @@ class SleepFuture(
     }
 }
 
-class AlreadyAsleep : Throwable("cannot go to sleep again: this isn't inception")
+class AlreadyAsleep : Exception("cannot go to sleep again: this isn't inception")

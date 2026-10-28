@@ -40,9 +40,9 @@ data class Position(
         }
 }
 
-class PathfindingImpossible : Throwable("cannot establish a pathfinding route")
+class PathfindingImpossible : Exception("cannot establish a pathfinding route")
 
-class PathfindingStuck : Throwable("pathfinding has timed out and is stuck")
+class PathfindingStuck : Exception("pathfinding has timed out and is stuck")
 
 class PositionFuture(
     val nav: PathNavigation,
