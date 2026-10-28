@@ -16,7 +16,6 @@ class ReadyFut<out T : Any>(
     override fun isTerminated(): Boolean = value == null
 
     override fun close() {
-        (value as? AutoCloseable)?.close()
         value = null
     }
 }
