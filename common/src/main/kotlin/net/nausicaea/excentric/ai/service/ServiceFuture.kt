@@ -26,11 +26,11 @@ abstract class ServiceFuture(
 
     override fun poll(): Poll<Try<Probability>> {
         if (hasExpired()) {
-            prq = null
+            close()
             return Ready(Err(ServiceExpired()))
         }
         return prq?.poll()?.mapOk {
-            prq = null
+            close()
             useNow()
         } ?: throw PollAfterReady()
     }
