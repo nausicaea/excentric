@@ -19,4 +19,9 @@ class Map<T : Any, out U : Any>(
                 Ready(f(aPoll.value))
             }
         }
+
+    override fun close() {
+        fut?.close()
+        fut = null
+    }
 }

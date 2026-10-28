@@ -13,7 +13,7 @@ class Cancellable<out T : Any>(
 ) : FusedFuture<Try<T>> {
     override fun poll(): Poll<Try<T>> {
         if (cancelFn()) {
-            fut = null
+            close()
             return Ready(
                 Err(
                     Cancelled(),
@@ -34,4 +34,9 @@ class Cancellable<out T : Any>(
     }
 
     override fun isTerminated(): Boolean = fut == null
+
+    override fun close() {
+        fut?.close()
+        fut = null
+    }
 }

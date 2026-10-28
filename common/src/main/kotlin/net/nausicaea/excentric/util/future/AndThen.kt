@@ -35,4 +35,11 @@ class AndThen<out T : Any, out U : Any>(
     }
 
     override fun isTerminated(): Boolean = a == null && bFut == null
+
+    override fun close() {
+        a?.close()
+        a = null
+        bFut?.close()
+        bFut = null
+    }
 }

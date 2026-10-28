@@ -20,4 +20,9 @@ class Fused<out T : Any>(
         }
 
     override fun isTerminated(): Boolean = fut == null
+
+    override fun close() {
+        fut?.close()
+        fut = null
+    }
 }
