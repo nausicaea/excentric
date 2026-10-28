@@ -12,6 +12,7 @@ import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.andThenOk
 import net.nausicaea.excentric.util.future.cancellable
+import net.nausicaea.excentric.util.future.cancellableOk
 import net.nausicaea.excentric.util.future.fuse
 import net.nausicaea.excentric.util.future.map
 import net.nausicaea.excentric.util.result.Err
@@ -51,8 +52,7 @@ data class BedBlockService(
         val increment = Probability.of(0.001)
         return prerequisite()
             .fulfil(ctx.consumer)
-            .cancellable { level.getBlockState(pos).block !is BedBlock }
-            .map { it.flatten() }
+            .cancellableOk { level.getBlockState(pos).block !is BedBlock }
             .andThenOk { SleepFuture(ctx, need, increment, pos) }
             .fuse()
     }
