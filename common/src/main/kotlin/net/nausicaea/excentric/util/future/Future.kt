@@ -4,6 +4,7 @@ import net.nausicaea.excentric.util.result.Try
 import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
+import org.jetbrains.annotations.Contract
 
 /**
  * A future represents an asynchronous computation.
@@ -21,7 +22,7 @@ import net.nausicaea.excentric.util.task.Ready
  * The core method of future, [poll], *attempts* to resolve the future into a
  * final value. This method does not block if the value is not ready.
  */
-fun interface Future<out T : Any> {
+fun interface Future<out T : Any> : AutoCloseable {
     /**
      * Attempts to resolve the future to a final value.
      *
@@ -56,6 +57,11 @@ fun interface Future<out T : Any> {
      * such a call.
      */
     fun poll(): Poll<T>
+
+    /**
+     * Abort the future, cleaning up all acquired resources. Must be idempotent and implementors may not throw exceptions.
+     */
+    override fun close() {}
 }
 
 /**

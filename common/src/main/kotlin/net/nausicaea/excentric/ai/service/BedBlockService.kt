@@ -83,6 +83,12 @@ class SleepFuture(
         }
         return Pending
     }
+
+    override fun close() {
+        if (ctx.consumer.isSleeping) {
+            ctx.consumer.stopSleeping()
+        }
+    }
 }
 
 class AlreadyAsleep : Throwable("cannot go to sleep again: this isn't inception")

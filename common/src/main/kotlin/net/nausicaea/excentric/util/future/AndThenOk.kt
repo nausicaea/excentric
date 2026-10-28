@@ -68,4 +68,11 @@ class AndThenOk<out T : Any, out U : Any>(
             }
         }
     }
+
+    override fun close() {
+        a?.close()
+        a = null
+        bFut?.close()
+        bFut = null
+    }
 }
