@@ -89,4 +89,6 @@ fun <T : Any, U : Any> Future<Try<T>>.andThenOk(f: (T) -> Future<Try<U>>): AndTh
 
 fun <T : Any> Future<T>.cancellable(f: () -> Boolean): Cancellable<T> = Cancellable(this, f)
 
+fun <T : Any> Future<Try<T>>.cancellableOk(f: () -> Boolean): CancellableOk<T> = CancellableOk(this, f)
+
 fun <T : Any> Future<T>.fuse(): Fused<T> = Fused(this)
