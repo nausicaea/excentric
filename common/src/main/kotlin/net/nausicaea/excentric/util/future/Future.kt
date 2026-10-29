@@ -64,6 +64,17 @@ fun interface Future<T : Any> : AutoCloseable {
     override fun close() {}
 
     fun <U : Any> map(f: (T) -> U): Map<T, U> = Map(this, f)
+
+    /**
+     * Chain on a computation for when a future finished, passing the result of the future to the provided closure f.
+     *
+     * The returned value of the closure must implement the Future trait and can represent some more work to be done before the composed future is finished.
+     *
+     * The closure f is only run after successful completion of the self future.
+     */
+    fun <U : Any> andThen(f: (T) -> Future<U>): AndThen<T, U> = AndThen(this, f)
+
+    fun fuse(): Fused<T> = Fused(this)
 }
 
 /**
@@ -76,19 +87,8 @@ fun <T : Any> ready(t: T): ReadyFut<T> = ReadyFut(t)
  */
 fun <T : Any> pending(): Future<T> = { Pending }
 
-/**
- * Chain on a computation for when a future finished, passing the result of the future to the provided closure f.
- *
- * The returned value of the closure must implement the Future trait and can represent some more work to be done before the composed future is finished.
- *
- * The closure f is only run after successful completion of the self future.
- */
-fun <T : Any, U : Any> Future<T>.andThen(f: (T) -> Future<U>): AndThen<T, U> = AndThen(this, f)
-
 fun <T : Any, U : Any> Future<Try<T>>.andThenOk(f: (T) -> Future<Try<U>>): AndThenOk<T, U> = AndThenOk(this, f)
 
 fun <T : Any> Future<T>.cancellable(f: () -> Boolean): Cancellable<T> = Cancellable(this, f)
 
 fun <T : Any> Future<Try<T>>.cancellableOk(f: () -> Boolean): CancellableOk<T> = CancellableOk(this, f)
-
-fun <T : Any> Future<T>.fuse(): Fused<T> = Fused(this)
