@@ -1,5 +1,6 @@
 package net.nausicaea.excentric.util.future
 
+import net.nausicaea.excentric.util.future.FutureExt.andThenOk
 import net.nausicaea.excentric.util.result.Err
 import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
@@ -45,7 +46,7 @@ class TestFuture {
 
     @Test
     fun andThenOkRunsTheSecondFutureAfterSuccess() {
-        val f = ready<Try<Unit>>(Ok(Unit)).andThenOk { ready<Try<Unit>>(Ok(Unit)) }
+        val f = ready<Try<Unit>>(Ok(Unit)).andThenOk { ready(Ok(Unit)) }
 
         assertEquals(Ready(Ok(Unit)), f.poll())
     }

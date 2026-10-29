@@ -1,10 +1,8 @@
 package net.nausicaea.excentric.util.future
 
-import net.nausicaea.excentric.util.result.Try
 import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
-import org.jetbrains.annotations.Contract
 
 /**
  * A future represents an asynchronous computation.
@@ -88,7 +86,3 @@ fun <T : Any> ready(t: T): ReadyFut<T> = ReadyFut(t)
  * Creates a future which never resolves, representing a computation that never finishes.
  */
 fun <T : Any> pending(): Future<T> = { Pending }
-
-fun <T : Any, U : Any> Future<Try<T>>.andThenOk(f: (T) -> Future<Try<U>>): AndThenOk<T, U> = AndThenOk(this, f)
-
-fun <T : Any> Future<Try<T>>.cancellableOk(f: () -> Boolean): CancellableOk<T> = CancellableOk(this, f)
