@@ -75,6 +75,8 @@ fun interface Future<T : Any> : AutoCloseable {
     fun <U : Any> andThen(f: (T) -> Future<U>): AndThen<T, U> = AndThen(this, f)
 
     fun fuse(): Fused<T> = Fused(this)
+
+    fun cancellable(f: () -> Boolean): Cancellable<T> = Cancellable(this, f)
 }
 
 /**
@@ -88,7 +90,5 @@ fun <T : Any> ready(t: T): ReadyFut<T> = ReadyFut(t)
 fun <T : Any> pending(): Future<T> = { Pending }
 
 fun <T : Any, U : Any> Future<Try<T>>.andThenOk(f: (T) -> Future<Try<U>>): AndThenOk<T, U> = AndThenOk(this, f)
-
-fun <T : Any> Future<T>.cancellable(f: () -> Boolean): Cancellable<T> = Cancellable(this, f)
 
 fun <T : Any> Future<Try<T>>.cancellableOk(f: () -> Boolean): CancellableOk<T> = CancellableOk(this, f)
