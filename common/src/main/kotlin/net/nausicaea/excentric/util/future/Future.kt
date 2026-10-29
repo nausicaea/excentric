@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Contract
  * The core method of future, [poll], *attempts* to resolve the future into a
  * final value. This method does not block if the value is not ready.
  */
-fun interface Future<out T : Any> : AutoCloseable {
+fun interface Future<T : Any> : AutoCloseable {
     /**
      * Attempts to resolve the future to a final value.
      *
@@ -62,6 +62,8 @@ fun interface Future<out T : Any> : AutoCloseable {
      * Abort the future, cleaning up all acquired resources. Must be idempotent and implementors may not throw exceptions.
      */
     override fun close() {}
+
+    fun <U : Any> map(f: (T) -> U): Map<T, U> = Map(this, f)
 }
 
 /**
@@ -72,9 +74,7 @@ fun <T : Any> ready(t: T): ReadyFut<T> = ReadyFut(t)
 /**
  * Creates a future which never resolves, representing a computation that never finishes.
  */
-fun pending(): Future<Nothing> = { Pending }
-
-fun <T : Any, U : Any> Future<T>.map(f: (T) -> U): Map<T, U> = Map(this, f)
+fun <T : Any> pending(): Future<T> = { Pending }
 
 /**
  * Chain on a computation for when a future finished, passing the result of the future to the provided closure f.
