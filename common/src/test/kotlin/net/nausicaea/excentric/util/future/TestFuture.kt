@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 class TestFuture {
     @Test
     fun pendingNeverCompletes() {
-        val fut = pending()
+        val fut: Future<Int> = pending()
         for (i in 0..100) {
             assertTrue(fut.poll().isPending())
         }
