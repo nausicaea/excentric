@@ -10,8 +10,8 @@ import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
-import net.nausicaea.excentric.util.future.andThenOk
-import net.nausicaea.excentric.util.future.cancellableOk
+import net.nausicaea.excentric.util.future.FutureExt.andThenOk
+import net.nausicaea.excentric.util.future.FutureExt.cancellableOk
 import net.nausicaea.excentric.util.result.Err
 import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
