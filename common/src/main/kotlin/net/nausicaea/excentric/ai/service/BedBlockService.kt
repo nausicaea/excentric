@@ -11,21 +11,15 @@ import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.andThenOk
-import net.nausicaea.excentric.util.future.cancellable
 import net.nausicaea.excentric.util.future.cancellableOk
 import net.nausicaea.excentric.util.future.fuse
-import net.nausicaea.excentric.util.future.map
 import net.nausicaea.excentric.util.result.Err
 import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
-import net.nausicaea.excentric.util.result.flatten
 import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
-/**
- * TODO: currently supports going to sleep only. Implement waking up.
- */
 data class BedBlockService(
     val pos: BlockPos,
     val ctx: BlockServiceContext,

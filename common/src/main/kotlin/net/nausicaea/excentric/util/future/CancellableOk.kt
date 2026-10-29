@@ -7,7 +7,7 @@ import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
-class CancellableOk<out T : Any>(
+class CancellableOk<T : Any>(
     private var fut: Future<Try<T>>?,
     private val cancelFn: () -> Boolean,
 ) : FusedFuture<Try<T>> {

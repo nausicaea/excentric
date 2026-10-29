@@ -4,7 +4,7 @@ import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
-class AndThen<out T : Any, out U : Any>(
+class AndThen<T : Any, U : Any>(
     private var a: Future<T>?,
     private val f: (T) -> Future<U>,
     private var bFut: Future<U>? = null,
