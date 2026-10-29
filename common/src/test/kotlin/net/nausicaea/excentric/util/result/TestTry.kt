@@ -30,12 +30,12 @@ class TestTry {
 
     @Test
     fun okReturnsSomeForOk() {
-        assertEquals(Ok(Unit).ok(), Some(Unit))
+        assertEquals(Some(Unit), Ok(Unit).ok())
     }
 
     @Test
     fun okReturnsNoneForErr() {
-        assertEquals(Err(RuntimeException()).ok(), None)
+        assertEquals(None, Err(RuntimeException()).ok())
     }
 
     @Test
@@ -68,8 +68,8 @@ class TestTry {
 
     @Test
     fun mapTransformsWrappedValueOnOk() {
-        assertEquals(Ok(Unit).map { true }, Ok(true))
-        assertEquals(Ok(1).map { it + 1 }, Ok(2))
+        assertEquals(Ok(true), Ok(Unit).map { true })
+        assertEquals(Ok(2), Ok(1).map { it + 1 })
     }
 
     @Test
@@ -84,7 +84,7 @@ class TestTry {
 
     @Test
     fun flattenMergesNestedOks() {
-        assertEquals(Ok(Ok(Unit)).flatten(), Ok(Unit))
+        assertEquals(Ok(Unit), Ok(Ok(Unit)).flatten())
     }
 
     @Test
