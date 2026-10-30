@@ -14,7 +14,7 @@ class Fused<T : Any>(
             }
 
             is Ready -> {
-                fut = null
+                close()
                 poll
             }
         }
