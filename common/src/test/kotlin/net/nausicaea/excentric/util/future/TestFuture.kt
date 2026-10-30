@@ -1,6 +1,7 @@
 package net.nausicaea.excentric.util.future
 
 import net.nausicaea.excentric.util.future.FutureExt.andThenOk
+import net.nausicaea.excentric.util.future.FutureExt.cancellableOk
 import net.nausicaea.excentric.util.result.Err
 import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
@@ -216,6 +217,33 @@ class TestFuture {
         assertEquals(1, first.closeInvocations)
         assertEquals(1, second.pollInvocations)
         assertEquals(1, second.closeInvocations)
+    }
+
+    @Test
+    fun `cancellableOk is fused`() {
+        val pnd = pending<Try<Unit>>().countInvocations()
+        var cancel = false
+        val fut = pnd.cancellableOk { cancel }
+        assertFused(fut) {
+            cancel = true
+            assertReadyErr<Cancelled, _>(it.poll())
+        }
+        assertEquals(1, pnd.closeInvocations)
+    }
+
+    @Test
+    fun `cancellableOk never polls inner future when cancelled immediately`() {
+        val pnd = pending<Try<Unit>>().countInvocations()
+        pnd.cancellableOk { true }.poll()
+        assertEquals(0, pnd.pollInvocations)
+    }
+
+    @Test
+    fun `cancellableOk calls close on inner future on outer close`() {
+        val pnd = pending<Try<Unit>>().countInvocations()
+        val cancel = false
+        pnd.cancellableOk { cancel }.close()
+        assertEquals(1, pnd.closeInvocations)
     }
 
     @Test
