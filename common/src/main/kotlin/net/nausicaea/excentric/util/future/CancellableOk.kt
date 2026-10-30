@@ -12,7 +12,7 @@ class CancellableOk<T : Any>(
     private val cancelFn: () -> Boolean,
 ) : FusedFuture<Try<T>> {
     override fun poll(): Poll<Try<T>> {
-        if (cancelFn()) {
+        if (fut != null && cancelFn()) {
             close()
             return Ready(
                 Err(
@@ -26,6 +26,7 @@ class CancellableOk<T : Any>(
             }
 
             is Ready -> {
+                close()
                 when (val result = poll.value) {
                     is Err -> Ready(Err(result.value))
                     is Ok -> Ready(Ok(result.value))
