@@ -26,12 +26,12 @@ private fun <T : Any> Future<T>.countInvocations(): CountInvocations<T> = CountI
 private class CountInvocations<T : Any>(
     private val fut: Future<T>,
 ) : Future<T> {
-    private var c: Int = 0
+    private var polls: Int = 0
 
-    val invocations: Int get() = c
+    val pollInvocations: Int get() = polls
 
     override fun poll(): Poll<T> {
-        c += 1
+        polls += 1
         return fut.poll()
     }
 }
@@ -44,13 +44,13 @@ private fun <T : Any> FusedFuture<T>.countInvocations(): FusedCountInvocations<T
 private class FusedCountInvocations<T : Any>(
     private val fut: FusedFuture<T>?,
 ) : FusedFuture<T> {
-    private var c: Int = 0
+    private var polls: Int = 0
 
-    val invocations: Int get() = c
+    val pollInvocations: Int get() = polls
 
     override fun poll(): Poll<T> =
         fut?.let {
-            c += 1
+            polls += 1
             it.poll()
         } ?: Pending
 
@@ -113,7 +113,7 @@ class TestFuture {
     fun `fused causes a future to return Ready at most once and Pending afterwards while the inner future is only called until Ready`() {
         val rep = repeat().countInvocations()
         assertFused(rep.fuse()) { assertReady(Unit, it.poll()) }
-        assertEquals(1, rep.invocations)
+        assertEquals(1, rep.pollInvocations)
     }
 
     @Test
@@ -147,8 +147,8 @@ class TestFuture {
         val second = ready<Try<Int>>(Ok(1)).countInvocations()
         val fut = first.andThenOk { second }
         assertFused(fut) { assertReadyOk(1, it.poll()) }
-        assertEquals(1, first.invocations)
-        assertEquals(1, second.invocations)
+        assertEquals(1, first.pollInvocations)
+        assertEquals(1, second.pollInvocations)
     }
 
     @Test
@@ -169,8 +169,8 @@ class TestFuture {
         val second = ready(1).countInvocations()
         val fut = first.andThen { second }
         assertFused(fut) { assertReady(1, it.poll()) }
-        assertEquals(1, first.invocations)
-        assertEquals(1, second.invocations)
+        assertEquals(1, first.pollInvocations)
+        assertEquals(1, second.pollInvocations)
     }
 
     @Test
