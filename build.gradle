@@ -1,9 +1,17 @@
 plugins {
+	alias(libs.plugins.kotlin.jvm) apply false
 	alias(libs.plugins.gradle.spotless) apply false
+	alias(libs.plugins.ktlint) apply false
+	alias(libs.plugins.detekt) apply false
+	alias(libs.plugins.kover) apply false
 }
 
 allprojects {
+	apply plugin: rootProject.libs.plugins.kotlin.jvm.get().pluginId
 	apply plugin: rootProject.libs.plugins.gradle.spotless.get().pluginId
+	apply plugin: rootProject.libs.plugins.ktlint.get().pluginId
+	apply plugin: rootProject.libs.plugins.detekt.get().pluginId
+	apply plugin: rootProject.libs.plugins.kover.get().pluginId
 
 	group = rootProject.group
 	version = rootProject.version
@@ -16,12 +24,17 @@ allprojects {
 		}
 	}
 
-	spotless {
-		kotlin {
-			target 'src/*/kotlin/**/*.kt'
-			ktlint()
-		}
+	kotlin {
+		jvmToolchain(25)
+	}
 
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(25)
+		}
+	}
+
+	spotless {
 		java {
 			target 'src/*/java/**/*.java'
 			googleJavaFormat().aosp()
