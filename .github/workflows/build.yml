@@ -23,8 +23,6 @@ jobs:
           check-latest: 'true'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
-      - name: spotless check (formatting)
-        run: ./gradlew spotlessCheck
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
@@ -33,3 +31,5 @@ jobs:
           name: artifacts
           path: fabric/build/libs/
           retention-days: 1
+      - name: test
+        run: ./gradlew check
