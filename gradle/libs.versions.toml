@@ -1,10 +1,13 @@
 [versions]
+detekt = '2.0.0-alpha.6'
 fabric-loom = '1.18.4'
 fabric-loader = '0.20.1'
 fabric-api = '0.119.4+1.21.4'
 fabric-language-kotlin = '1.14.2+kotlin.2.4.21'
 gradle-spotless = '8.10.4'
 kotlin = '2.4.21'
+kover = '0.9.11'
+ktlint = '14.2.0'
 minecraft = '1.21.4'
 mixin = '0.8.7'
 parchment-release = "2025.03.23"
@@ -19,8 +22,11 @@ mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
 parchment = { module = "org.parchmentmc.data:parchment-1.21.4", version.ref = "parchment-release" }
 
 [plugins]
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 fabric-loom-remap = { id = "net.fabricmc.fabric-loom-remap", version.ref = "fabric-loom" }
 gradle-spotless = { id = "com.diffplug.spotless", version.ref = "gradle-spotless" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 
 [bundles]

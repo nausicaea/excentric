@@ -1,6 +1,5 @@
 plugins {
 	alias(libs.plugins.fabric.loom.remap)
-	alias(libs.plugins.kotlin.jvm)
 }
 
 loom {
@@ -26,14 +25,4 @@ dependencies {
 		parchment(variantOf(rootProject.libs.parchment) { artifactType("zip") })
 	}
 	testImplementation(rootProject.libs.kotlin.test)
-}
-
-kotlin {
-	jvmToolchain(25)
-}
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
 }

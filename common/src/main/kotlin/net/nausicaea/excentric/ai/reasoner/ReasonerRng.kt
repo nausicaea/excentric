@@ -1,6 +1,5 @@
 package net.nausicaea.excentric.ai.reasoner
 
-import net.minecraft.util.RandomSource
 import net.nausicaea.excentric.util.Weighted
 
 fun interface ReasonerRng {
