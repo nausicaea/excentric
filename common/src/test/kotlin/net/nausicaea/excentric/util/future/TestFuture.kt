@@ -13,48 +13,47 @@ import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
+private class CloseCounter : AutoCloseable {
+    private var closes = 0
+
+    val closeInvocations: Int get() = closes
+
+    override fun close() {
+        closes += 1
+    }
+}
+
 /**
  * Continuously return a ready future.
  */
 private fun repeat(): Future<Unit> = { Ready(Unit) }
 
 /**
- * Count the number of [Future.poll] invocations
+ * Count the number of [Future.poll] invocations of the underlying future
  */
 private fun <T : Any> Future<T>.countInvocations(): CountInvocations<T> = CountInvocations(this)
 
 private class CountInvocations<T : Any>(
-    private val fut: Future<T>,
-) : Future<T> {
+    private var fut: Future<T>?,
+) : FusedFuture<T> {
     private var polls: Int = 0
+    private var closes: Int = 0
 
     val pollInvocations: Int get() = polls
+    val closeInvocations: Int get() = closes
 
     override fun poll(): Poll<T> {
         polls += 1
-        return fut.poll()
+        return fut?.poll() ?: Pending
     }
-}
 
-/**
- * Count the number of [FusedFuture.poll] invocations of the underlying future
- */
-private fun <T : Any> FusedFuture<T>.countInvocations(): FusedCountInvocations<T> = FusedCountInvocations(this)
+    override fun close() {
+        closes += 1
+        fut?.close()
+        fut = null
+    }
 
-private class FusedCountInvocations<T : Any>(
-    private val fut: FusedFuture<T>?,
-) : FusedFuture<T> {
-    private var polls: Int = 0
-
-    val pollInvocations: Int get() = polls
-
-    override fun poll(): Poll<T> =
-        fut?.let {
-            polls += 1
-            it.poll()
-        } ?: Pending
-
-    override fun isTerminated(): Boolean = fut?.isTerminated() ?: true
+    override fun isTerminated(): Boolean = fut == null
 }
 
 private fun <T : Any> assertPendingForevermore(fut: Future<T>) {
@@ -110,10 +109,32 @@ class TestFuture {
     }
 
     @Test
+    fun `ready does not clean up resources on outer close`() {
+        val value = CloseCounter()
+        ready(value).close()
+        assertEquals(0, value.closeInvocations)
+    }
+
+    @Test
+    fun `ready does not clean up resources when Ready`() {
+        val value = CloseCounter()
+        ready(value).poll()
+        assertEquals(0, value.closeInvocations)
+    }
+
+    @Test
     fun `fused causes a future to return Ready at most once and Pending afterwards while the inner future is only called until Ready`() {
         val rep = repeat().countInvocations()
         assertFused(rep.fuse()) { assertReady(Unit, it.poll()) }
         assertEquals(1, rep.pollInvocations)
+        assertEquals(1, rep.closeInvocations)
+    }
+
+    @Test
+    fun `fused calls close on inner future on outer close`() {
+        val rep = repeat().countInvocations()
+        rep.fuse().close()
+        assertEquals(1, rep.closeInvocations)
     }
 
     @Test
@@ -148,7 +169,29 @@ class TestFuture {
         val fut = first.andThenOk { second }
         assertFused(fut) { assertReadyOk(1, it.poll()) }
         assertEquals(1, first.pollInvocations)
+        assertEquals(1, first.closeInvocations)
         assertEquals(1, second.pollInvocations)
+        assertEquals(1, second.closeInvocations)
+    }
+
+    @Test
+    fun `andThenOk calls close on first inner future on outer close when second has not been called yet`() {
+        val first = ready<Try<Unit>>(Ok(Unit)).countInvocations()
+        val second = ready<Try<Int>>(Ok(1)).countInvocations()
+        first.andThenOk { second }.close()
+        assertEquals(1, first.closeInvocations)
+        assertEquals(0, second.closeInvocations)
+    }
+
+    @Test
+    fun `andThenOk calls close on both inner futures on outer close when second was called at least once`() {
+        val first = ready<Try<Unit>>(Ok(Unit)).countInvocations()
+        val second = ready<Try<Int>>(Ok(1)).countInvocations()
+        val fut = first.andThenOk { second }
+        fut.poll()
+        fut.close()
+        assertEquals(1, first.closeInvocations)
+        assertEquals(1, second.closeInvocations)
     }
 
     @Test
@@ -170,12 +213,14 @@ class TestFuture {
         val fut = first.andThen { second }
         assertFused(fut) { assertReady(1, it.poll()) }
         assertEquals(1, first.pollInvocations)
+        assertEquals(1, first.closeInvocations)
         assertEquals(1, second.pollInvocations)
+        assertEquals(1, second.closeInvocations)
     }
 
     @Test
-    fun `cancellable is fused and closes the future from a predicate`() {
-        val pnd = pending<Unit>()
+    fun `cancellable is fused`() {
+        val pnd = pending<Unit>().countInvocations()
         var cancel = false
         val fut = pnd.cancellable { cancel }
 
@@ -183,5 +228,21 @@ class TestFuture {
             cancel = true
             assertReadyErr<Cancelled, _>(it.poll())
         }
+        assertEquals(1, pnd.closeInvocations)
+    }
+
+    @Test
+    fun `cancellable never polls inner future when cancelled immediately`() {
+        val pnd = pending<Unit>().countInvocations()
+        pnd.cancellable { true }.poll()
+        assertEquals(0, pnd.pollInvocations)
+    }
+
+    @Test
+    fun `cancellable calls close on inner future on outer close`() {
+        val pnd = pending<Unit>().countInvocations()
+        val cancel = false
+        pnd.cancellable { cancel }.close()
+        assertEquals(1, pnd.closeInvocations)
     }
 }

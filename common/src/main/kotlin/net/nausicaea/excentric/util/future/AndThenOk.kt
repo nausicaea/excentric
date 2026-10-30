@@ -8,59 +8,60 @@ import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
 class AndThenOk<T : Any, U : Any>(
-    private var a: Future<Try<T>>?,
+    private var first: Future<Try<T>>?,
     private val f: (T) -> Future<Try<U>>,
-    private var bFut: Future<Try<U>>? = null,
 ) : FusedFuture<Try<U>> {
-    override fun isTerminated(): Boolean = a == null && bFut == null
+    private var second: Future<Try<U>>? = null
+
+    override fun isTerminated(): Boolean = first == null && second == null
 
     override fun poll(): Poll<Try<U>> {
-        when (val aPoll = a?.poll()) {
+        when (val firstPoll = first?.poll()) {
             is Pending -> {
                 return Pending
             }
 
             is Ready -> {
-                when (val aTry = aPoll.value) {
+                when (val firstTry = firstPoll.value) {
                     is Err -> {
-                        a = null
+                        closeFirst()
                         return Ready(
                             Err(
-                                aTry.value,
+                                firstTry.value,
                             ),
                         )
                     }
 
                     is Ok -> {
-                        bFut = f(aTry.value)
-                        a = null
+                        second = f(firstTry.value)
+                        closeFirst()
                     }
                 }
             }
 
             null -> {}
         }
-        return when (val bPoll = bFut?.poll()) {
+        return when (val secondPoll = second?.poll()) {
             is Pending, null -> {
                 Pending
             }
 
             is Ready -> {
-                when (val bTry = bPoll.value) {
+                when (val secondTry = secondPoll.value) {
                     is Err -> {
-                        bFut = null
+                        closeSecond()
                         Ready(
                             Err(
-                                bTry.value,
+                                secondTry.value,
                             ),
                         )
                     }
 
                     is Ok -> {
-                        bFut = null
+                        closeSecond()
                         Ready(
                             Ok(
-                                bTry.value,
+                                secondTry.value,
                             ),
                         )
                     }
@@ -70,9 +71,17 @@ class AndThenOk<T : Any, U : Any>(
     }
 
     override fun close() {
-        a?.close()
-        a = null
-        bFut?.close()
-        bFut = null
+        closeFirst()
+        closeSecond()
+    }
+
+    private fun closeFirst() {
+        first?.close()
+        first = null
+    }
+
+    private fun closeSecond() {
+        second?.close()
+        second = null
     }
 }
