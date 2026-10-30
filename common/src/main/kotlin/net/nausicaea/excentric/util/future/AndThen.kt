@@ -5,41 +5,50 @@ import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
 class AndThen<T : Any, U : Any>(
-    private var a: Future<T>?,
+    private var first: Future<T>?,
     private val f: (T) -> Future<U>,
-    private var bFut: Future<U>? = null,
 ) : FusedFuture<U> {
+    private var second: Future<U>? = null
+
     override fun poll(): Poll<U> {
-        when (val aPoll = a?.poll()) {
+        when (val firstPoll = first?.poll()) {
             is Pending -> {
                 return Pending
             }
 
             is Ready -> {
-                bFut = f(aPoll.value)
-                a = null
+                second = f(firstPoll.value)
+                closeFirst()
             }
 
             null -> {}
         }
-        return when (val bPoll = bFut?.poll()) {
+        return when (val secondPoll = second?.poll()) {
             is Pending, null -> {
                 Pending
             }
 
             is Ready -> {
-                bFut = null
-                Ready(bPoll.value)
+                closeSecond()
+                Ready(secondPoll.value)
             }
         }
     }
 
-    override fun isTerminated(): Boolean = a == null && bFut == null
+    override fun isTerminated(): Boolean = first == null && second == null
 
     override fun close() {
-        a?.close()
-        a = null
-        bFut?.close()
-        bFut = null
+        closeFirst()
+        closeSecond()
+    }
+
+    private fun closeFirst() {
+        first?.close()
+        first = null
+    }
+
+    private fun closeSecond() {
+        second?.close()
+        second = null
     }
 }
