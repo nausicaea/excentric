@@ -34,7 +34,21 @@ repos:
         entry: ./gradlew spotlessApply
         language: system
         pass_filenames: false
-        files: \.(java|kt|gradle)$
+        files: \.(java|gradle)$
+      - id: ktlint-format
+        name: Ktlint (auto-format Kotlin files)
+        stages: [pre-commit]
+        entry: ./gradlew ktlintFormat
+        language: system
+        pass_filenames: false
+        files: \.(kt)$
+      - id: check
+        name: Check code
+        stages: [pre-commit]
+        entry: ./gradlew check
+        language: system
+        pass_filenames: false
+        files: \.(java|gradle|kt)$
 
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v4.19.1
