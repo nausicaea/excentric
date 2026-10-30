@@ -7,9 +7,7 @@ import net.nausicaea.excentric.util.task.Ready
 /**
  * A future represents an asynchronous computation.
  *
- * A future is a value that might not have finished computing yet. This kind of
- * "asynchronous value" makes it possible for a thread to continue doing useful
- * work while it waits for the value to become available.
+ * A future is a value that might not have finished computing yet.
  *
  * # Differences to other APIs
  *
@@ -47,7 +45,7 @@ fun interface Future<T : Any> : AutoCloseable {
      * thread pool (or something similar) to ensure that `poll` can return
      * quickly.
      *
-     * # Panics
+     * # Throws
      *
      * Once a future has completed (returned `Ready` from `poll`), calling its
      * `poll` method again may throw, block forever, or cause other kinds of
