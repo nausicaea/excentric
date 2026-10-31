@@ -9,5 +9,17 @@
     "lockFileMaintenance": {
         "enabled": true,
         "schedule": ["on monday"]
-    }
+    },
+    "packageRules": [
+        {
+            "matchManagers": ["gradle"],
+            "matchPackageNames": ["com.mojang:minecraft"],
+            "enabled": false
+        },
+        {
+            "matchManagers": ["gradle"],
+            "matchPackageNames": ["net.fabricmc.fabric-api:fabric-api"],
+            "allowedVersions": "/\\+1\\.21\\.4$/"
+        }
+    ]
 }
