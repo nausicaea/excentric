@@ -36,7 +36,7 @@ data class Position(
 ) : Prerequisite {
     override fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
         if (entity is Mob) {
-            PositionFuture(entity.navigation, entity, pos, pathfindingTolerance, speedModifier)
+            PositionFuture(entity.navigation, pos, pathfindingTolerance, speedModifier)
         } else {
             ready(Err(UnsupportedOperationException("pathfinding is only supported for subclasses of Mob")))
         }
@@ -48,7 +48,6 @@ class PathfindingStuck : Exception("pathfinding has timed out and is stuck")
 
 class PositionFuture(
     private var nav: PathNavigation?,
-    val entity: Mob,
     val pos: Vec3,
     val pathfindingTolerance: Int,
     val speedModifier: Double,
