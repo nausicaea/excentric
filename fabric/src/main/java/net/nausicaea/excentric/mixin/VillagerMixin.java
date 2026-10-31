@@ -21,7 +21,7 @@ import net.nausicaea.excentric.ai.NeedsReasoner;
 import net.nausicaea.excentric.ai.debug.NeedsDebug;
 import net.nausicaea.excentric.ai.debug.NeedsDebugSource;
 import net.nausicaea.excentric.ai.debug.VillagerDebug;
-import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
+import net.nausicaea.excentric.minecraft.core.NeedSingletonsKt;
 import net.nausicaea.excentric.minecraft.util.RandomSourceExtKt;
 import net.nausicaea.excentric.mojang.serialization.Codecs;
 import net.nausicaea.excentric.util.EveryN;
