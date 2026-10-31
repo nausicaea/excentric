@@ -120,6 +120,6 @@ object EventCallbacks {
             return
         }
         val n = entity as Needful
-        n.villageModReasoner().close()
+        n.`villageMod$Reasoner`().close()
     }
 }
