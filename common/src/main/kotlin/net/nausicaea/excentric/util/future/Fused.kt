@@ -4,7 +4,7 @@ import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
-class Fused<out T : Any>(
+class Fused<T : Any>(
     private var fut: Future<T>?,
 ) : FusedFuture<T> {
     override fun poll(): Poll<T> =
@@ -14,10 +14,15 @@ class Fused<out T : Any>(
             }
 
             is Ready -> {
-                fut = null
+                close()
                 poll
             }
         }
 
     override fun isTerminated(): Boolean = fut == null
+
+    override fun close() {
+        fut?.close()
+        fut = null
+    }
 }

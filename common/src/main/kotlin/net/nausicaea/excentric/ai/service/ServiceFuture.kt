@@ -19,13 +19,18 @@ abstract class ServiceFuture(
 
     override fun isTerminated(): Boolean = prq == null
 
+    override fun close() {
+        prq?.close()
+        prq = null
+    }
+
     override fun poll(): Poll<Try<Probability>> {
         if (hasExpired()) {
-            prq = null
+            close()
             return Ready(Err(ServiceExpired()))
         }
         return prq?.poll()?.mapOk {
-            prq = null
+            close()
             useNow()
         } ?: throw PollAfterReady()
     }

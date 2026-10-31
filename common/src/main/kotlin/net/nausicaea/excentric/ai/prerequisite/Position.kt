@@ -3,7 +3,9 @@ package net.nausicaea.excentric.ai.prerequisite
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.ai.navigation.PathNavigation
+import net.minecraft.world.level.pathfinder.Path
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.util.future.FusedFuture
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.ready
 import net.nausicaea.excentric.util.result.Err
@@ -34,43 +36,54 @@ data class Position(
 ) : Prerequisite {
     override fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
         if (entity is Mob) {
-            PositionFuture(entity.navigation, entity, pos, pathfindingTolerance, speedModifier)
+            PositionFuture(entity.navigation, pos, pathfindingTolerance, speedModifier)
         } else {
             ready(Err(UnsupportedOperationException("pathfinding is only supported for subclasses of Mob")))
         }
 }
 
-class PathfindingImpossible : Throwable("cannot establish a pathfinding route")
+class PathfindingImpossible : Exception("cannot establish a pathfinding route")
 
-class PathfindingStuck : Throwable("pathfinding has timed out and is stuck")
+class PathfindingStuck : Exception("pathfinding has timed out and is stuck")
 
-/**
- * TODO: cancelling this future should also abort pathfinding.
- */
 class PositionFuture(
-    val nav: PathNavigation,
-    val entity: Mob,
+    private var nav: PathNavigation?,
     val pos: Vec3,
     val pathfindingTolerance: Int,
     val speedModifier: Double,
-) : Future<Try<Unit>> {
-    var initialised: Boolean = false
+    private var path: Path? = null,
+) : FusedFuture<Try<Unit>> {
+    override fun isTerminated(): Boolean = nav == null
 
     override fun poll(): Poll<Try<Unit>> {
-        if (!initialised) {
-            initialised = true
-            val path =
-                nav.createPath(pos.x, pos.y, pos.z, pathfindingTolerance)
-                    ?: return Ready(Err(PathfindingImpossible()))
-            nav.moveTo(path, speedModifier)
+        if (nav == null) {
+            return Pending
         }
 
-        if (nav.isStuck) {
+        if (path == null) {
+            path = nav?.createPath(pos.x, pos.y, pos.z, pathfindingTolerance)
+            if (path == null) {
+                close()
+                return Ready(Err(PathfindingImpossible()))
+            }
+            nav?.moveTo(path, speedModifier)
+        }
+
+        if (nav?.isStuck ?: false) {
+            close()
             return Ready(Err(PathfindingStuck()))
         }
-        if (nav.isDone) {
+        if (nav?.isDone ?: false) {
+            close()
             return Ready(Ok(Unit))
         }
         return Pending
+    }
+
+    override fun close() {
+        if (path != null && nav?.path == path) {
+            nav?.stop()
+        }
+        nav = null
     }
 }

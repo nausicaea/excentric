@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ForbiddenComment:FabricNeedsContext.kt:FabricNeedsContext$// TODO: Collect services from blocks other than beds in the world.</ID>
+    <ID>ForbiddenComment:FabricNeedsContext.kt:FabricNeedsContext$// TODO: Collect services from other entities in the World.</ID>
+    <ID>ForbiddenComment:FabricNeedsContext.kt:FabricNeedsContext$// TODO: Find services of items lying in containers somewhere.</ID>
+    <ID>ForbiddenComment:ServiceApi.kt:ServiceApi$/* TODO: Implement ENTITY_SERVICE fallbacks ENTITY_SERVICE.registerFallback { entity, ctx -&gt; null } */</ID>
+    <ID>LongMethod:FabricNeedsContext.kt:FabricNeedsContext$override fun collect: Sequence&lt;Service&gt;</ID>
+    <ID>LoopWithTooManyJumpStatements:VillagerDebugBroadcaster.kt:VillagerDebugBroadcaster$for</ID>
+    <ID>MagicNumber:EventCallbacks.kt:EventCallbacks$80</ID>
+    <ID>MaxLineLength:ExcentricCommands.kt:ExcentricCommands$source.sendFailure(Component.literal("Your client does not have excentric installed, nothing can be displayed"))</ID>
+    <ID>MaxLineLength:ExcentricCommands.kt:ExcentricCommands$source.sendSuccess({ Component.literal("Villager needs overlay ${if (target) "enabled" else "disabled"}") }, false)</ID>
+    <ID>ReturnCount:VillageManager.kt:VillageManager$fun findOrClaimByStructure: Village?</ID>
+  </CurrentIssues>
+</SmellBaseline>

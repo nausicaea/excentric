@@ -1,7 +1,7 @@
 ---
-state: proposed
+state: accepted
 owner: nausicaea
-acceptance_date:
+acceptance_date: 2026-10-28
 modification_date: 2026-10-23
 ---
 

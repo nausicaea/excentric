@@ -10,21 +10,15 @@ import net.nausicaea.excentric.ai.prerequisite.Prerequisite
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
-import net.nausicaea.excentric.util.future.andThenOk
-import net.nausicaea.excentric.util.future.cancellable
-import net.nausicaea.excentric.util.future.fuse
-import net.nausicaea.excentric.util.future.map
+import net.nausicaea.excentric.util.future.FutureExt.andThenOk
+import net.nausicaea.excentric.util.future.FutureExt.cancellableOk
 import net.nausicaea.excentric.util.result.Err
 import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
-import net.nausicaea.excentric.util.result.flatten
 import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
-/**
- * TODO: currently supports going to sleep only. Implement waking up.
- */
 data class BedBlockService(
     val pos: BlockPos,
     val ctx: BlockServiceContext,
@@ -51,8 +45,7 @@ data class BedBlockService(
         val increment = Probability.of(0.001)
         return prerequisite()
             .fulfil(ctx.consumer)
-            .cancellable { level.getBlockState(pos).block !is BedBlock }
-            .map { it.flatten() }
+            .cancellableOk { level.getBlockState(pos).block !is BedBlock }
             .andThenOk { SleepFuture(ctx, need, increment, pos) }
             .fuse()
     }
@@ -83,6 +76,12 @@ class SleepFuture(
         }
         return Pending
     }
+
+    override fun close() {
+        if (initialised && ctx.consumer.isSleeping) {
+            ctx.consumer.stopSleeping()
+        }
+    }
 }
 
-class AlreadyAsleep : Throwable("cannot go to sleep again: this isn't inception")
+class AlreadyAsleep : Exception("cannot go to sleep again: this isn't inception")
