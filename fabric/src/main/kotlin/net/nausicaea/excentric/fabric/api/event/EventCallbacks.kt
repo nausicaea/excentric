@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.entity.BellBlockEntity
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.chunk.ChunkAccess
+import net.nausicaea.excentric.ai.Needful
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.claim
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.claimDeferred
 import net.nausicaea.excentric.fabric.api.attachment.VillageRef.drainDeferred
@@ -31,6 +32,7 @@ object EventCallbacks {
         ServerChunkEvents.CHUNK_LOAD.register(::onChunkLoad)
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register(::onBlockEntityLoad)
         ServerEntityEvents.ENTITY_LOAD.register(::onEntityLoad)
+        ServerEntityEvents.ENTITY_UNLOAD.register(::onEntityUnload)
         AFTER_BLOCK_PLACE.register(::onAfterBlockPlace)
     }
 
@@ -108,5 +110,16 @@ object EventCallbacks {
             .get(serverLevel)
             .find(entity.blockPosition())
             ?.let { claim(entity, it.id) }
+    }
+
+    private fun onEntityUnload(
+        entity: Entity,
+        @Suppress("unused") serverLevel: ServerLevel,
+    ) {
+        if (entity !is Villager) {
+            return
+        }
+        val n = entity as Needful
+        n.villageModReasoner().close()
     }
 }
