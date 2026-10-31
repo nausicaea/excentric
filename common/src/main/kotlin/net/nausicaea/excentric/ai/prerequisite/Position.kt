@@ -5,6 +5,8 @@ import net.minecraft.world.entity.Mob
 import net.minecraft.world.entity.ai.navigation.PathNavigation
 import net.minecraft.world.level.pathfinder.Path
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.ai.navigation.PathfindingImpossible
+import net.nausicaea.excentric.ai.navigation.PathfindingStuck
 import net.nausicaea.excentric.util.future.FusedFuture
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.ready
@@ -41,10 +43,6 @@ data class Position(
             ready(Err(UnsupportedOperationException("pathfinding is only supported for subclasses of Mob")))
         }
 }
-
-class PathfindingImpossible : Exception("cannot establish a pathfinding route")
-
-class PathfindingStuck : Exception("pathfinding has timed out and is stuck")
 
 class PositionFuture(
     private var nav: PathNavigation?,
