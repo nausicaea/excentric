@@ -1,7 +1,10 @@
+
 package net.nausicaea.excentric.ai
 
 interface Needful {
-    fun villageModNeeds(): NeedsCollection
+    @Suppress("FunctionName")
+    fun `villageMod$Needs`(): NeedsCollection
 
-    fun villageModReasoner(): NeedsReasoner
+    @Suppress("FunctionName")
+    fun `villageMod$Reasoner`(): NeedsReasoner
 }

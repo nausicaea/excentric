@@ -42,13 +42,11 @@ abstract class VillagerMixin implements Needful, NeedsDebugSource {
     @Unique private EveryN villageMod$every8Ticks;
     @Unique private RandomSource villageMod$rng;
 
-    @SuppressWarnings("AddedMixinMembersNamePattern")
-    public @NotNull NeedsCollection villageModNeeds() {
+    public @NotNull NeedsCollection villageMod$needs() {
         return this.villageMod$needs;
     }
 
-    @SuppressWarnings("AddedMixinMembersNamePattern")
-    public @NotNull NeedsReasoner villageModReasoner() {
+    public @NotNull NeedsReasoner villageMod$reasoner() {
         return this.villageMod$reasoner;
     }
 
@@ -87,9 +85,8 @@ abstract class VillagerMixin implements Needful, NeedsDebugSource {
     }
 
     /// Capture the needs and the active service of this villager for debug displays.
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public @NotNull VillagerDebug villagerModDebugSnapshot() {
+    public @NotNull VillagerDebug villagerMod$DebugSnapshot() {
         var villager = ((Villager) (Object) this);
         var ctx = new FabricNeedsContext(villageMod$needs, villager);
         return NeedsDebug.snapshot(villager.getId(), ctx, villageMod$reasoner);
