@@ -1,21 +1,12 @@
 package net.nausicaea.excentric.ai.prerequisite
 
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.Mob
-import net.minecraft.world.entity.ai.navigation.PathNavigation
-import net.minecraft.world.level.pathfinder.Path
 import net.minecraft.world.phys.Vec3
-import net.nausicaea.excentric.ai.navigation.PathfindingImpossible
-import net.nausicaea.excentric.ai.navigation.PathfindingStuck
-import net.nausicaea.excentric.util.future.FusedFuture
+import net.nausicaea.excentric.ai.navigation.Navigator
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.ready
 import net.nausicaea.excentric.util.result.Err
-import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
-import net.nausicaea.excentric.util.task.Pending
-import net.nausicaea.excentric.util.task.Poll
-import net.nausicaea.excentric.util.task.Ready
 
 /**
  * Denotes a [Prerequisite] position: the entity that wants to satisfy this
@@ -37,51 +28,15 @@ data class Position(
     val speedModifier: Double = 0.5,
 ) : Prerequisite {
     override fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
-        if (entity is Mob) {
-            PositionFuture(entity.navigation, pos, pathfindingTolerance, speedModifier)
+        if (entity is Navigator) {
+            entity.`villageMod$navigateTo`(this)
         } else {
-            ready(Err(UnsupportedOperationException("pathfinding is only supported for subclasses of Mob")))
+            ready(
+                Err(
+                    UnsupportedOperationException(
+                        "pathfinding is only supported for types that implement Navigator",
+                    ),
+                ),
+            )
         }
-}
-
-class PositionFuture(
-    private var nav: PathNavigation?,
-    val pos: Vec3,
-    val pathfindingTolerance: Int,
-    val speedModifier: Double,
-    private var path: Path? = null,
-) : FusedFuture<Try<Unit>> {
-    override fun isTerminated(): Boolean = nav == null
-
-    override fun poll(): Poll<Try<Unit>> {
-        if (nav == null) {
-            return Pending
-        }
-
-        if (path == null) {
-            path = nav?.createPath(pos.x, pos.y, pos.z, pathfindingTolerance)
-            if (path == null) {
-                close()
-                return Ready(Err(PathfindingImpossible()))
-            }
-            nav?.moveTo(path, speedModifier)
-        }
-
-        if (nav?.isStuck ?: false) {
-            close()
-            return Ready(Err(PathfindingStuck()))
-        }
-        if (nav?.isDone ?: false) {
-            close()
-            return Ready(Ok(Unit))
-        }
-        return Pending
-    }
-
-    override fun close() {
-        if (path != null && nav?.path == path) {
-            nav?.stop()
-        }
-        nav = null
-    }
 }

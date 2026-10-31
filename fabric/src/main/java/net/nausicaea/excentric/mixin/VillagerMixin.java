@@ -42,14 +42,6 @@ abstract class VillagerMixin implements Needful, NeedsDebugSource {
     @Unique private EveryN villageMod$every8Ticks;
     @Unique private RandomSource villageMod$rng;
 
-    public @NotNull NeedsCollection villageMod$needs() {
-        return this.villageMod$needs;
-    }
-
-    public @NotNull NeedsReasoner villageMod$reasoner() {
-        return this.villageMod$reasoner;
-    }
-
     @Inject(
             method =
                     "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/npc/VillagerType;)V",
@@ -136,5 +128,15 @@ abstract class VillagerMixin implements Needful, NeedsDebugSource {
             boolean original, ServerLevel level, ItemStack stack) {
         var villager = (Villager) (Object) this;
         return villager.getInventory().canAddItem(stack) && stack.has(DataComponents.FOOD);
+    }
+
+    @Override
+    public @NotNull NeedsCollection villageMod$Needs() {
+        return this.villageMod$needs;
+    }
+
+    @Override
+    public @NotNull NeedsReasoner villageMod$Reasoner() {
+        return this.villageMod$reasoner;
     }
 }
