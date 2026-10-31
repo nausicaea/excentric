@@ -7,10 +7,10 @@ import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.ItemStack
 import net.nausicaea.excentric.LOG_MARKER
 import net.nausicaea.excentric.ai.need.Need
-import net.nausicaea.excentric.ai.need.SATIATION
 import net.nausicaea.excentric.ai.prerequisite.Fulfilled
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
+import net.nausicaea.excentric.minecraft.core.SATIATION
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of

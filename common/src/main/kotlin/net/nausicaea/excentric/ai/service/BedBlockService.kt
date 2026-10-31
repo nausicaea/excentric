@@ -4,9 +4,9 @@ import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.block.BedBlock
 import net.nausicaea.excentric.ai.need.Need
-import net.nausicaea.excentric.ai.need.RESTEDNESS
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
+import net.nausicaea.excentric.minecraft.core.RESTEDNESS
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
