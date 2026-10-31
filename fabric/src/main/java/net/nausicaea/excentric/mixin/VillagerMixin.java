@@ -15,6 +15,7 @@ import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.ai.FabricNeedsContext;
+import net.nausicaea.excentric.ai.Needful;
 import net.nausicaea.excentric.ai.NeedsCollection;
 import net.nausicaea.excentric.ai.NeedsReasoner;
 import net.nausicaea.excentric.ai.debug.NeedsDebug;
@@ -33,13 +34,23 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Villager.class)
-abstract class VillagerMixin implements NeedsDebugSource {
+abstract class VillagerMixin implements Needful, NeedsDebugSource {
     @Unique private static final String EXCENTRIC_NEEDS = "ExcentricNeeds";
     @Unique private final NeedsCollection villageMod$needs = new NeedsCollection();
     @Unique private final NeedsReasoner villageMod$reasoner = new NeedsReasoner();
     @Unique private EveryN villageMod$every32Ticks;
     @Unique private EveryN villageMod$every8Ticks;
     @Unique private RandomSource villageMod$rng;
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    public @NotNull NeedsCollection villageModNeeds() {
+        return this.villageMod$needs;
+    }
+
+    @SuppressWarnings("AddedMixinMembersNamePattern")
+    public @NotNull NeedsReasoner villageModReasoner() {
+        return this.villageMod$reasoner;
+    }
 
     @Inject(
             method =

@@ -21,9 +21,20 @@ import net.nausicaea.excentric.util.task.ready
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class NeedsReasoner : Reasoner<Service, NeedsContext> {
+class NeedsReasoner :
+    Reasoner<Service, NeedsContext>,
+    AutoCloseable {
     private var currentService: SvcFut? = null
     private val hysteresis: Double = 0.2
+
+    override fun close() {
+        closeCurrentService()
+    }
+
+    private fun closeCurrentService() {
+        currentService?.close()
+        currentService = null
+    }
 
     override fun threshold(): Probability =
         currentService
@@ -32,8 +43,9 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .unwrapOr(Probability.ZERO)
 
     override fun setCurrentAction(action: Weighted<Service>) {
-        currentService?.close()
-        currentService = SvcFut(action.weight, action.item, action.item.key(), action.item.apply())
+        val newService = SvcFut(action.weight, action.item, action.item.key(), action.item.apply())
+        closeCurrentService()
+        currentService = newService
     }
 
     /**
@@ -78,7 +90,7 @@ class NeedsReasoner : Reasoner<Service, NeedsContext> {
             .map { SvcFutPolled(it.key, it.fut.poll()) }
             .andThen { it.state.ready().map { iit -> SvcFutReady(it.key, iit) } }
             .inspect {
-                currentService = null
+                closeCurrentService()
                 it.state.inspectErr { iit -> LOG.info(LOG_MARKER, "Error using service for need ${it.key}", iit) }
             }.andThen { it.state.ok().map { iit -> SvcUsed(it.key, iit) } }
             .forEach { context.needs().realise(it.key, it.benefit) }
