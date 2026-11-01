@@ -40,11 +40,11 @@ data class BedBlockService(
     override fun describe(): String = "bed at ${pos.toShortString()}"
 
     override fun apply(): Future<Try<Probability>> {
-        val level = ctx.consumer.level()
+        val level = ctx.subject.level()
         val need = key()
         val increment = Probability.of(0.001)
         return prerequisite()
-            .fulfil(ctx.consumer)
+            .fulfil(ctx.subject)
             .cancellableOk { level.getBlockState(pos).block !is BedBlock }
             .andThenOk { SleepFuture(ctx, need, increment, pos) }
             .fuse()
@@ -60,17 +60,17 @@ class SleepFuture(
 ) : Future<Try<Probability>> {
     override fun poll(): Poll<Try<Probability>> {
         if (!initialised) {
-            if (ctx.consumer.isSleeping) {
+            if (ctx.subject.isSleeping) {
                 return Ready(Err(AlreadyAsleep()))
             }
-            ctx.consumer.startSleeping(pos)
+            ctx.subject.startSleeping(pos)
             initialised = true
         }
-        if (ctx.consumer.isSleeping) {
+        if (ctx.subject.isSleeping) {
             ctx.needs.realise(need, increment)
 
             if (ctx.needs[need]?.isApproxOne ?: false) {
-                ctx.consumer.stopSleeping()
+                ctx.subject.stopSleeping()
                 return Ready(Ok(Probability.ZERO))
             }
         }
@@ -78,8 +78,8 @@ class SleepFuture(
     }
 
     override fun close() {
-        if (initialised && ctx.consumer.isSleeping) {
-            ctx.consumer.stopSleeping()
+        if (initialised && ctx.subject.isSleeping) {
+            ctx.subject.stopSleeping()
         }
     }
 }
