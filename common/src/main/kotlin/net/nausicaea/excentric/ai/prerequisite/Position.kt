@@ -1,6 +1,5 @@
 package net.nausicaea.excentric.ai.prerequisite
 
-import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.phys.Vec3
 import net.nausicaea.excentric.ai.navigation.Navigator
 import net.nausicaea.excentric.util.future.Future
@@ -27,9 +26,9 @@ data class Position(
     val arrivalTolerance: Double = 1.5,
     val speedModifier: Double = 0.5,
 ) : Prerequisite {
-    override fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
-        if (entity is Navigator) {
-            entity.`villageMod$navigateTo`(this)
+    override fun <T : Any> fulfil(subject: T): Future<Try<Unit>> =
+        if (subject is Navigator) {
+            subject.`villageMod$navigateTo`(this)
         } else {
             ready(
                 Err(
