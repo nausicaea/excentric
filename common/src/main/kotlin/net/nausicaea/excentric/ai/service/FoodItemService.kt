@@ -74,7 +74,7 @@ data class FoodItemService(
     /**
      * Create a [FoodItemFuture] that promises to fulfil the [FoodItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].
      */
-    override fun apply(): Future<Try<Probability>> = FoodItemFuture(props, ctx, prerequisite().fulfil(ctx.consumer))
+    override fun apply(): Future<Try<Probability>> = FoodItemFuture(props, ctx, prerequisite().fulfil(ctx.subject))
 
     /**
      * If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.
@@ -95,7 +95,7 @@ data class FoodItemService(
                 LOG.info(LOG_MARKER, "Non-food item or item vanished, no benefit")
                 return Probability.ZERO
             }
-            val consumer = ctx.consumer
+            val consumer = ctx.subject
             val remainder = itemStack.finishUsingItem(consumer.level(), consumer)
             ctx.putBack(remainder)
             val benefit = props.nutrition().toDouble() / MAX_NUTRITION
