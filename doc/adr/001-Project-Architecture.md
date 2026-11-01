@@ -12,7 +12,8 @@ modification_date: 2026-10-15
 - Git branch names follow [Conventional Branches](https://conventionalbranch.org)
 - The `gradle` build system is used.
 - The source code is split into common and mod-loader-specific source sets.
-- The code shall be written in Kotlin and use functional paradigms where possible.
+- The code shall be written in Kotlin and use functional paradigms where the
+  maintainer possesses the appropriate skill.
 - The mod is designed to run _exclusively_ on Minecraft servers.
 - Client code may be used for debugging only.
 - Initially, the mod is designed for fabric.
