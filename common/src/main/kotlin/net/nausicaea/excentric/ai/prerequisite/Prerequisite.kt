@@ -7,5 +7,3 @@ import net.nausicaea.excentric.util.result.Try
 interface Prerequisite {
     fun fulfil(entity: LivingEntity): Future<Try<Unit>>
 }
-
-fun <T : Prerequisite, U : Prerequisite> T.and(p: U): And<T, U> = And(this, p)
