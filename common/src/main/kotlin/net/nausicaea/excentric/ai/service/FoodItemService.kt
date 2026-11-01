@@ -15,7 +15,13 @@ import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.Probability.Companion.of
 import net.nausicaea.excentric.util.future.Future
+import net.nausicaea.excentric.util.future.FutureExt.andThenOk
+import net.nausicaea.excentric.util.future.FutureExt.cancellableOk
+import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
+import net.nausicaea.excentric.util.task.Pending
+import net.nausicaea.excentric.util.task.Poll
+import net.nausicaea.excentric.util.task.Ready
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -74,22 +80,27 @@ data class FoodItemService(
     /**
      * Create a [FoodItemFuture] that promises to fulfil the [FoodItemService.prerequisite], providing the final benefit to [net.nausicaea.excentric.ai.need.Satiation].
      */
-    override fun apply(): Future<Try<Probability>> = FoodItemFuture(props, ctx, prerequisite().fulfil(ctx.subject))
+    override fun apply(): Future<Try<Probability>> =
+        prerequisite()
+            .fulfil(ctx.subject)
+            .cancellableOk {
+                val stack = ctx.itemStack()
+                (ctx.source is ItemStackSource.World && ctx.source.entity.isRemoved) ||
+                    stack.isEmpty ||
+                    !stack.has(DataComponents.FOOD)
+            }.andThenOk { FoodItemFuture(props, ctx) }
 
     /**
      * If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.
      */
     class FoodItemFuture(
-        val props: FoodProperties,
+        private var props: FoodProperties?,
         val ctx: ItemServiceContext,
-        prq: Future<Try<Unit>>,
-    ) : ServiceFuture(prq) {
+    ) : Future<Try<Probability>> {
         private fun hasExpired(stack: ItemStack): Boolean =
             (ctx.source is ItemStackSource.World && ctx.source.entity.isRemoved) || stack.isEmpty || !stack.has(DataComponents.FOOD)
 
-        override fun hasExpired(): Boolean = hasExpired(ctx.itemStack())
-
-        override fun useNow(): Probability {
+        private fun useNow(p: FoodProperties): Probability {
             val itemStack = ctx.itemStack()
             if (hasExpired(itemStack)) {
                 LOG.info(LOG_MARKER, "Non-food item or item vanished, no benefit")
@@ -98,10 +109,17 @@ data class FoodItemService(
             val consumer = ctx.subject
             val remainder = itemStack.finishUsingItem(consumer.level(), consumer)
             ctx.putBack(remainder)
-            val benefit = props.nutrition().toDouble() / MAX_NUTRITION
+            val benefit = p.nutrition().toDouble() / MAX_NUTRITION
             LOG.info(LOG_MARKER, "Food-item provides $benefit benefit")
             return of(benefit)
         }
+
+        override fun poll(): Poll<Try<Probability>> =
+            props?.let {
+                val result = useNow(it)
+                props = null
+                Ready(Ok(result))
+            } ?: Pending
 
         companion object {
             private val LOG: Logger = LoggerFactory.getLogger(FoodItemFuture::class.java)
