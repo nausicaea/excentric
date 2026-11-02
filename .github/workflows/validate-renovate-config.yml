@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: read
     container:
-      image: docker.io/renovate/renovate:44.181@sha256:5164b93fea95e0e80c4ef059cd748002a920922463ad8cc752f350f0ad41a583
+      image: docker.io/renovate/renovate:44.185@sha256:171ccdd2a5b1a9c007749ec54143ae3426553e7c6d243dd9622ba0aa7ac5ee23
       options: --user 0:0
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
