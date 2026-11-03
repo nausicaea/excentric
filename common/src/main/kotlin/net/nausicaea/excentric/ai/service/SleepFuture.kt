@@ -11,6 +11,7 @@ import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.result.Err
 import net.nausicaea.excentric.util.result.Try
+import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
@@ -28,10 +29,9 @@ class SleepFuture(
         if (subject.isSleeping) {
             return Ready(Err(AlreadyAsleep()))
         }
-        TODO()
+        return Pending
     }
 
     override fun close() {
-        TODO()
     }
 }
