@@ -15,12 +15,13 @@ import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.nausicaea.excentric.ai.FabricNeedsContext;
+import net.nausicaea.excentric.ai.Needful;
 import net.nausicaea.excentric.ai.NeedsCollection;
 import net.nausicaea.excentric.ai.NeedsReasoner;
 import net.nausicaea.excentric.ai.debug.NeedsDebug;
 import net.nausicaea.excentric.ai.debug.NeedsDebugSource;
 import net.nausicaea.excentric.ai.debug.VillagerDebug;
-import net.nausicaea.excentric.ai.need.NeedSingletonsKt;
+import net.nausicaea.excentric.minecraft.core.NeedSingletonsKt;
 import net.nausicaea.excentric.minecraft.util.RandomSourceExtKt;
 import net.nausicaea.excentric.mojang.serialization.Codecs;
 import net.nausicaea.excentric.util.EveryN;
@@ -33,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Villager.class)
-abstract class VillagerMixin implements NeedsDebugSource {
+abstract class VillagerMixin implements Needful, NeedsDebugSource {
     @Unique private static final String EXCENTRIC_NEEDS = "ExcentricNeeds";
     @Unique private final NeedsCollection villageMod$needs = new NeedsCollection();
     @Unique private final NeedsReasoner villageMod$reasoner = new NeedsReasoner();
@@ -76,9 +77,8 @@ abstract class VillagerMixin implements NeedsDebugSource {
     }
 
     /// Capture the needs and the active service of this villager for debug displays.
-    @SuppressWarnings("AddedMixinMembersNamePattern")
     @Override
-    public @NotNull VillagerDebug villagerModDebugSnapshot() {
+    public @NotNull VillagerDebug villagerMod$DebugSnapshot() {
         var villager = ((Villager) (Object) this);
         var ctx = new FabricNeedsContext(villageMod$needs, villager);
         return NeedsDebug.snapshot(villager.getId(), ctx, villageMod$reasoner);
@@ -128,5 +128,15 @@ abstract class VillagerMixin implements NeedsDebugSource {
             boolean original, ServerLevel level, ItemStack stack) {
         var villager = (Villager) (Object) this;
         return villager.getInventory().canAddItem(stack) && stack.has(DataComponents.FOOD);
+    }
+
+    @Override
+    public @NotNull NeedsCollection villageMod$Needs() {
+        return this.villageMod$needs;
+    }
+
+    @Override
+    public @NotNull NeedsReasoner villageMod$Reasoner() {
+        return this.villageMod$reasoner;
     }
 }

@@ -1,15 +1,7 @@
-package net.nausicaea.excentric.util
+package net.nausicaea.excentric.util.result
 
 import net.nausicaea.excentric.util.option.None
 import net.nausicaea.excentric.util.option.Some
-import net.nausicaea.excentric.util.result.Err
-import net.nausicaea.excentric.util.result.Ok
-import net.nausicaea.excentric.util.result.Try
-import net.nausicaea.excentric.util.result.flatten
-import net.nausicaea.excentric.util.result.inspect
-import net.nausicaea.excentric.util.result.inspectErr
-import net.nausicaea.excentric.util.result.map
-import net.nausicaea.excentric.util.result.ok
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -38,12 +30,12 @@ class TestTry {
 
     @Test
     fun okReturnsSomeForOk() {
-        assertEquals(Ok(Unit).ok(), Some(Unit))
+        assertEquals(Some(Unit), Ok(Unit).ok())
     }
 
     @Test
     fun okReturnsNoneForErr() {
-        assertEquals(Err(RuntimeException()).ok(), None)
+        assertEquals(None, Err(RuntimeException()).ok())
     }
 
     @Test
@@ -76,8 +68,8 @@ class TestTry {
 
     @Test
     fun mapTransformsWrappedValueOnOk() {
-        assertEquals(Ok(Unit).map { true }, Ok(true))
-        assertEquals(Ok(1).map { it + 1 }, Ok(2))
+        assertEquals(Ok(true), Ok(Unit).map { true })
+        assertEquals(Ok(2), Ok(1).map { it + 1 })
     }
 
     @Test
@@ -92,7 +84,7 @@ class TestTry {
 
     @Test
     fun flattenMergesNestedOks() {
-        assertEquals(Ok(Ok(Unit)).flatten(), Ok(Unit))
+        assertEquals(Ok(Unit), Ok(Ok(Unit)).flatten())
     }
 
     @Test
