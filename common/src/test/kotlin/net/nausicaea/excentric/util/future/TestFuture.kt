@@ -1,5 +1,10 @@
 package net.nausicaea.excentric.util.future
 
+import net.nausicaea.excentric.assertFused
+import net.nausicaea.excentric.assertPendingForevermore
+import net.nausicaea.excentric.assertReady
+import net.nausicaea.excentric.assertReadyErr
+import net.nausicaea.excentric.assertReadyOk
 import net.nausicaea.excentric.util.future.FutureExt.andThenOk
 import net.nausicaea.excentric.util.future.FutureExt.cancellableOk
 import net.nausicaea.excentric.util.result.Err
@@ -11,8 +16,6 @@ import net.nausicaea.excentric.util.task.Ready
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertIs
-import kotlin.test.assertTrue
 
 private class CloseCounter : AutoCloseable {
     private var closes = 0
@@ -55,47 +58,6 @@ private class CountInvocations<T : Any>(
     }
 
     override fun isTerminated(): Boolean = fut == null
-}
-
-private fun <T : Any> assertPendingForevermore(fut: Future<T>) {
-    @Suppress("ForEachParameterNotUsed")
-    (0..100).forEach { assertPending(fut.poll()) }
-}
-
-private fun <T : Any> assertPending(poll: Poll<T>) {
-    assertIs<Pending>(poll)
-}
-
-private fun <T : Any> assertReady(
-    expected: T,
-    poll: Poll<T>,
-) {
-    assertEquals(Ready(expected), poll)
-}
-
-private fun <T : Any> assertReadyOk(
-    expected: T,
-    poll: Poll<Try<T>>,
-) {
-    assertIs<Ready<Try<T>>>(poll)
-    assertIs<Ok<T>>(poll.value)
-    assertEquals(expected, poll.value.value)
-}
-
-private inline fun <reified E : Exception, T : Any> assertReadyErr(poll: Poll<Try<T>>) {
-    assertIs<Ready<Try<T>>>(poll)
-    assertIs<Err>(poll.value)
-    assertIs<E>(poll.value.value)
-}
-
-private fun <T : Any> assertFused(
-    fut: FusedFuture<T>,
-    expected: (FusedFuture<T>) -> Unit,
-) {
-    assertFalse(fut.isTerminated())
-    expected(fut)
-    assertTrue(fut.isTerminated())
-    assertPendingForevermore(fut)
 }
 
 class TestFuture {
