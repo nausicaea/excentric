@@ -108,6 +108,8 @@ class NeedsCollection {
 
     operator fun get(needKey: ResourceKey<Need>): Probability? = index[needKey]?.let { satisfactions[it] }
 
+    fun containsKey(key: ResourceKey<Need>): Boolean = index.containsKey(key)
+
     /**
      * Slowly reduce the [Need]'s satisfaction level through [Need.decayFn].
      */
