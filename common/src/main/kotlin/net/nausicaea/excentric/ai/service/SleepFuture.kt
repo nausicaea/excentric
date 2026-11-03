@@ -2,7 +2,10 @@ package net.nausicaea.excentric.ai.service
 
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
+import net.nausicaea.excentric.ai.NeedsCollection
 import net.nausicaea.excentric.ai.need.Need
+import net.nausicaea.excentric.minecraft.core.RESTEDNESS
+import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.result.Err
@@ -13,26 +16,28 @@ import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
 class SleepFuture(
-    val ctx: BlockServiceContext,
-    val need: ResourceKey<Need>,
+    val subject: Sleeper,
+    val needs: NeedsCollection,
+    val need: ResourceKey<Need> = NEED_REGISTRY.getResourceKey(RESTEDNESS).get(),
     val increment: Probability,
     val pos: BlockPos,
-    private var initialised: Boolean = false,
 ) : Future<Try<Probability>> {
+    private var initialised: Boolean = false
+
     @Suppress("ReturnCount")
     override fun poll(): Poll<Try<Probability>> {
         if (!initialised) {
-            if (ctx.subject.isSleeping) {
+            if (subject.isSleeping) {
                 return Ready(Err(AlreadyAsleep()))
             }
-            ctx.subject.startSleeping(pos)
+            subject.startSleeping(pos)
             initialised = true
         }
-        if (ctx.subject.isSleeping) {
-            ctx.needs.realise(need, increment)
+        if (subject.isSleeping) {
+            needs.realise(need, increment)
 
-            if (ctx.needs[need]?.isApproxOne ?: false) {
-                ctx.subject.stopSleeping()
+            if (needs[need]?.isApproxOne ?: false) {
+                subject.stopSleeping()
                 return Ready(Ok(Probability.ZERO))
             }
         }
@@ -40,8 +45,8 @@ class SleepFuture(
     }
 
     override fun close() {
-        if (initialised && ctx.subject.isSleeping) {
-            ctx.subject.stopSleeping()
+        if (initialised && subject.isSleeping) {
+            subject.stopSleeping()
         }
     }
 }
