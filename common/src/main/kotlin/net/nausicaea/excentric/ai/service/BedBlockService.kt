@@ -2,7 +2,9 @@ package net.nausicaea.excentric.ai.service
 
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BedBlock
+import net.nausicaea.excentric.ai.NeedsCollection
 import net.nausicaea.excentric.ai.need.Need
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
@@ -16,8 +18,12 @@ import net.nausicaea.excentric.util.result.Try
 
 data class BedBlockService(
     val pos: BlockPos,
-    val ctx: BlockServiceContext,
+    val level: Level,
+    val subject: Sleeper,
+    val needs: NeedsCollection,
 ) : Service {
+    constructor(pos: BlockPos, level: Level, ctx: BlockServiceContext) : this(pos, level, ctx.subject, ctx.needs)
+
     override fun key(): ResourceKey<Need> =
         NEED_REGISTRY
             .getResourceKey(RESTEDNESS)
@@ -35,14 +41,11 @@ data class BedBlockService(
     override fun describe(): String = "bed at ${pos.toShortString()}"
 
     override fun apply(): Future<Try<Probability>> {
-        val level = ctx.subject.level()
         val need = key()
         val increment = Probability.of(0.001)
         return prerequisite()
-            .fulfil(ctx.subject)
+            .fulfil(subject)
             .cancellableOk { level.getBlockState(pos).block !is BedBlock }
-            .andThenOk { SleepFuture(ctx, need, increment, pos) }
+            .andThenOk { SleepFuture(subject, needs, need, increment, pos) }
     }
 }
-
-class AlreadyAsleep : Exception("cannot go to sleep again: this isn't inception")
