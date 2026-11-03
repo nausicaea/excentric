@@ -161,15 +161,14 @@ class NeedsCollection {
     fun realise(
         key: ResourceKey<Need>,
         benefit: Probability,
-    ) {
+    ): Probability =
         index[key]?.let { i ->
             // Assume unknown needs are filled up by
             // `addedIntensity`, starting at zero.
             satisfactions.compute(
                 i,
             ) { _, v -> v?.plus(benefit) ?: benefit }
-        }
-    }
+        } ?: Probability.ZERO
 
     companion object {
         private val LOG: Logger = LoggerFactory.getLogger(NeedsCollection::class.java)
