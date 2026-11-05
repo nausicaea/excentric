@@ -29,6 +29,7 @@ class SleepFuture(
         if (subject.isSleeping) {
             return Ready(Err(AlreadyAsleep()))
         }
+        subject.startSleeping(pos)
         return Pending
     }
 
