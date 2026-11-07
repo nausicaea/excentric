@@ -10,6 +10,7 @@ import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.result.Err
+import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
 import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
@@ -28,6 +29,9 @@ class SleepFuture(
         }
         if (subject.isSleeping) {
             return Ready(Err(AlreadyAsleep()))
+        }
+        if (needs[need]!!.isApproxOne) {
+            return Ready(Ok(Probability.ONE))
         }
         subject.startSleeping(pos)
         return Pending
