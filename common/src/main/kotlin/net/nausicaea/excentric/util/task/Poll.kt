@@ -105,3 +105,17 @@ inline fun <T : Any> Poll<T>.orElse(f: () -> Poll<T>): Poll<T> =
         is Ready -> this
         Pending -> f()
     }
+
+inline fun <T : Any> Poll<T>.orReadyIf(
+    f: () -> T,
+    pred: () -> Boolean,
+): Poll<T> =
+    when (this) {
+        Pending ->
+            if (pred()) {
+                Ready(f())
+            } else {
+                Pending
+            }
+        is Ready -> this
+    }

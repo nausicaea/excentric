@@ -14,7 +14,8 @@ import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
 import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
-import net.nausicaea.excentric.util.task.Ready
+import net.nausicaea.excentric.util.task.inspectPending
+import net.nausicaea.excentric.util.task.orReadyIf
 
 class SleepFuture(
     val subject: Sleeper,
@@ -23,19 +24,12 @@ class SleepFuture(
     val increment: Probability,
     val pos: BlockPos,
 ) : Future<Try<Probability>> {
-    override fun poll(): Poll<Try<Probability>> {
-        if (!needs.containsKey(need)) {
-            return Ready(Err(MissingNeed()))
-        }
-        if (subject.isSleeping) {
-            return Ready(Err(AlreadyAsleep()))
-        }
-        if (needs[need]!!.isApproxOne) {
-            return Ready(Ok(Probability.ONE))
-        }
-        subject.startSleeping(pos)
-        return Pending
-    }
+    override fun poll(): Poll<Try<Probability>> =
+        Pending
+            .orReadyIf({ Err(MissingNeed()) }) { !needs.containsKey(need) }
+            .orReadyIf({ Err(AlreadyAsleep()) }) { subject.isSleeping }
+            .orReadyIf({ Ok(Probability.ONE) }) { needs[need]!!.isApproxOne }
+            .inspectPending { subject.startSleeping(pos) }
 
     override fun close() {
     }
