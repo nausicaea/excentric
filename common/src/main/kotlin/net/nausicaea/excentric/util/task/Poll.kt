@@ -50,7 +50,7 @@ data class Ready<V : Any>(
 fun <T : Any> Poll<T>.ready(): Opt<T> =
     when (this) {
         is Ready -> this.value.asOpt()
-        is Pending -> None
+        Pending -> None
     }
 
 /**
@@ -63,9 +63,18 @@ inline fun <T : Any> Poll<T>.inspect(f: (T) -> Unit): Poll<T> =
             this
         }
 
-        is Pending -> {
+        Pending -> {
             this
         }
+    }
+
+inline fun <T : Any> Poll<T>.inspectPending(f: () -> Unit): Poll<T> =
+    when (this) {
+        Pending -> {
+            f()
+            this
+        }
+        is Ready -> this
     }
 
 /**
@@ -74,7 +83,7 @@ inline fun <T : Any> Poll<T>.inspect(f: (T) -> Unit): Poll<T> =
 inline fun <T : Any, U : Any> Poll<T>.map(f: (T) -> U): Poll<U> =
     when (this) {
         is Ready -> Ready(f(value))
-        is Pending -> Pending
+        Pending -> Pending
     }
 
 inline fun <T : Any, U : Any> Poll<Try<T>>.mapOk(f: (T) -> U): Poll<Try<U>> =
@@ -89,4 +98,10 @@ inline fun <T : Any, U : Any> Poll<Try<T>>.mapOk(f: (T) -> U): Poll<Try<U>> =
                 is Ok -> Ready(Ok(f(value.value)))
             }
         }
+    }
+
+inline fun <T : Any> Poll<T>.orElse(f: () -> Poll<T>): Poll<T> =
+    when (this) {
+        is Ready -> this
+        Pending -> f()
     }
