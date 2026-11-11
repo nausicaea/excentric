@@ -34,7 +34,7 @@ fun <T : Any> assertReadyOk(
     poll: Poll<Try<T>>,
 ) {
     assertIs<Ready<Try<T>>>(poll)
-    assertIs<Ok<T>>(poll.value)
+    assertIs<Ok<T>>(poll.value, "${poll.value}")
     assertEquals(expected, poll.value.value)
 }
 

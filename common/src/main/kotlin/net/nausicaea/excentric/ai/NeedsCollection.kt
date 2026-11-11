@@ -108,6 +108,13 @@ class NeedsCollection {
 
     operator fun get(needKey: ResourceKey<Need>): Probability? = index[needKey]?.let { satisfactions[it] }
 
+    operator fun set(
+        needKey: ResourceKey<Need>,
+        probability: Probability,
+    ) {
+        index[needKey]?.let { satisfactions[it] = probability }
+    }
+
     fun containsKey(key: ResourceKey<Need>): Boolean = index.containsKey(key)
 
     /**
