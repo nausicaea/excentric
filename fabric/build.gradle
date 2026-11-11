@@ -1,8 +1,5 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
 	alias(libs.plugins.fabric.loom.remap)
-	alias(libs.plugins.kotlin.jvm)
 	id 'maven-publish'
 }
 
@@ -48,15 +45,7 @@ processResources {
 	}
 }
 
-kotlin {
-	jvmToolchain(25)
-}
-
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
-
 	withSourcesJar()
 }
 

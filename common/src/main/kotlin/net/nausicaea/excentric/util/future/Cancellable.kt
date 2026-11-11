@@ -7,13 +7,13 @@ import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
-class Cancellable<out T : Any>(
+class Cancellable<T : Any>(
     private var fut: Future<T>?,
     private val cancelFn: () -> Boolean,
 ) : FusedFuture<Try<T>> {
     override fun poll(): Poll<Try<T>> {
-        if (cancelFn()) {
-            fut = null
+        if (fut != null && cancelFn()) {
+            close()
             return Ready(
                 Err(
                     Cancelled(),
@@ -26,6 +26,7 @@ class Cancellable<out T : Any>(
             }
 
             is Ready -> {
+                close()
                 Ready(
                     Ok(poll.value),
                 )
@@ -34,4 +35,9 @@ class Cancellable<out T : Any>(
     }
 
     override fun isTerminated(): Boolean = fut == null
+
+    override fun close() {
+        fut?.close()
+        fut = null
+    }
 }
