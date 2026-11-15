@@ -47,5 +47,8 @@ class SleepFuture(
     }
 
     override fun close() {
+        if (initialised && subject.isSleeping) {
+            subject.stopSleeping()
+        }
     }
 }

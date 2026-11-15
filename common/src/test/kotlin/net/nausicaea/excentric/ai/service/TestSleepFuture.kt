@@ -31,9 +31,9 @@ class TestSleepFuture {
         val subject = FakeSleeper(false)
         val needs = NeedsCollection()
         val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
-        val increment = Probability.of(0.1)
+        val restRate = Probability.of(0.1)
 
-        SleepFuture(subject, needs, need, increment, BlockPos.ZERO)
+        SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
         assertFalse(subject.isSleeping)
         assertTrue(subject.unchanged)
     }
@@ -44,9 +44,9 @@ class TestSleepFuture {
         val needs = NeedsCollection()
         needs.add(RESTEDNESS, Probability.ZERO)
         val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
-        val increment = Probability.of(0.1)
+        val restRate = Probability.of(0.1)
 
-        val fut = SleepFuture(subject, needs, need, increment, BlockPos.ZERO)
+        val fut = SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
         assertReadyErr<AlreadyAsleep, _>(fut.poll())
         assertTrue(subject.unchanged)
     }
@@ -56,9 +56,9 @@ class TestSleepFuture {
         val subject = FakeSleeper(false)
         val needs = NeedsCollection()
         val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
-        val increment = Probability.of(0.1)
+        val restRate = Probability.of(0.1)
 
-        val fut = SleepFuture(subject, needs, need, increment, BlockPos.ZERO)
+        val fut = SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
         assertReadyErr<MissingNeed, _>(fut.poll())
         assertTrue(subject.unchanged)
     }
@@ -69,9 +69,9 @@ class TestSleepFuture {
         val needs = NeedsCollection()
         needs.add(RESTEDNESS, Probability.ONE)
         val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
-        val increment = Probability.of(0.1)
+        val restRate = Probability.of(0.1)
 
-        val fut = SleepFuture(subject, needs, need, increment, BlockPos.ZERO)
+        val fut = SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
         assertReadyOk(Probability.ONE, fut.poll())
         assertTrue(subject.unchanged)
     }
@@ -82,9 +82,9 @@ class TestSleepFuture {
         val needs = NeedsCollection()
         needs.add(RESTEDNESS, Probability.ZERO)
         val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
-        val increment = Probability.of(0.1)
+        val restRate = Probability.of(0.1)
 
-        val fut = SleepFuture(subject, needs, need, increment, BlockPos.ZERO)
+        val fut = SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
         assertPending(fut.poll())
         assertEquals(1, subject.startInvocations)
         assertEquals(listOf(BlockPos.ZERO), subject.startSleepingArgs)
@@ -96,10 +96,10 @@ class TestSleepFuture {
         val needs = NeedsCollection()
         needs.add(RESTEDNESS, Probability.ZERO)
         val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
-        val increment = Probability.of(0.1)
+        val restRate = Probability.of(0.1)
         assertFalse(subject.isSleeping)
 
-        val fut = SleepFuture(subject, needs, need, increment, BlockPos.ZERO)
+        val fut = SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
         assertPending(fut.poll())
         assertEquals(1, subject.startInvocations)
         assertTrue(subject.isSleeping)
@@ -108,6 +108,37 @@ class TestSleepFuture {
 
         assertReadyOk(Probability.ONE, fut.poll())
         assertEquals(1, subject.startInvocations)
+        assertEquals(1, subject.stopInvocations)
+    }
+
+    @Test
+    fun `close does not call stopSleeping if polling has not started`() {
+        val subject = FakeSleeper(manageState = true)
+        val needs = NeedsCollection()
+        val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
+        val restRate = Probability.of(0.1)
+
+        val fut = SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
+        fut.close()
+        assertEquals(0, subject.startInvocations)
+        assertEquals(0, subject.stopInvocations)
+    }
+
+    @Test
+    fun `close calls stopSleeping if startSleeping was called by SleepFuture`() {
+        val subject = FakeSleeper(manageState = true)
+        val needs = NeedsCollection()
+        needs.add(RESTEDNESS, Probability.ZERO)
+        val need = NEED_REGISTRY.getResourceKey(RESTEDNESS).get()
+        val restRate = Probability.of(0.1)
+        assertFalse(subject.isSleeping)
+
+        val fut = SleepFuture(subject, needs, need, restRate, BlockPos.ZERO)
+        assertPending(fut.poll())
+        assertEquals(1, subject.startInvocations)
+        assertTrue(subject.isSleeping)
+
+        fut.close()
         assertEquals(1, subject.stopInvocations)
     }
 }
