@@ -23,12 +23,11 @@ class SleepFuture(
     val increment: Probability,
     val pos: BlockPos,
 ) : Future<Try<Probability>> {
+    private var initialised: Boolean = false
+
     override fun poll(): Poll<Try<Probability>> {
         if (!needs.containsKey(need)) {
             return Ready(Err(MissingNeed()))
-        }
-        if (subject.isSleeping) {
-            return Ready(Err(AlreadyAsleep()))
         }
         if (needs[need]!!.isApproxOne) {
             if (subject.isSleeping) {
@@ -36,7 +35,13 @@ class SleepFuture(
             }
             return Ready(Ok(Probability.ONE))
         }
-        subject.startSleeping(pos)
+        if (!initialised) {
+            if (subject.isSleeping) {
+                return Ready(Err(AlreadyAsleep()))
+            }
+            subject.startSleeping(pos)
+            initialised = true
+        }
 
         return Pending
     }

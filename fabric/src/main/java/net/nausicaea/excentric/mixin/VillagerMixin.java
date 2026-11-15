@@ -96,10 +96,8 @@ abstract class VillagerMixin implements Needful, NeedsDebugSource {
         var ctx = new FabricNeedsContext(villageMod$needs, villager);
         villageMod$reasoner.tryRealiseService(ctx);
         villageMod$every8Ticks.run(() -> villageMod$needs.decay(gameTime));
-        villageMod$every32Ticks.run(
-                () ->
-                        villageMod$reasoner.plan(
-                                ctx, RandomSourceExtKt.asReasonerRng(villageMod$rng)));
+        villageMod$every32Ticks.run(() ->
+                villageMod$reasoner.plan(ctx, RandomSourceExtKt.asReasonerRng(villageMod$rng)));
     }
 
     @Inject(method = "addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V", at = @At("TAIL"))
