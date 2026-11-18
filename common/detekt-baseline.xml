@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ForbiddenComment:BedBlockService.kt:BedBlockService$* TODO: make a bed's base utility depend on the occupation or reservation status</ID>
+    <ID>ForbiddenComment:FoodItemService.kt:FoodItemService$// FIXME: Position isn't the only prerequisite for ForeignInventory</ID>
+    <ID>ForbiddenComment:NeedsCollection.kt:NeedsCollection$// TODO: what do we do when the need is critical?</ID>
+    <ID>ForbiddenComment:Restedness.kt:Restedness$* Represents the need to be rested, i.e. to sleep. * * TODO: balance decay rate and utility function. Currently placeholders.</ID>
+    <ID>ForbiddenComment:Satiation.kt:Satiation$* Represents the need to eat. * * TODO: balance decay rate and utility function. Currently placeholders.</ID>
+    <ID>MaxLineLength:Codecs.kt:Codecs$val</ID>
+    <ID>MaxLineLength:FoodItemService.kt:FoodItemService$*</ID>
+    <ID>MaxLineLength:FoodItemService.kt:FoodItemService.FoodItemFuture$(ctx.source is ItemStackSource.World &amp;&amp; ctx.source.entity.isRemoved) || stack.isEmpty || !stack.has(DataComponents.FOOD)</ID>
+    <ID>MaxLineLength:FoodItemService.kt:FoodItemService.FoodItemFuture$* If there is no [Prerequisite] or if the prerequisite is satisfied, use the [net.minecraft.world.item.ItemStack] by calling [net.minecraft.world.item.ItemStack.finishUsingItem] and put back the remainder. Then, complete the future with the benefit to the need which is proportional to [FoodProperties.nutrition]. Complete the future with zero benefit if the [net.minecraft.world.item.ItemStack] is empty or doesn't have the [FoodProperties] data component.</ID>
+    <ID>MaxLineLength:Future.kt:Future$*</ID>
+    <ID>MaxLineLength:Future.kt:Future$* Abort the future, cleaning up all acquired resources. Must be idempotent and implementors may not throw exceptions.</ID>
+    <ID>MaxLineLength:NeedsCollection.kt:NeedsCollection$fun toMap: Map&lt;ResourceLocation, Probability&gt;</ID>
+    <ID>MaxLineLength:NeedsReasoner.kt:NeedsReasoner$*</ID>
+    <ID>MaxLineLength:Opt.kt:*</ID>
+    <ID>MaxLineLength:Opt.kt:Opt$*</ID>
+    <ID>MaxLineLength:Opt.kt:Opt$* Map an `Opt&lt;T&gt;` to an `Opt&lt;U&gt;` by applying a function only if the value is present (i.e. [Some]). Return [None] otherwise.</ID>
+    <ID>MaxLineLength:Poll.kt:* If a value is ready with [Ready], call the function `f` to peek into the value, then return the original [Poll] value.</ID>
+    <ID>MaxLineLength:Poll.kt:* Map a [Ready] value with the function `f` to a new value or return [Pending] without calling the function if no value is ready.</ID>
+    <ID>MaxLineLength:Position.kt:Position$* Error term for position comparisons. Determines the maximum deviation from the target position that is acceptable for pathfinding.</ID>
+    <ID>MaxLineLength:TestFuture.kt:TestFuture$fun</ID>
+    <ID>ReturnCount:AndThenOk.kt:AndThenOk$override fun poll: Poll&lt;Try&lt;U&gt;&gt;</ID>
+    <ID>ReturnCount:BedBlockService.kt:SleepFuture$override fun poll: Poll&lt;Try&lt;Probability&gt;&gt;</ID>
+    <ID>ReturnCount:Position.kt:PositionFuture$override fun poll: Poll&lt;Try&lt;Unit&gt;&gt;</ID>
+    <ID>ReturnCount:ReasonerRng.kt:ReasonerRng$fun &lt;T&gt; chooseWeighted: Weighted&lt;T&gt;?</ID>
+  </CurrentIssues>
+</SmellBaseline>

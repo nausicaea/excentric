@@ -2,33 +2,28 @@ package net.nausicaea.excentric.ai.service
 
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BedBlock
+import net.nausicaea.excentric.ai.NeedsCollection
 import net.nausicaea.excentric.ai.need.Need
-import net.nausicaea.excentric.ai.need.RESTEDNESS
 import net.nausicaea.excentric.ai.prerequisite.Position
 import net.nausicaea.excentric.ai.prerequisite.Prerequisite
+import net.nausicaea.excentric.minecraft.core.RESTEDNESS
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 import net.nausicaea.excentric.util.Probability
 import net.nausicaea.excentric.util.future.Future
-import net.nausicaea.excentric.util.future.andThenOk
-import net.nausicaea.excentric.util.future.cancellable
-import net.nausicaea.excentric.util.future.fuse
-import net.nausicaea.excentric.util.future.map
-import net.nausicaea.excentric.util.result.Err
-import net.nausicaea.excentric.util.result.Ok
+import net.nausicaea.excentric.util.future.FutureExt.andThenOk
+import net.nausicaea.excentric.util.future.FutureExt.cancellableOk
 import net.nausicaea.excentric.util.result.Try
-import net.nausicaea.excentric.util.result.flatten
-import net.nausicaea.excentric.util.task.Pending
-import net.nausicaea.excentric.util.task.Poll
-import net.nausicaea.excentric.util.task.Ready
 
-/**
- * TODO: currently supports going to sleep only. Implement waking up.
- */
 data class BedBlockService(
     val pos: BlockPos,
-    val ctx: BlockServiceContext,
+    val level: Level,
+    val subject: Sleeper,
+    val needs: NeedsCollection,
 ) : Service {
+    constructor(pos: BlockPos, level: Level, ctx: BlockServiceContext) : this(pos, level, ctx.subject, ctx.needs)
+
     override fun key(): ResourceKey<Need> =
         NEED_REGISTRY
             .getResourceKey(RESTEDNESS)
@@ -46,43 +41,11 @@ data class BedBlockService(
     override fun describe(): String = "bed at ${pos.toShortString()}"
 
     override fun apply(): Future<Try<Probability>> {
-        val level = ctx.consumer.level()
         val need = key()
         val increment = Probability.of(0.001)
         return prerequisite()
-            .fulfil(ctx.consumer)
-            .cancellable { level.getBlockState(pos).block !is BedBlock }
-            .map { it.flatten() }
-            .andThenOk { SleepFuture(ctx, need, increment, pos) }
-            .fuse()
+            .fulfil(subject)
+            .cancellableOk { level.getBlockState(pos).block !is BedBlock }
+            .andThenOk { SleepFuture(subject, needs, need, increment, pos) }
     }
 }
-
-class SleepFuture(
-    val ctx: BlockServiceContext,
-    val need: ResourceKey<Need>,
-    val increment: Probability,
-    val pos: BlockPos,
-    private var initialised: Boolean = false,
-) : Future<Try<Probability>> {
-    override fun poll(): Poll<Try<Probability>> {
-        if (!initialised) {
-            if (ctx.consumer.isSleeping) {
-                return Ready(Err(AlreadyAsleep()))
-            }
-            ctx.consumer.startSleeping(pos)
-            initialised = true
-        }
-        if (ctx.consumer.isSleeping) {
-            ctx.needs.realise(need, increment)
-
-            if (ctx.needs[need]?.isApproxOne ?: false) {
-                ctx.consumer.stopSleeping()
-                return Ready(Ok(Probability.ZERO))
-            }
-        }
-        return Pending
-    }
-}
-
-class AlreadyAsleep : Throwable("cannot go to sleep again: this isn't inception")
