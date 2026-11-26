@@ -10,7 +10,7 @@ sealed interface Try<out T : Any> {
 }
 
 data class Err(
-    val value: Throwable,
+    val value: Exception,
 ) : Try<Nothing> {
     override fun isOk(): Boolean = false
 
@@ -56,7 +56,7 @@ inline fun <T : Any> Try<T>.inspect(f: (T) -> Unit): Try<T> =
  *
  * Returns the original result.
  */
-inline fun <T : Any> Try<T>.inspectErr(f: (Throwable) -> Unit): Try<T> =
+inline fun <T : Any> Try<T>.inspectErr(f: (Exception) -> Unit): Try<T> =
     when (this) {
         is Ok -> {
             this

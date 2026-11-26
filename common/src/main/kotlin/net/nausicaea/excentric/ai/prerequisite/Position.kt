@@ -1,17 +1,11 @@
 package net.nausicaea.excentric.ai.prerequisite
 
-import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.Mob
-import net.minecraft.world.entity.ai.navigation.PathNavigation
 import net.minecraft.world.phys.Vec3
+import net.nausicaea.excentric.ai.navigation.Navigator
 import net.nausicaea.excentric.util.future.Future
 import net.nausicaea.excentric.util.future.ready
 import net.nausicaea.excentric.util.result.Err
-import net.nausicaea.excentric.util.result.Ok
 import net.nausicaea.excentric.util.result.Try
-import net.nausicaea.excentric.util.task.Pending
-import net.nausicaea.excentric.util.task.Poll
-import net.nausicaea.excentric.util.task.Ready
 
 /**
  * Denotes a [Prerequisite] position: the entity that wants to satisfy this
@@ -32,45 +26,16 @@ data class Position(
     val arrivalTolerance: Double = 1.5,
     val speedModifier: Double = 0.5,
 ) : Prerequisite {
-    override fun fulfil(entity: LivingEntity): Future<Try<Unit>> =
-        if (entity is Mob) {
-            PositionFuture(entity.navigation, entity, pos, pathfindingTolerance, speedModifier)
+    override fun <T : Any> fulfil(subject: T): Future<Try<Unit>> =
+        if (subject is Navigator) {
+            subject.`villageMod$navigateTo`(this)
         } else {
-            ready(Err(UnsupportedOperationException("pathfinding is only supported for subclasses of Mob")))
+            ready(
+                Err(
+                    UnsupportedOperationException(
+                        "pathfinding is only supported for types that implement Navigator",
+                    ),
+                ),
+            )
         }
-}
-
-class PathfindingImpossible : Throwable("cannot establish a pathfinding route")
-
-class PathfindingStuck : Throwable("pathfinding has timed out and is stuck")
-
-/**
- * TODO: cancelling this future should also abort pathfinding.
- */
-class PositionFuture(
-    val nav: PathNavigation,
-    val entity: Mob,
-    val pos: Vec3,
-    val pathfindingTolerance: Int,
-    val speedModifier: Double,
-) : Future<Try<Unit>> {
-    var initialised: Boolean = false
-
-    override fun poll(): Poll<Try<Unit>> {
-        if (!initialised) {
-            initialised = true
-            val path =
-                nav.createPath(pos.x, pos.y, pos.z, pathfindingTolerance)
-                    ?: return Ready(Err(PathfindingImpossible()))
-            nav.moveTo(path, speedModifier)
-        }
-
-        if (nav.isStuck) {
-            return Ready(Err(PathfindingStuck()))
-        }
-        if (nav.isDone) {
-            return Ready(Ok(Unit))
-        }
-        return Pending
-    }
 }

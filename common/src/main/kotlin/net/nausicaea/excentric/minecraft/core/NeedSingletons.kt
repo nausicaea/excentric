@@ -1,11 +1,14 @@
-package net.nausicaea.excentric.ai.need
+package net.nausicaea.excentric.minecraft.core
 
 import net.minecraft.core.Registry
+import net.nausicaea.excentric.ai.need.Need
+import net.nausicaea.excentric.ai.need.Restedness
+import net.nausicaea.excentric.ai.need.Satiation
 import net.nausicaea.excentric.id
 import net.nausicaea.excentric.minecraft.core.registries.NEED_REGISTRY
 
 /**
- * See [Satiation] for information.
+ * See [net.nausicaea.excentric.ai.need.Satiation] for information.
  */
 @JvmField
 val SATIATION: Need =
@@ -16,7 +19,7 @@ val SATIATION: Need =
     )
 
 /**
- * See [Restedness] for information.
+ * See [net.nausicaea.excentric.ai.need.Restedness] for information.
  */
 @JvmField
 val RESTEDNESS: Need =

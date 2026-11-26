@@ -4,7 +4,7 @@ import net.nausicaea.excentric.util.task.Pending
 import net.nausicaea.excentric.util.task.Poll
 import net.nausicaea.excentric.util.task.Ready
 
-class Map<T : Any, out U : Any>(
+class Map<T : Any, U : Any>(
     private var fut: Future<T>?,
     private val f: (T) -> U,
 ) : Future<U> {
@@ -19,4 +19,9 @@ class Map<T : Any, out U : Any>(
                 Ready(f(aPoll.value))
             }
         }
+
+    override fun close() {
+        fut?.close()
+        fut = null
+    }
 }

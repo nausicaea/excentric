@@ -15,6 +15,7 @@ import net.nausicaea.excentric.ai.service.ItemStackSource
 import net.nausicaea.excentric.ai.service.Service
 import net.nausicaea.excentric.fabric.api.lookup.ServiceApi
 import net.nausicaea.excentric.minecraft.world.asSequence
+import net.nausicaea.excentric.minecraft.world.entity.LivingEntitySleeper
 import net.nausicaea.excentric.minecraft.world.entity.getNonemptyItemBySlot
 import net.nausicaea.excentric.minecraft.world.phys.toBlockPosFloor
 import net.nausicaea.excentric.util.filterMap
@@ -100,8 +101,16 @@ data class FabricNeedsContext(
                 HALF_WIDTH,
                 PoiManager.Occupancy.HAS_SPACE,
             ).asSequence()
-            .flatMap { toSeq(ServiceApi.BLOCK_SERVICE.find(level, it, BlockServiceContext(entity, needs))) }
-            .forEach(svcBuffer::add)
+            .flatMap {
+                toSeq(
+                    ServiceApi.BLOCK_SERVICE
+                        .find(
+                            level,
+                            it,
+                            BlockServiceContext(LivingEntitySleeper(entity), needs),
+                        ),
+                )
+            }.forEach(svcBuffer::add)
 
         // TODO: Collect services from other entities in the World.
         return svcBuffer.asSequence()

@@ -109,7 +109,7 @@ inline fun <T : Any> Opt<T>.orElse(f: () -> Opt<T>): Opt<T> = if (isSome) this e
 fun <T : Any> Opt<T>.unwrapOr(default: T): T = unwrapOrNull ?: default
 
 /**
- * Returns the contained [Opt.Companion.Some] value or computes it from a closure.
+ * Returns the contained [Some] value or computes it from a closure.
  */
 inline fun <T : Any> Opt<T>.unwrapOrElse(default: () -> T): T = unwrapOrNull ?: default()
 

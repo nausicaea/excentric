@@ -51,7 +51,7 @@ object ServiceApi {
             blockEntity
                 .asOpt()
                 .filter { it is BedBlockEntity }
-                .map { BedBlockService(blockPos, ctx) }
+                .map { BedBlockService(blockPos, level, ctx) }
                 .unwrapOrNull
         }
         /* TODO: Implement ENTITY_SERVICE fallbacks

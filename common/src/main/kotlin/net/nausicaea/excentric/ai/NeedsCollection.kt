@@ -23,6 +23,7 @@ import kotlin.math.max
  * [NeedsCollection.realise]), and can
  * score [Service]s.
  */
+@Suppress("TooManyFunctions")
 class NeedsCollection {
     private val index: MutableMap<ResourceKey<Need>, Int> = mutableMapOf()
     private val satisfactions: MutableMap<Int, Probability> = mutableMapOf()
@@ -108,6 +109,15 @@ class NeedsCollection {
 
     operator fun get(needKey: ResourceKey<Need>): Probability? = index[needKey]?.let { satisfactions[it] }
 
+    operator fun set(
+        needKey: ResourceKey<Need>,
+        probability: Probability,
+    ) {
+        index[needKey]?.let { satisfactions[it] = probability }
+    }
+
+    fun containsKey(key: ResourceKey<Need>): Boolean = index.containsKey(key)
+
     /**
      * Slowly reduce the [Need]'s satisfaction level through [Need.decayFn].
      */
@@ -161,15 +171,14 @@ class NeedsCollection {
     fun realise(
         key: ResourceKey<Need>,
         benefit: Probability,
-    ) {
+    ): Probability =
         index[key]?.let { i ->
             // Assume unknown needs are filled up by
             // `addedIntensity`, starting at zero.
             satisfactions.compute(
                 i,
             ) { _, v -> v?.plus(benefit) ?: benefit }
-        }
-    }
+        } ?: Probability.ZERO
 
     companion object {
         private val LOG: Logger = LoggerFactory.getLogger(NeedsCollection::class.java)

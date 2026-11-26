@@ -8,5 +8,6 @@ interface NeedsDebugSource {
     /**
      * Capture the current needs and active service of this entity.
      */
-    fun villagerModDebugSnapshot(): VillagerDebug
+    @Suppress("FunctionName")
+    fun `villagerMod$DebugSnapshot`(): VillagerDebug
 }
