@@ -23,6 +23,7 @@ import kotlin.math.max
  * [NeedsCollection.realise]), and can
  * score [Service]s.
  */
+@Suppress("TooManyFunctions")
 class NeedsCollection {
     private val index: MutableMap<ResourceKey<Need>, Int> = mutableMapOf()
     private val satisfactions: MutableMap<Int, Probability> = mutableMapOf()

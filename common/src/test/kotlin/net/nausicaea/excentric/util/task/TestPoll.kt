@@ -53,6 +53,7 @@ class TestPoll {
         assertPending<Unit>(Pending.orElse { Pending })
     }
 
+    @Suppress("MaxLineLength")
     @Test
     fun `orElse skips lambda on Ready`() {
         assertReadyErr<IllegalStateException, Unit>(Ready(Err(IllegalStateException())).orElse { Ready(Err(RuntimeException())) })

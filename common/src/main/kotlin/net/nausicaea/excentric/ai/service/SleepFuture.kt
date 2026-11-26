@@ -25,6 +25,7 @@ class SleepFuture(
 ) : Future<Try<Probability>> {
     private var initialised: Boolean = false
 
+    @Suppress("ReturnCount")
     override fun poll(): Poll<Try<Probability>> {
         if (!needs.containsKey(need)) {
             return Ready(Err(MissingNeed()))
